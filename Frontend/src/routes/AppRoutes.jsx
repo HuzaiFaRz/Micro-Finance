@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
-import Navbar from "../components/Navbar";
+import Navbar from "../Navbar/Navbar";
 import LoanCalculator from "../pages/LoanCalculator";
 import LoanApplicationPage from "../pages/LoanApplicationPage";
 import UserDashboard from "../pages/UserDashboard";

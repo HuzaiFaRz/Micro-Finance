@@ -1,1 +1,43 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: qurova-bold;
+  src: url(assets/Fonts/Qurova-Bold.otf);
+}
+
+@font-face {
+  font-family: qurova-medium;
+  src: url(assets/Fonts/Qurova-Medium.otf);
+}
+
+@font-face {
+  font-family: qurova-light;
+  src: url(assets/Fonts/Qurova-Light.otf);
+}
+
+@theme {
+  --font-qurova-bold: qurova-bold;
+  --font-qurova-medium: qurova-medium;
+  --font-qurova-light: qurova-light;
+
+  /* Text Colors */
+  --text-primary: #0d47a1;
+  --text-secondary: #1a73e8;
+  --text-muted: #6b7280;
+  --text-accent: #f9ab00;
+
+  /* Heading Colors */
+  --heading-primary: #0d47a1;
+  --heading-secondary: #1a73e8;
+  --heading-accent: #34a853;
+
+  /* Backgrounds */
+  --bg-main: #e8f0fe;
+  --bg-card: #ffffff;
+  --bg-accent: #34a853;
+
+  /* Input Fields */
+  --input-border: #1a73e8;
+  --input-bg: #ffffff;
+  --input-placeholder: #6b7280;
+}

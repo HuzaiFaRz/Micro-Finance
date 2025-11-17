@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <React.Fragment>
       <Navbar />
-      <main className="w-full h-svh bg-card ">
+      <main className="w-full h-svh bg-main">
         <Outlet />
       </main>
       <Footer />

@@ -1,43 +1,32 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: qurova-bold;
-  src: url(assets/Fonts/Qurova-Bold.otf);
+  font-family: elmssans-bold;
+  src: url(assets/Fonts/ElmsSans-Bold.ttf);
 }
 
 @font-face {
-  font-family: qurova-medium;
-  src: url(assets/Fonts/Qurova-Medium.otf);
+  font-family: elmssans-medium;
+  src: url(assets/Fonts/ElmsSans-Medium.ttf);
 }
 
 @font-face {
-  font-family: qurova-light;
-  src: url(assets/Fonts/Qurova-Light.otf);
+  font-family: elmssans-light;
+  src: url(assets/Fonts/ElmsSans-Light.ttf);
 }
 
 @theme {
-  --font-qurova-bold: qurova-bold;
-  --font-qurova-medium: qurova-medium;
-  --font-qurova-light: qurova-light;
+  --font-elmssans-bold: elmssans-bold;
+  --font-elmssans-medium: elmssans-medium;
+  --font-elmssans-light: elmssans-light;
+  --color-main: #e0f7fa;
+  --color-layout: #1f4e79;
+  --color-card: #2f80ed;
+  --color-hover: rgba(0, 0, 0, 0.5);
+  --breakpoint-desktop: 1000px;
+  --breakpoint-tablet: 830px;
+}
 
-  /* Text Colors */
-  --text-primary: #0d47a1;
-  --text-secondary: #1a73e8;
-  --text-muted: #6b7280;
-  --text-accent: #f9ab00;
-
-  /* Heading Colors */
-  --heading-primary: #0d47a1;
-  --heading-secondary: #1a73e8;
-  --heading-accent: #34a853;
-
-  /* Backgrounds */
-  --bg-main: #e8f0fe;
-  --bg-card: #ffffff;
-  --bg-accent: #34a853;
-
-  /* Input Fields */
-  --input-border: #1a73e8;
-  --input-bg: #ffffff;
-  --input-placeholder: #6b7280;
+p {
+  color: #224d86;
 }

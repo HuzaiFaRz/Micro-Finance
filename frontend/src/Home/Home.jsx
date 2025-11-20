@@ -1,9 +1,9 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-import { bgone } from "../assets/Images/1.jpg";
-import { bgtwo } from "../assets/Images/2.jpg";
-import { bgthree } from "../assets/Images/3.jpg";
+import  bgone  from "../assets/Images/1.jpg";
+import  bgtwo  from "../assets/Images/2.jpg";
+import  bgthree from "../assets/Images/3.jpg";
 
 const Home = () => {
   const swiperContent = [

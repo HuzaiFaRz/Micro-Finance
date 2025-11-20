@@ -9,34 +9,36 @@ import {
 
 const Navbar = () => {
   let [navbarButton, setNavbarButton] = useState(false);
-
   const nav_Links = [
     { linkName: "Home", linkURL: "/" },
     { linkName: "Dashboard", linkURL: "dashboard" },
-    { linkName: "Loan Categories", linkURL: "loancategories" },
+    { linkName: "Loan Categories", linkURL: "loan-categories" },
     { linkName: "Contact Us", linkURL: "contact" },
     { linkName: "About Us", linkURL: "about" },
-    { linkName: "Apply Now", linkURL: "loanform" },
+    { linkName: "Apply Now", linkURL: "loan-form" },
   ];
+  nav_Links.map((e) => {
+    return Object.freeze(e);
+  });
 
   const navbarEvent = () => {
     setNavbarButton(!navbarButton);
   };
 
-  // document.body.style.overflow = navbarButton ? "hidden" : "";
+  document.body.style.overflow = navbarButton ? "hidden" : "";
 
   return (
     <Fragment>
       <>
-        <header className="z-30 w-full h-16 bg-layout fixed top-0 right-0 flex visible tablet:invisible tablet:hidden justify-between items-center p-5">
+        <header className="z-100 w-full h-16 bg-layout text-main fixed top-0 right-0 flex visible tablet:invisible tablet:hidden justify-between items-center p-5">
           {navbarButton ? (
             <XMarkIcon
-              className="size-10 text-main z-50 cursor-pointer"
+              className="size-10 cursor-pointer"
               onClick={() => navbarEvent()}
             />
           ) : (
             <Bars3BottomRightIcon
-              className="size-10 text-main z-50 cursor-pointer"
+              className="size-10 cursor-pointer"
               onClick={() => navbarEvent()}
             />
           )}
@@ -47,27 +49,26 @@ const Navbar = () => {
         </header>
 
         <nav
-          className={`bg-layout fixed top-0 tablet:left-0 w-4/5 tablet:w-full h-full tablet:h-16 flex flex-col tablet:flex-row items-center justify-center tablet:justify-between p-4 -left-full transition-all ${
+          className={`bg-layout fixed top-0 tablet:left-0 w-4/5 tablet:w-full h-full tablet:h-16 flex flex-col tablet:flex-row items-center justify-center tablet:justify-between p-4 -left-full z-50 transition-all text-main ${
             navbarButton && "left-0"
           }`}
         >
           <div className="nav-start absolute bottom-8 tablet:static">
             <NavLink to={"/"}>
-              <CurrencyDollarIcon className="size-14 tablet:size-10 text-main" />
+              <CurrencyDollarIcon className="size-14 tablet:size-10" />
             </NavLink>
           </div>
 
-          <div className="nav-center flex flex-col tablet:flex-row gap-6 tablet:gap-3 w-full tablet:w-auto">
+          <div className="nav-center flex flex-col tablet:flex-row gap-6 tablet:gap-3 w-full tablet:w-auto font-elmssans-medium tablet:text-sm desktop:text-[16px] text-xl tracking-wide">
             {nav_Links.map((val, index) => {
               return (
                 <React.Fragment key={index}>
                   <NavLink
                     to={val.linkURL}
-                    className={`text-main px-3 py-2 font-elmssans-medium tracking-wide 
-                     tablet:text-sm desktop:text-[16px] text-xl hover:bg-hover rounded-lg ${
-                       index === 5 &&
-                       "bg-card rounded-lg ml-0 desktop:ml-8 tablet:ml-3px px-4 py-2"
-                     }`}
+                    className={`px-3 py-2 hover:bg-hover rounded-lg ${
+                      index === 5 &&
+                      "bg-card rounded-lg ml-0 desktop:ml-8 tablet:ml-3px px-4 py-2"
+                    }`}
                   >
                     {val.linkName}
                   </NavLink>

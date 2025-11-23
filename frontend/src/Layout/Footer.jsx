@@ -30,15 +30,16 @@ const Footer = () => {
               </li>
             </div>
             <div className="w-full tablet:w-[50%] desktop:w-[60%] h-full flex justify-evenly tablet:justify-end items-center px-2 tablet:pr-8 tablet:gap-4 border-b">
-              {footer_Links.map((val, index) => {
+              {footer_Links.map((elem, index) => {
+                const { linkName, linkURL } = elem;
                 return (
                   <React.Fragment key={index}>
                     <NavLink
-                      to={val.linkURL}
+                      to={linkURL}
                       className={`px-2 py-2`}
                       target={index === 3 && "_blank"}
                     >
-                      {val.linkName}
+                      {linkName}
                     </NavLink>
                   </React.Fragment>
                 );
@@ -52,10 +53,7 @@ const Footer = () => {
                 <span>Making Money</span>
                 <span>Accessible & Durable.</span>
               </div>
-              <img
-                src={logo}
-                className="w-40 tablet:w-52"
-              />
+              <img src={logo} className="w-40 tablet:w-52" />
             </div>
             <div className="w-full tablet:w-[50%] desktop:w-[40%] flex justify-center tablet:justify-end items-center tablet:items-end border-b tablet:border-l tablet:border-b-0 tablet:pb-10 order-1">
               <p className="px-5 text-sm tablet:text-md">

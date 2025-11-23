@@ -60,17 +60,18 @@ const Navbar = () => {
           </div>
 
           <div className="nav-center flex flex-col tablet:flex-row gap-6 tablet:gap-3 w-full tablet:w-auto font-elmssans-medium tablet:text-sm desktop:text-[16px] text-xl tracking-wide">
-            {nav_Links.map((val, index) => {
+            {nav_Links.map((elem, index) => {
+              const { linkName, linkURL } = elem;
               return (
                 <React.Fragment key={index}>
                   <NavLink
-                    to={val.linkURL}
+                    to={linkURL}
                     className={`px-3 py-2 hover:bg-hover rounded-lg ${
                       index === 5 &&
                       "bg-card rounded-lg ml-0 desktop:ml-8 tablet:ml-3px px-4 py-2"
                     }`}
                   >
-                    {val.linkName}
+                    {linkName}
                   </NavLink>
                 </React.Fragment>
               );

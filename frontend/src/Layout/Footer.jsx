@@ -37,7 +37,7 @@ const Footer = () => {
                     <NavLink
                       to={linkURL}
                       className={`px-2 py-2`}
-                      target={index === 3 && "_blank"}
+                      target={index === 3 ? "_blank":undefined}
                     >
                       {linkName}
                     </NavLink>

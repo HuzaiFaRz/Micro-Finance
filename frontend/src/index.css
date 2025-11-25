@@ -34,3 +34,9 @@ body {
   -moz-user-select: none !important;
   -webkit-user-drag: none !important;
 }
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  display: none !important;
+  color:rgb(47, 128, 237);
+}

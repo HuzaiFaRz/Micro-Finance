@@ -49,7 +49,7 @@ const Register = () => {
                   <label htmlFor={elem} className="w-full relative">
                     Insert {elem}
                     <input
-                      className={`w-full text-card mt-1 border-2 shadow-xl/20 shadow-card px-3 py-3  border-e outline-0 placeholder:text-black placeholder:opacity-45`}
+                      className={`w-full text-card mt-1 border-none shadow-xl/20 shadow-card px-3 py-3  outline-0 placeholder:text-black placeholder:opacity-45`}
                       id={elem}
                       type={
                         passwordEye[elem]

@@ -38,5 +38,10 @@ body {
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   display: none !important;
-  color:rgb(47, 128, 237);
+  color: rgb(47, 128, 237);
+}
+
+input,
+button {
+  outline: none !important;
 }

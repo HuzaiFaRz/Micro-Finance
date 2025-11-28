@@ -2,9 +2,9 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { NavLink } from "react-router";
 
-import bgone from "../assets/Images/1.jpg";
-import bgtwo from "../assets/Images/2.jpg";
-import bgthree from "../assets/Images/3.jpg";
+import homeSlideImage1 from "../assets/Images/home-slide-img-1.jpg";
+import homeSlideImage2 from "../assets/Images/home-slide-img-2.jpg";
+import homeSlideImage3 from "../assets/Images/home-slide-img-3.jpg";
 
 const Home = () => {
   const swiperContent = [
@@ -12,19 +12,19 @@ const Home = () => {
       heading: "Smart Micro - Finance Solutions",
       paragraph:
         "Manage your loans and payments easily — fast, secure, and hassle-free.",
-      background: bgone,
+      background: homeSlideImage1,
     },
     {
       heading: "Manage Loans in Seconds",
       paragraph:
         "Create, track, and manage installments automatically. Save time and avoid errors.",
-      background: bgtwo,
+      background: homeSlideImage2,
     },
     {
       heading: "Safe, Anywhere Access",
       paragraph:
         "Encrypted cloud storage and a mobile-friendly interface. Manage your finances anytime, anywhere.",
-      background: bgthree,
+      background: homeSlideImage3,
     },
   ];
 

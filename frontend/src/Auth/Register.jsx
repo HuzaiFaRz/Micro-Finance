@@ -1,20 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { NavLink, Outlet } from "react-router";
-import AuthImage from "../assets/Images/auth-image.jpg";
 import {
   ArrowLongRightIcon,
-  EyeDropperIcon,
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/16/solid";
+import AuthHead from "./AuthHead";
+import { ThemeContextCreated } from "./Contexts/ThemeContext";
+import AuthImage from "./AuthImage";
 
 const Register = () => {
+  const { windowMode, passwordEyeCSS, mainColor } =
+    useContext(ThemeContextCreated);
+
   const [passwordEye, setPasswordEye] = useState({
     password: false,
     repeatPassword: false,
   });
-
-  const passwordEyeCSS = `size-5 absolute right-0 top-1/2 -translate-x-1/2 cursor-pointer`;
 
   const registerInput = [
     "Name",
@@ -24,32 +26,43 @@ const Register = () => {
     "Number",
   ];
   const passwordEyeHandler = (elem) => {
+    event.preventDefault();
     setPasswordEye((prev) => ({
       ...prev,
       [elem]: !prev[elem],
     }));
-    console.log(passwordEye);
   };
 
   return (
     <>
       <div className="w-full h-dvh flex justify-center items-center">
-        <div className="w-[60%] h-full relative">
-          <img src={AuthImage} className="w-full h-full object-cover" />
-          <div className="absolute top-0 right-0 bg-card opacity-25 z-40 w-full h-full"></div>
-        </div>
-        <form className="flex flex-col justify-evenly items-center w-[40%] h-full px-7">
-          <div className="w-full text-start font-elmssans-bold text-5xl text-black tracking-tighter">
-            Register
-          </div>
-          <div className="flex flex-col justify-start items-start w-full x-10 py-5 gap-5 text-md font-elmssans-medium">
+        <AuthImage />
+
+        <form
+          className={`flex flex-col justify-between items-center w-[50%] h-full px-7 py-5 ${mainColor}`}
+        >
+          <AuthHead />
+          <div
+            className={`flex flex-col justify-start items-start w-full x-10 py-5 gap-5 text-md font-elmssans-light tracking-wider ${mainColor}`}
+          >
             {registerInput.map((elem, index) => {
               return (
                 <React.Fragment key={index}>
-                  <label htmlFor={elem} className="w-full relative">
-                    Insert {elem}
+                  <label
+                    htmlFor={elem}
+                    className={`w-full relative mb-1 underline underline-offset-11 ${
+                      windowMode === "light" && "font-elmssans-medium"
+                    } text-card `}
+                  >
+                    {elem === "Repeat Password"
+                      ? elem
+                      : `Insert ${elem === "Number" ? `CNIC` : `${elem}`}`}
                     <input
-                      className={`w-full text-card mt-1 border-none shadow-xl/20 shadow-card px-3 py-3  outline-0 placeholder:text-black placeholder:opacity-45`}
+                      className={`w-full px-3 py-3 border-l border-b mt-1 placeholder:opacity-50 ${
+                        windowMode === "dark"
+                          ? "placeholder:text-card text-main border-card shadow-none"
+                          : "placeholder:text-black text-black border-black shadow-xl/40 shadow-card"
+                      }`}
                       id={elem}
                       type={
                         passwordEye[elem]
@@ -66,7 +79,7 @@ const Register = () => {
                         className={passwordEyeCSS}
                         onClick={() => passwordEyeHandler(elem)}
                       >
-                        {passwordEye[elem] ? <EyeSlashIcon /> : <EyeIcon />}
+                        {passwordEye[elem] ? <EyeIcon /> : <EyeSlashIcon />}
                       </button>
                     )}
                   </label>
@@ -80,7 +93,7 @@ const Register = () => {
             </button>
             <NavLink
               to={"/sign-in"}
-              className={`flex items-center gap-3 px-12 py-2 shadow-xl/70 shadow-card text-black`}
+              className={`flex items-center gap-3 px-12 py-2 shadow-xl/70 shadow-card ${mainColor}`}
             >
               <span>Sign In</span> <ArrowLongRightIcon className="size-6" />{" "}
             </NavLink>

@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, useLocation } from "react-router";
+import { Route, Routes, useLocation } from "react-router";
 import "swiper/css";
 import Home from "./Home/Home";
 import Register from "./Auth/Register";
@@ -9,10 +9,9 @@ import LoanForm from "./Pages/LoanForm";
 import LoanCategories from "./Pages/LoanCategories";
 import Contact from "./Pages/Contact";
 import { About } from "./Pages/About";
-import { useEffect } from "react";
-import Navbar from "./Layout/Navbar";
-import Footer from "./Layout/Footer";
+import { Fragment, useEffect } from "react";
 import Layout from "./Layout/Layout";
+import ThemeContextProvider from "./Auth/Contexts/ThemeContextProvider";
 
 const App = () => {
   const pageLocation = useLocation();
@@ -32,20 +31,24 @@ const App = () => {
   }, [pageLocation]);
 
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="loan-form" element={<LoanForm />} />
-        <Route path="loan-categories" element={<LoanCategories />} />
-        <Route path="contact" element={<Contact />} />
-        <Route path="about" element={<About />} />
-      </Route>
+    <Fragment>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="loan-form" element={<LoanForm />} />
+          <Route path="loan-categories" element={<LoanCategories />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="about" element={<About />} />
+        </Route>
 
-      <Route path="register" element={<Register />}></Route>
-      <Route path="sign-in" element={<SignIn />}></Route>
-    </Routes>
+        <Route element={<ThemeContextProvider />}>
+          <Route path="register" element={<Register />} />
+          <Route path="sign-in" element={<SignIn />} />
+        </Route>
+      </Routes>
+    </Fragment>
   );
 };
 

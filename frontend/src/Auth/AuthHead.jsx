@@ -18,11 +18,11 @@ const AuthHead = () => {
   return (
     <Fragment>
       <div
-        className={`w-full flex justify-between items-center text-start font-elmssans-bold text-5xl tracking-tighter ${
+        className={`w-full flex justify-between items-center font-elmssans-bold text-5xl tracking-tighter ${
           windowMode === "dark" ? "text-main" : "text-black"
         }`}
       >
-        <span>{authHeadHeading}</span>
+        <span className="py-2 tablet:py-0 italic">{authHeadHeading}</span>
         <button
           className="modeButton cursor-pointer"
           type="button"

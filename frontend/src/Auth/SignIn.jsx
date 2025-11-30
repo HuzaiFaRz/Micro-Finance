@@ -13,7 +13,6 @@ const SignIn = () => {
   const { windowMode, passwordEyeCSS, mainColor, inputCSS, labelCSS } =
     useContext(ThemeContextCreated);
   const [passwordEye, setPasswordEye] = useState(false);
-
   const registerInput = ["Email", "Password"];
   const passwordEyeHandler = () => {
     setPasswordEye(!passwordEye);
@@ -27,7 +26,7 @@ const SignIn = () => {
         >
           <AuthHead />
           <div
-            className={`flex flex-col justify-start items-start w-full x-10 py-5 gap-5 text-md ${mainColor}`}
+            className={`flex flex-col justify-start items-start w-full x-10 py-5 gap-5 text-sm tablet:text-[16px] ${mainColor}`}
           >
             {registerInput.map((elem, index) => {
               return (
@@ -60,7 +59,7 @@ const SignIn = () => {
               );
             })}
           </div>
-          <div className="font-elmssans-medium text-lg text-main w-full flex flex-wrap justify-center items-center gap-6 cursor-pointer">
+          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap justify-center items-center gap-6 cursor-pointer">
             <button className="bg-card px-18 py-2 rounded-3xl">Sign In</button>
             <NavLink
               to={"/register"}

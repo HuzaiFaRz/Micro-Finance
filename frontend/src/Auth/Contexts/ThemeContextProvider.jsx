@@ -10,7 +10,7 @@ const ThemeContextProvider = ({ children }) => {
   const [windowMode, setWindowMode] = useState(
     checkingLS ? checkingLS : matchMedia.matches ? "dark" : "light"
   );
-  const passwordEyeCSS = `size-5 absolute right-0 top-1/2 -translate-x-1/2 cursor-pointer`;
+  const passwordEyeCSS = `size-5 absolute right-2 top-[60%] cursor-pointer`;
   const mainColor =
     windowMode === "dark" ? "bg-black text-main" : "bg-main text-black";
   const inputCSS = `w-full px-3 py-3 border-l border-b placeholder:opacity-70 mt-3 ${

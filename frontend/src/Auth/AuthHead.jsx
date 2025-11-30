@@ -18,7 +18,7 @@ const AuthHead = () => {
   return (
     <Fragment>
       <div
-        className={`w-full flex justify-between items-center font-elmssans-bold text-5xl tracking-tighter ${
+        className={`w-full flex justify-between items-center font-elmssans-bold text-3xl tablet:text-5xl tracking-tighter ${
           windowMode === "dark" ? "text-main" : "text-black"
         }`}
       >
@@ -29,9 +29,9 @@ const AuthHead = () => {
           onClick={modeButtonHandler}
         >
           {windowMode === "dark" ? (
-            <SunIcon className="size-10" />
+            <SunIcon className="tablet:size-10 size-8" />
           ) : (
-            <MoonIcon className="size-10" />
+            <MoonIcon className="tablet:size-10 size-8" />
           )}
         </button>
       </div>

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { NavLink, Outlet } from "react-router";
 import {
   ArrowLongRightIcon,
@@ -38,24 +38,30 @@ const Register = () => {
     return loop;
   }, {});
 
-  console.log(initialValues);
+  const errorParaRef = useRef([]);
+  const gettingErrorPara = (id) => {
+    if (!errorParaRef.current) return [];
+    return errorParaRef.current.filter((e) => e?.id === id);
+  };
 
   const registerInputHandler = (e) => {
-    const { value } = e.target;
-    if (e.target.id === "Number") {
-      if (typeof e.target.value === "number") {
-        if (value.length === 14) {
-          console.log(value);
+    const { value, id } = e.target;
+    const errorPara = gettingErrorPara(id);
+    if (id === "Number") {
+      if (!/[^0-9-]/g.test(value)) {
+        if (value.length === 5 || value.length === 13) {
+          e.target.value = `${value}-`;
         }
+        errorPara[0].textContent = "Ok";
       } else {
-        // alert("type cniv");
+        e.target.value = value.replace(/[^0-9-]/g, "");
+        errorPara[0].textContent = "Wrong Format";
       }
     }
   };
 
   const registerFormHandler = () => {
     event.preventDefault();
-    console.log(this);
   };
 
   return (
@@ -66,7 +72,6 @@ const Register = () => {
           className={`flex flex-col justify-between items-center tablet:w-[50%] w-full h-full tablet:h-dvh px-4 py-4 ${mainColor}`}
         >
           <AuthHead />
-
           <form
             className={`flex flex-col justify-start items-start w-full x-10 py-5 gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider ${mainColor}`}
           >
@@ -102,7 +107,11 @@ const Register = () => {
                         {passwordEye[elem] ? <EyeIcon /> : <EyeSlashIcon />}
                       </button>
                     )}
-                    <p className="absolute text-xs text-red-500 font-elmssans-light top-4 right-2">
+                    <p
+                      className="absolute text-xs text-red-500 font-elmssans-light top-4 right-2"
+                      id={elem}
+                      ref={(el) => (errorParaRef.current[index] = el)}
+                    >
                       {elem === "Number"
                         ? "CNIC"
                         : elem === "Repeat Password"

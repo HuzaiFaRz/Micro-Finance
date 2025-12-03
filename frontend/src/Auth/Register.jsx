@@ -2,8 +2,12 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { NavLink, Outlet } from "react-router";
 import {
   ArrowLongRightIcon,
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
   EyeIcon,
   EyeSlashIcon,
+  ShieldCheckIcon,
+  ShieldExclamationIcon,
 } from "@heroicons/react/16/solid";
 import AuthHead from "./AuthHead";
 import { ThemeContextCreated } from "./Contexts/ThemeContext";
@@ -12,16 +16,24 @@ import AuthImage from "./AuthImage";
 import { useFormStatus } from "react-dom";
 
 const Register = () => {
-  const { windowMode, passwordEyeCSS, mainColor, inputCSS, labelCSS } =
-    useContext(ThemeContextCreated);
+  const {
+    windowMode,
+    passwordEyeCSS,
+    mainColor,
+    inputCSS,
+    labelCSS,
+    inputsError,
+    setInputError,
+  } = useContext(ThemeContextCreated);
   const [passwordEye, setPasswordEye] = useState({
     password: false,
     repeatPassword: false,
   });
+
   const registerInputs = [
     "Name",
     "Email",
-    "Number",
+    "CNIC",
     "Password",
     "Repeat Password",
   ];
@@ -32,7 +44,6 @@ const Register = () => {
       [elem]: !prev[elem],
     }));
   };
-
   const initialValues = registerInputs.reduce((loop, currentValue) => {
     loop[currentValue] = "";
     return loop;
@@ -47,21 +58,85 @@ const Register = () => {
   const registerInputHandler = (e) => {
     const { value, id } = e.target;
     const errorPara = gettingErrorPara(id);
-    if (id === "Number") {
-      if (!/[^0-9-]/g.test(value)) {
-        if (value.length === 5 || value.length === 13) {
-          e.target.value = `${value}-`;
-        }
-        errorPara[0].textContent = "Ok";
+    const regex = /[!#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/;
+    const gettingError = (type, msg) => {
+      setInputError({
+        ...inputsError,
+        errorType: type,
+        errorMassege: msg,
+      });
+      errorPara[0].textContent = msg;
+      errorPara[0].style.color =
+        type === "Warning" ? "red" : type === "Success" ? "#4CAF50" : "";
+    };
+
+    if (
+      id === "Name" ||
+      id === "Email" ||
+      id === "Password" ||
+      id === "Repeat Password"
+    ) {
+      if (value === "") {
+        gettingError(
+          "Warning",
+          `${id === "Repeat Password" ? "Password" : id} Required`
+        );
       } else {
-        e.target.value = value.replace(/[^0-9-]/g, "");
-        errorPara[0].textContent = "Wrong Format";
+        gettingError("Success", "OK");
+      }
+    }
+
+    if (id === "Name") {
+      if (/\s{2,}/.test(value) || value.startsWith(" ")) {
+        gettingError("Warning", "Remove Space");
+      } else if (value.match(regex)) {
+        gettingError("Warning", "Special Character are not Allowed");
+      } else {
+        gettingError("Success", "OK");
+      }
+    } else if (id === "Password" || id === "Repeat Password") {
+      if (/\s/.test(value)) {
+        gettingError("Warning", "Remove Space");
+      } else if (value.length <= 9) {
+        gettingError("Warning", "Password is too short (min: 9)");
+      } else if (value !== value) {
+        console.log(this);
+      }
+    } else if (id === "Email") {
+      if (/\s/.test(value)) {
+        gettingError("Warning", "Remove Space");
+      } else if (value.match(regex)) {
+        gettingError("Warning", "Special Character are not Allowed");
+      } else {
+        gettingError("Success", "OK");
+      }
+    }
+
+    if (id === "CNIC") {
+      let digit = value.replace(/[^0-9]/g, "");
+      let format = "";
+      if (digit.length <= 5) {
+        format = digit;
+      } else if (digit.length <= 12) {
+        format = `${digit.slice(0, 5)}-${digit.slice(5)}`;
+      } else {
+        format = `${digit.slice(0, 5)}-${digit.slice(5, 12)}-${digit.slice(
+          12,
+          13
+        )}`;
+      }
+      e.target.value = format;
+      if (digit.length === 13) {
+        gettingError("Success", "OK");
+      } else {
+        gettingError("Warning", "CNIC Required");
       }
     }
   };
 
   const registerFormHandler = () => {
-    event.preventDefault();
+    // event.preventDefault();
+    console.log(this);
   };
 
   return (
@@ -78,47 +153,43 @@ const Register = () => {
             {registerInputs.map((elem, index) => {
               return (
                 <React.Fragment key={index}>
-                  <label htmlFor={elem} className={`${labelCSS}`}>
-                    {elem === "Repeat Password"
-                      ? elem
-                      : `Insert ${elem === "Number" ? `CNIC` : `${elem}`}`}
+                  <label
+                    htmlFor={elem}
+                    className={`${labelCSS} pointer-events-none`}
+                  >
+                    {`Insert ${elem === "Repeat Password" ? "Password" : elem}`}
                     <input
-                      className={`${inputCSS}`}
+                      className={`${inputCSS} pointer-events-auto`}
                       id={elem}
                       type={
                         elem === "Password" || elem === "Repeat Password"
                           ? passwordEye[elem]
                             ? "text"
-                            : "password"
-                          : elem === "Email"
-                          ? "email"
+                            : "text"
+                          : elem === "CNIC"
+                          ? "tel"
                           : "text"
                       }
-                      placeholder={`${elem === "Number" ? "CNIC" : elem}...`}
-                      maxLength={elem === "Number" ? "15" : ""}
+                      placeholder={`${elem}...`}
+                      maxLength={elem === "CNIC" ? "15" : ""}
                       onChange={registerInputHandler}
                     />
+
                     {(elem === "Password" || elem === "Repeat Password") && (
                       <button
                         type="button"
-                        className={passwordEyeCSS}
+                        className={`${passwordEyeCSS} pointer-events-auto`}
                         onClick={() => passwordEyeHandler(elem)}
                       >
                         {passwordEye[elem] ? <EyeIcon /> : <EyeSlashIcon />}
                       </button>
                     )}
+
                     <p
-                      className="absolute text-xs text-red-500 font-elmssans-light top-4 right-2"
+                      className={`absolute text-sm pointer-events-none z-10 font-elmssans-medium top-4 right-2 flex items-center gap-2 cursor-pointer`}
                       id={elem}
                       ref={(el) => (errorParaRef.current[index] = el)}
-                    >
-                      {elem === "Number"
-                        ? "CNIC"
-                        : elem === "Repeat Password"
-                        ? "Password"
-                        : elem}{" "}
-                      Required
-                    </p>
+                    ></p>
                   </label>
                 </React.Fragment>
               );
@@ -127,8 +198,8 @@ const Register = () => {
 
           <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap justify-center items-center gap-6 cursor-pointer">
             <button
-              className="bg-card px-18 py-2 rounded-3xl"
-              type="button"
+              className="bg-card px-18 py-2 rounded-3xl cursor-pointer"
+              type="submit"
               onClick={registerFormHandler}
             >
               Register

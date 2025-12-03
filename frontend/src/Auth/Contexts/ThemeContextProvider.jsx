@@ -3,8 +3,12 @@ import { Outlet, useLocation } from "react-router";
 import { ThemeContextCreated } from "./ThemeContext";
 
 const ThemeContextProvider = ({ children }) => {
+  const [inputsError, setInputError] = useState({
+    errorType: undefined,
+    errorMassege: undefined,
+  });
   const pageLocation = useLocation();
-  const [authHeadHeading, setAuthHeadHeading] = useState("");
+  const [authHeadHeading, setAuthHeadHeading] = useState();
   const checkingLS = localStorage.getItem("theme");
   const matchMedia = window.matchMedia("(prefers-color-scheme: dark)");
   const [windowMode, setWindowMode] = useState(
@@ -56,6 +60,8 @@ const ThemeContextProvider = ({ children }) => {
           mainColor,
           inputCSS,
           labelCSS,
+          inputsError,
+          setInputError,
         }}
       >
         {children}

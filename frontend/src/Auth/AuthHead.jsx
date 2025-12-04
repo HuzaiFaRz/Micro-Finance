@@ -1,19 +1,22 @@
-import { Fragment, useContext, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { MoonIcon, SunIcon } from "@heroicons/react/16/solid";
-import { ThemeContextCreated } from "./Contexts/ThemeContext";
+import { GlobalContextCreated } from "../Contexts/GlobalContext";
 
 const AuthHead = () => {
   const { windowMode, setWindowMode, authHeadHeading } =
-    useContext(ThemeContextCreated);
+    useContext(GlobalContextCreated);
   const [, setUserMode] = useState(localStorage.getItem("theme") || windowMode);
   const modeButtonHandler = () => {
     setUserMode((prev) => {
       const newMode = prev === "dark" ? "light" : "dark";
       localStorage.setItem("theme", newMode);
-      setWindowMode(newMode);
       return newMode;
     });
   };
+
+  useEffect(() => {
+    setWindowMode(localStorage.getItem("theme"));
+  });
 
   return (
     <Fragment>

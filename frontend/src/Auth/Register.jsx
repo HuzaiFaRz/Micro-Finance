@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { NavLink, Outlet } from "react-router";
 import {
   ArrowLongRightIcon,
@@ -10,25 +10,25 @@ import {
   ShieldExclamationIcon,
 } from "@heroicons/react/16/solid";
 import AuthHead from "./AuthHead";
-import { ThemeContextCreated } from "./Contexts/ThemeContext";
+import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import AuthImage from "./AuthImage";
 
-import { useFormStatus } from "react-dom";
-
 const Register = () => {
-  const {
-    windowMode,
-    passwordEyeCSS,
-    mainColor,
-    inputCSS,
-    labelCSS,
-    inputsError,
-    setInputError,
-  } = useContext(ThemeContextCreated);
+  const [errorCheck, setErrorCheck] = useState();
   const [passwordEye, setPasswordEye] = useState({
     password: false,
     repeatPassword: false,
   });
+
+  const errorParaRef = useRef([]);
+
+  const passwordEyeHandler = (elem) => {
+    event.preventDefault();
+    setPasswordEye((prev) => ({
+      ...prev,
+      [elem]: !prev[elem],
+    }));
+  };
 
   const registerInputs = [
     "Name",
@@ -37,80 +37,88 @@ const Register = () => {
     "Password",
     "Repeat Password",
   ];
-  const passwordEyeHandler = (elem) => {
-    event.preventDefault();
-    setPasswordEye((prev) => ({
-      ...prev,
-      [elem]: !prev[elem],
-    }));
-  };
+
   const initialValues = registerInputs.reduce((loop, currentValue) => {
     loop[currentValue] = "";
     return loop;
   }, {});
 
-  const errorParaRef = useRef([]);
+  const {
+    windowMode,
+    passwordEyeCSS,
+    mainColor,
+    inputCSS,
+    labelCSS,
+    inputsError,
+    regex,
+    gmailRegex,
+  } = useContext(GlobalContextCreated);
+
   const gettingErrorPara = (id) => {
     if (!errorParaRef.current) return [];
     return errorParaRef.current.filter((e) => e?.id === id);
   };
 
+  const gettingError = (type, errorPara) => {
+    const gettingMSG = inputsError.filter((e) => {
+      return e.type === type;
+    });
+    errorPara[0].textContent = gettingMSG[0].message;
+    errorPara[0].style.color = gettingMSG[0].type !== "ok" ? "red" : "#4CAF50";
+    setErrorCheck(gettingMSG[0].type !== "ok" ? false : true);
+  };
+
   const registerInputHandler = (e) => {
     const { value, id } = e.target;
     const errorPara = gettingErrorPara(id);
-    const regex = /[!#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/;
-    const gettingError = (type, msg) => {
-      setInputError({
-        ...inputsError,
-        errorType: type,
-        errorMassege: msg,
-      });
-      errorPara[0].textContent = msg;
-      errorPara[0].style.color =
-        type === "Warning" ? "red" : type === "Success" ? "#4CAF50" : "";
-    };
-
-    if (
-      id === "Name" ||
-      id === "Email" ||
-      id === "Password" ||
-      id === "Repeat Password"
-    ) {
-      if (value === "") {
-        gettingError(
-          "Warning",
-          `${id === "Repeat Password" ? "Password" : id} Required`
-        );
-      } else {
-        gettingError("Success", "OK");
-      }
-    }
 
     if (id === "Name") {
-      if (/\s{2,}/.test(value) || value.startsWith(" ")) {
-        gettingError("Warning", "Remove Space");
-      } else if (value.match(regex)) {
-        gettingError("Warning", "Special Character are not Allowed");
+      if (value === "") {
+        gettingError("required", errorPara);
+      } else if (/\s{2,}/.test(value) || value.startsWith(" ")) {
+        gettingError("leading_space", errorPara);
+      } else if (regex.test(value)) {
+        gettingError("invalid_chars", errorPara);
       } else {
-        gettingError("Success", "OK");
-      }
-    } else if (id === "Password" || id === "Repeat Password") {
-      if (/\s/.test(value)) {
-        gettingError("Warning", "Remove Space");
-      } else if (value.length <= 9) {
-        gettingError("Warning", "Password is too short (min: 9)");
-      } else if (value !== value) {
-        console.log(this);
+        gettingError("ok", errorPara);
       }
     } else if (id === "Email") {
-      if (/\s/.test(value)) {
-        gettingError("Warning", "Remove Space");
-      } else if (value.match(regex)) {
-        gettingError("Warning", "Special Character are not Allowed");
+      if (value === "") {
+        gettingError("required", errorPara);
+      } else if (/\s{2,}/.test(value) || value.startsWith(" ")) {
+        gettingError("leading_space", errorPara);
+      } else if (!gmailRegex.test(value)) {
+        gettingError("invalid_format", errorPara);
       } else {
-        gettingError("Success", "OK");
+        gettingError("ok", errorPara);
       }
     }
+
+    // if (id === "Name") {
+    //   if (true) {
+    //     gettingError("Warning", "Remove Space");
+    //   } else if (value.match(regex)) {
+    //     gettingError("Warning", "Special Character are not Allowed");
+    //   } else {
+    //     gettingError("Success", "OK");
+    //   }
+    // } else if (id === "Password" || id === "Repeat Password") {
+    //   if (/\s/.test(value)) {
+    //     gettingError("Warning", "Remove Space");
+    //   } else if (value.length <= 9) {
+    //     gettingError("Warning", "Password is too short (min: 9)");
+    //   } else if (value !== value) {
+    //     console.log(this);
+    //   }
+    // } else if (id === "Email") {
+    //   if (/\s/.test(value)) {
+    //     gettingError("Warning", "Remove Space");
+    //   } else if (value.match(regex)) {
+    //     gettingError("Warning", "Special Character are not Allowed");
+    //   } else {
+    //     gettingError("Success", "OK");
+    //   }
+    // }
 
     if (id === "CNIC") {
       let digit = value.replace(/[^0-9]/g, "");
@@ -159,7 +167,10 @@ const Register = () => {
                   >
                     {`Insert ${elem === "Repeat Password" ? "Password" : elem}`}
                     <input
-                      className={`${inputCSS} pointer-events-auto`}
+                      className={`${inputCSS} pointer-events-auto ${
+                        errorCheck ? "border-red-500" : "border-green-500"
+                      }`}
+                      autoComplete="off"
                       id={elem}
                       type={
                         elem === "Password" || elem === "Repeat Password"

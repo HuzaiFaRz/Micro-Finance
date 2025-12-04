@@ -6,12 +6,12 @@ import {
   EyeSlashIcon,
 } from "@heroicons/react/16/solid";
 import AuthHead from "./AuthHead";
-import { ThemeContextCreated } from "./Contexts/ThemeContext";
+import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import AuthImage from "./AuthImage";
 
 const SignIn = () => {
   const { windowMode, passwordEyeCSS, mainColor, inputCSS, labelCSS } =
-    useContext(ThemeContextCreated);
+    useContext(GlobalContextCreated);
   const [passwordEye, setPasswordEye] = useState(false);
   const registerInput = ["Email", "Password"];
   const passwordEyeHandler = () => {

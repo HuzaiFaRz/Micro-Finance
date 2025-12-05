@@ -14,13 +14,10 @@ import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import AuthImage from "./AuthImage";
 
 const Register = () => {
-  const [errorCheck, setErrorCheck] = useState();
   const [passwordEye, setPasswordEye] = useState({
     password: false,
     repeatPassword: false,
   });
-
-  const errorParaRef = useRef([]);
 
   const passwordEyeHandler = (elem) => {
     event.preventDefault();
@@ -54,43 +51,87 @@ const Register = () => {
     gmailRegex,
   } = useContext(GlobalContextCreated);
 
+  const errorParaRef = useRef([]);
   const gettingErrorPara = (id) => {
     if (!errorParaRef.current) return [];
     return errorParaRef.current.filter((e) => e?.id === id);
   };
 
-  const gettingError = (type, errorPara) => {
-    const gettingMSG = inputsError.filter((e) => {
-      return e.type === type;
-    });
-    errorPara[0].textContent = gettingMSG[0].message;
-    errorPara[0].style.color = gettingMSG[0].type !== "ok" ? "red" : "#4CAF50";
-    setErrorCheck(gettingMSG[0].type !== "ok" ? false : true);
+  const lableRef = useRef([]);
+  const gettingLable = (id) => {
+    if (!lableRef.current) return [];
+    return lableRef.current.filter((e) => e?.id === id);
   };
 
-  const registerInputHandler = (e) => {
-    const { value, id } = e.target;
-    const errorPara = gettingErrorPara(id);
+  const registerInputHandler = (input) => {
+    const { value, id } = input.target;
+    const errorPara = gettingErrorPara(`Error-Para${id}`);
+    const lable = gettingLable(`Label-${id}`);
+
+    const gettingError = (type) => {
+      const gettingMSG = inputsError.filter((e) => {
+        return e.type === type;
+      });
+      errorPara[0].textContent = gettingMSG[0].message;
+      errorPara[0].style.color =
+        gettingMSG[0].type === "ok" ? "#4CAF50" : "red";
+      if (gettingMSG[0].type === "ok") {
+        input.target.style.borderColor = "green";
+        lable[0].style.textDecorationColor = "green";
+      } else {
+        input.target.style.borderColor = "red";
+        lable[0].style.textDecorationColor = "red";
+      }
+    };
 
     if (id === "Name") {
       if (value === "") {
-        gettingError("required", errorPara);
+        gettingError("required");
       } else if (/\s{2,}/.test(value) || value.startsWith(" ")) {
-        gettingError("leading_space", errorPara);
+        gettingError("leading_space");
       } else if (regex.test(value)) {
-        gettingError("invalid_chars", errorPara);
+        gettingError("invalid_chars");
       } else {
-        gettingError("ok", errorPara);
+        gettingError("ok");
       }
     } else if (id === "Email") {
       if (value === "") {
-        gettingError("required", errorPara);
+        gettingError("required");
       } else if (/\s{2,}/.test(value) || value.startsWith(" ")) {
-        gettingError("leading_space", errorPara);
+        gettingError("leading_space");
       } else if (!gmailRegex.test(value)) {
-        gettingError("invalid_format", errorPara);
+        gettingError("invalid_format");
       } else {
-        gettingError("ok", errorPara);
+        gettingError("ok");
+      }
+    } else if (id === "CNIC") {
+      let digit = value.replace(/[^0-9]/g, "");
+      let format = "";
+      if (digit.length <= 5) {
+        format = digit;
+      } else if (digit.length <= 12) {
+        format = `${digit.slice(0, 5)}-${digit.slice(5)}`;
+      } else {
+        format = `${digit.slice(0, 5)}-${digit.slice(5, 12)}-${digit.slice(
+          12,
+          13
+        )}`;
+      }
+      input.target.value = format;
+      if (digit.length === 13) {
+        gettingError("ok");
+      } else {
+        gettingError("required");
+      }
+    } else if (id === "Password" || id === "Repeat Password") {
+      if (value === "") {
+        gettingError("required");
+      } else if (/\s+/g.test(value)) {
+        gettingError("no_space");
+      } else if (value.length <= 9) {
+        gettingError("too_short");
+      } else {
+        gettingError("ok");
       }
     }
 
@@ -119,27 +160,6 @@ const Register = () => {
     //     gettingError("Success", "OK");
     //   }
     // }
-
-    if (id === "CNIC") {
-      let digit = value.replace(/[^0-9]/g, "");
-      let format = "";
-      if (digit.length <= 5) {
-        format = digit;
-      } else if (digit.length <= 12) {
-        format = `${digit.slice(0, 5)}-${digit.slice(5)}`;
-      } else {
-        format = `${digit.slice(0, 5)}-${digit.slice(5, 12)}-${digit.slice(
-          12,
-          13
-        )}`;
-      }
-      e.target.value = format;
-      if (digit.length === 13) {
-        gettingError("Success", "OK");
-      } else {
-        gettingError("Warning", "CNIC Required");
-      }
-    }
   };
 
   const registerFormHandler = () => {
@@ -152,7 +172,7 @@ const Register = () => {
       <div className="w-full h-full tablet:h-dvh flex flex-col tablet:flex-row justify-center items-center">
         <AuthImage />
         <div
-          className={`flex flex-col justify-between items-center tablet:w-[50%] w-full h-full tablet:h-dvh px-4 py-4 ${mainColor}`}
+          className={`flex flex-col justify-evenly items-center tablet:w-[50%] w-full h-full tablet:h-dvh px-4 ${mainColor}`}
         >
           <AuthHead />
           <form
@@ -163,13 +183,13 @@ const Register = () => {
                 <React.Fragment key={index}>
                   <label
                     htmlFor={elem}
-                    className={`${labelCSS} pointer-events-none`}
+                    id={`Label-${elem}`}
+                    className={`${labelCSS} `}
+                    ref={(el) => (lableRef.current[index] = el)}
                   >
                     {`Insert ${elem === "Repeat Password" ? "Password" : elem}`}
                     <input
-                      className={`${inputCSS} pointer-events-auto ${
-                        errorCheck ? "border-red-500" : "border-green-500"
-                      }`}
+                      className={`${inputCSS}`}
                       autoComplete="off"
                       id={elem}
                       type={
@@ -189,7 +209,7 @@ const Register = () => {
                     {(elem === "Password" || elem === "Repeat Password") && (
                       <button
                         type="button"
-                        className={`${passwordEyeCSS} pointer-events-auto`}
+                        className={`${passwordEyeCSS} pointer-events-none`}
                         onClick={() => passwordEyeHandler(elem)}
                       >
                         {passwordEye[elem] ? <EyeIcon /> : <EyeSlashIcon />}
@@ -197,8 +217,8 @@ const Register = () => {
                     )}
 
                     <p
-                      className={`absolute text-sm pointer-events-none z-10 font-elmssans-medium top-4 right-2 flex items-center gap-2 cursor-pointer`}
-                      id={elem}
+                      className={`absolute text-sm pointer-events-none top-4 right-2 flex items-center gap-2 cursor-pointer`}
+                      id={`Error-Para${elem}`}
                       ref={(el) => (errorParaRef.current[index] = el)}
                     ></p>
                   </label>
@@ -207,7 +227,7 @@ const Register = () => {
             })}
           </form>
 
-          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap justify-center items-center gap-6 cursor-pointer">
+          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap justify-center items-center gap-6 cursor-pointer mb-5">
             <button
               className="bg-card px-18 py-2 rounded-3xl cursor-pointer"
               type="submit"

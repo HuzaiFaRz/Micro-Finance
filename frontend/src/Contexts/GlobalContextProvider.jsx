@@ -19,13 +19,16 @@ const GlobalContextProvider = ({ children }) => {
     { type: "too_short", message: "Too short" },
     { type: "numbers_only", message: "Numbers only" },
     { type: "letters_only", message: "Letters only" },
+    { type: "password_not_match", message: "Passwords do not match" },
+
+    { type: "password_empty_when_repeat", message: "Enter password first" },
+    { type: "invalid_length", message: "Invalid length" },
+    { type: "password_mismatch", message: "Passwords don't match" },
     { type: "ok", message: "OK" },
   ];
   const regex = /[!#$%^&@*()_+\-=\[\]{};':"\\|,.<>\/?~`]/;
   const gmailRegex = /^[a-zA-Z0-9._]+@gmail\.com$/;
 
-
-  
   const pageLocation = useLocation();
 
   const passwordEyeCSS = `size-5 absolute right-2 top-[60%] cursor-pointer`;
@@ -39,7 +42,9 @@ const GlobalContextProvider = ({ children }) => {
   }`;
 
   const labelCSS = `w-full relative underline underline-offset-19 ${
-    windowMode === "dark" ? "text-main decoration-main" : "text-card font-elmssans-medium decoration-black"
+    windowMode === "dark"
+      ? "text-main decoration-main"
+      : "text-card font-elmssans-medium decoration-black"
   }`;
 
   const whatModeOnWindow = () => {

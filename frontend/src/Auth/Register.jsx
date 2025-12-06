@@ -19,6 +19,8 @@ const Register = () => {
     repeatPassword: false,
   });
 
+  const [password, setPassword] = useState("");
+
   const passwordEyeHandler = (elem) => {
     event.preventDefault();
     setPasswordEye((prev) => ({
@@ -64,7 +66,7 @@ const Register = () => {
   };
 
   const registerInputHandler = (input) => {
-    const { value, id } = input.target;
+    let { value, id } = input.target;
     const errorPara = gettingErrorPara(`Error-Para${id}`);
     const lable = gettingLable(`Label-${id}`);
 
@@ -74,37 +76,76 @@ const Register = () => {
       });
       errorPara[0].textContent = gettingMSG[0].message;
       errorPara[0].style.color =
-        gettingMSG[0].type === "ok" ? "#4CAF50" : "red";
+        gettingMSG[0].type === "ok" ? "#22c55e" : "#dc2626";
       if (gettingMSG[0].type === "ok") {
-        input.target.style.borderColor = "green";
-        lable[0].style.textDecorationColor = "green";
+        input.target.style.borderColor = "#22c55e";
+        lable[0].style.textDecorationColor = "#22c55e";
       } else {
-        input.target.style.borderColor = "red";
-        lable[0].style.textDecorationColor = "red";
+        input.target.style.borderColor = "#dc2626";
+        lable[0].style.textDecorationColor = "#dc2626";
       }
     };
 
-    if (id === "Name") {
-      if (value === "") {
+    if (
+      id === "Name" ||
+      id === "Email" ||
+      id === "CNIC" ||
+      id === "Password" ||
+      id === "Repeat Password"
+    ) {
+      if (!value) {
         gettingError("required");
-      } else if (/\s{2,}/.test(value) || value.startsWith(" ")) {
-        gettingError("leading_space");
-      } else if (regex.test(value)) {
-        gettingError("invalid_chars");
+        if (id === "Password") {
+          setPassword("");
+        }
+        return;
+      }
+    }
+    if (id === "Name" || id === "Email") {
+      if (id === "Email") {
+        if (!gmailRegex.test(value)) {
+          gettingError("invalid_format");
+          return;
+        }
+        gettingError("ok");
       } else {
+        if (regex.test(value)) {
+          gettingError("invalid_chars");
+          return;
+        }
+        if (/\s{2,}/.test(value) || value.startsWith(" ")) {
+          gettingError("leading_space");
+          return;
+        }
         gettingError("ok");
       }
-    } else if (id === "Email") {
-      if (value === "") {
-        gettingError("required");
-      } else if (/\s{2,}/.test(value) || value.startsWith(" ")) {
-        gettingError("leading_space");
-      } else if (!gmailRegex.test(value)) {
-        gettingError("invalid_format");
+    }
+    if (id === "Password" || id === "Repeat Password") {
+      if (id === "Password") {
+        if (/\s+/g.test(value)) {
+          gettingError("no_space");
+          return;
+        }
+        if (value.length <= 8) {
+          gettingError("too_short");
+          return;
+        }
+        gettingError("ok");
+        setPassword(value);
       } else {
+        if (!password.trim()) {
+          gettingError("password_empty_when_repeat");
+          input.target.value = "";
+          return;
+        }
+        if (value !== password) {
+          gettingError("password_mismatch");
+          return;
+        }
         gettingError("ok");
       }
-    } else if (id === "CNIC") {
+    }
+    if (id === "CNIC") {
       let digit = value.replace(/[^0-9]/g, "");
       let format = "";
       if (digit.length <= 5) {
@@ -118,48 +159,17 @@ const Register = () => {
         )}`;
       }
       input.target.value = format;
-      if (digit.length === 13) {
-        gettingError("ok");
-      } else {
+      if (!digit.length) {
         gettingError("required");
+        return;
       }
-    } else if (id === "Password" || id === "Repeat Password") {
-      if (value === "") {
-        gettingError("required");
-      } else if (/\s+/g.test(value)) {
-        gettingError("no_space");
-      } else if (value.length <= 9) {
-        gettingError("too_short");
-      } else {
-        gettingError("ok");
+      if (digit.length !== 13) {
+        gettingError("invalid_length");
+        return;
       }
-    }
 
-    // if (id === "Name") {
-    //   if (true) {
-    //     gettingError("Warning", "Remove Space");
-    //   } else if (value.match(regex)) {
-    //     gettingError("Warning", "Special Character are not Allowed");
-    //   } else {
-    //     gettingError("Success", "OK");
-    //   }
-    // } else if (id === "Password" || id === "Repeat Password") {
-    //   if (/\s/.test(value)) {
-    //     gettingError("Warning", "Remove Space");
-    //   } else if (value.length <= 9) {
-    //     gettingError("Warning", "Password is too short (min: 9)");
-    //   } else if (value !== value) {
-    //     console.log(this);
-    //   }
-    // } else if (id === "Email") {
-    //   if (/\s/.test(value)) {
-    //     gettingError("Warning", "Remove Space");
-    //   } else if (value.match(regex)) {
-    //     gettingError("Warning", "Special Character are not Allowed");
-    //   } else {
-    //     gettingError("Success", "OK");
-    //   }
-    // }
+      gettingError("ok");
+    }
   };
 
   const registerFormHandler = () => {
@@ -217,7 +227,7 @@ const Register = () => {
                     )}
 
                     <p
-                      className={`absolute text-sm pointer-events-none top-4 right-2 flex items-center gap-2 cursor-pointer`}
+                      className={`absolute text-sm pointer-events-none top-4 right-2 flex items-center gap-2 cursor-pointer tracking-widest`}
                       id={`Error-Para${elem}`}
                       ref={(el) => (errorParaRef.current[index] = el)}
                     ></p>

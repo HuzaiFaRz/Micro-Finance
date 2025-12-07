@@ -41,7 +41,7 @@ const GlobalContextProvider = ({ children }) => {
       : "placeholder:text-black text-black border-black"
   }`;
 
-  const labelCSS = `w-full relative underline underline-offset-19 ${
+  const labelCSS = `w-full underline underline-offset-19 ${
     windowMode === "dark"
       ? "text-main decoration-main"
       : "text-card font-elmssans-medium decoration-black"

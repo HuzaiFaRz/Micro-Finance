@@ -13,8 +13,18 @@ import AuthHead from "./AuthHead";
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import AuthImage from "./AuthImage";
 
-const reducer = (state, action) => {
-console.log(state, action)
+const formReducer = (state, action) => {
+  if (action.type === "INPUT_CHANGE") {
+    return {
+      ...state,
+      [action.inputID]: action.inputValue,
+    };
+  } else if (action.type === "RESET_FORM") {
+    return {
+      ...state,
+      [action.inputID]: "",
+    };
+  }
 };
 
 const Register = () => {
@@ -52,10 +62,16 @@ const Register = () => {
     mainColor,
     inputCSS,
     labelCSS,
-    inputsError,
+    gettingError,
     regex,
     gmailRegex,
   } = useContext(GlobalContextCreated);
+
+  const inputRef = useRef([]);
+  const gettingInput = (id) => {
+    if (!inputRef.current) return [];
+    return inputRef?.current.filter((e) => e?.id === id);
+  };
 
   const errorParaRef = useRef([]);
   const gettingErrorPara = (id) => {
@@ -69,29 +85,13 @@ const Register = () => {
     return lableRef?.current.filter((e) => e?.id === id);
   };
 
-  const [values, dispatch] = useReducer(reducer, initialValues);
+  const [formValues, formDispatch] = useReducer(formReducer, initialValues);
 
-  const registerInputHandler = (input) => {
-    let { value, id } = input.target;
-    const errorPara = gettingErrorPara(`Error-Para${id}`);
-    const lable = gettingLable(`Label-${id}`);
-    const gettingError = (type) => {
-      const gettingMSG = inputsError.filter((e) => {
-        return e.type === type;
-      });
-      if (gettingMSG[0].type === "ok") {
-        input.target.style.borderColor = "#22c55e";
-        lable[0].style.textDecorationColor = "#22c55e";
-        errorPara[0].style.color = "#22c55e";
-        errorPara[0].innerHTML = ` <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" class="size-5 text-[#22c55e]"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" /></svg> ${gettingMSG[0].message}`;
-      } else {
-        input.target.style.borderColor = "#dc2626";
-        lable[0].style.textDecorationColor = "#dc2626";
-        errorPara[0].style.color = "#dc2626";
-        errorPara[0].innerHTML = ` <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" class="size-5 text-[#dc2626]">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.25-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z" /></svg>${gettingMSG[0].message}`;
-      }
-    };
+  const registerInputHandler = (elem) => {
+    let { value, id, name } = elem.target;
+    const errorPara = gettingErrorPara(`Error-Para-${name}`);
+    const lable = gettingLable(`Label-${name}`);
+    const input = gettingInput(`${name}`);
     if (
       id === "Name" ||
       id === "Email" ||
@@ -100,7 +100,7 @@ const Register = () => {
       id === "Repeat Password"
     ) {
       if (!value) {
-        gettingError("required");
+        gettingError("required", errorPara, lable, input);
         if (id === "Password") {
           setPassword("");
         }
@@ -109,29 +109,34 @@ const Register = () => {
     }
     if (id === "Name" || id === "Email") {
       if (id === "Email") {
-        if (!gmailRegex.test(value)) return gettingError("invalid_format");
-        gettingError("ok");
+        if (!gmailRegex.test(value))
+          return gettingError("invalid_format", errorPara, lable, input);
+        gettingError("ok", errorPara, lable, input);
       } else {
-        if (regex.test(value)) return gettingError("invalid_chars");
+        if (regex.test(value))
+          return gettingError("invalid_chars", errorPara, lable, input);
         if (/\s{2,}/.test(value) || value.startsWith(" "))
-          return gettingError("leading_space");
-        gettingError("ok");
+          return gettingError("leading_space", errorPara, lable, input);
+        gettingError("ok", errorPara, lable, input);
       }
     }
     if (id === "Password" || id === "Repeat Password") {
       if (id === "Password") {
-        if (/\s+/g.test(value)) return gettingError("no_space");
-        if (value.length <= 8) return gettingError("too_short");
-        gettingError("ok");
+        if (/\s+/g.test(value))
+          return gettingError("no_space", errorPara, lable, input);
+        if (value.length <= 8)
+          return gettingError("too_short", errorPara, lable, input);
+        gettingError("ok", errorPara, lable, input);
         setPassword(value);
       } else {
         if (!password.trim()) {
-          gettingError("password_empty_when_repeat");
-          input.target.value = "";
+          gettingError("password_empty_when_repeat", errorPara, lable, input);
+          elem.target.value = "";
           return;
         }
-        if (value !== password) return gettingError("password_mismatch");
-        gettingError("ok");
+        if (value !== password)
+          return gettingError("password_mismatch", errorPara, lable, input);
+        gettingError("ok", errorPara, lable, input);
       }
     }
     if (id === "CNIC") {
@@ -147,19 +152,51 @@ const Register = () => {
           13
         )}`;
       }
-      input.target.value = format;
-      if (!digit.length) return gettingError("required");
-      if (digit.length !== 13) return gettingError("invalid_length");
-      gettingError("ok");
+      elem.target.value = format;
+      if (!digit.length)
+        return gettingError("required", errorPara, lable, input);
+      if (digit.length !== 13)
+        return gettingError("invalid_length", errorPara, lable, input);
+      gettingError("ok", errorPara, lable, input);
     }
 
-    dispatch({ [id]: value });
+    if (errorParaRef.current.some((e) => e.innerText !== "OK").valueOf()) {
+      formDispatch({ type: "INPUT_CHANGE", inputID: id, inputValue: value });
+      return;
+    }
   };
-  console.log(values);
 
   const registerFormHandler = () => {
     event.preventDefault();
-    console.log(event);
+    // fields.forEach((field, index) => {
+    //    if(field.value empty OR errorPara[index].innerText !== "OK"){
+    //        gettingError("required", errorPara[index], label[index], input[index])
+    //    } else {
+    //        gettingError("ok", errorPara[index], label[index], input[index])
+    //    }
+    // })
+
+    if (
+      Object.values(formValues).some(
+        (e) => e === "" || e === undefined || e === null
+      ) &&
+      errorParaRef.current.some((e) => e.innerText !== "OK")
+    ) {
+      gettingError(
+        "required",
+        errorParaRef.current,
+        lableRef.current,
+        inputRef.current
+      );
+      return;
+    }
+    gettingError(
+      "ok",
+      errorParaRef.current,
+      lableRef.current,
+      inputRef.current
+    );
+    console.log(formValues);
   };
 
   return (
@@ -190,13 +227,15 @@ const Register = () => {
 
                     <input
                       className={`${inputCSS} pointer-events-auto`}
+                      ref={(el) => (inputRef.current[index] = el)}
                       autoComplete="off"
-                      id={elem}
+                      id={`${elem}`}
+                      name={elem}
                       type={
                         elem === "Password" || elem === "Repeat Password"
                           ? passwordEye[elem]
                             ? "text"
-                            : "password"
+                            : "text"
                           : elem === "CNIC"
                           ? "tel"
                           : "text"
@@ -217,8 +256,8 @@ const Register = () => {
                     )}
 
                     <p
-                      className={`absolute text-sm top-2 right-2 flex items-center gap-2 tracking-widest`}
-                      id={`Error-Para${elem}`}
+                      className={`absolute text-sm top-2 right-2 flex items-center gap-2 tracking-widest text-red-500`}
+                      id={`Error-Para-${elem}`}
                       ref={(el) => (errorParaRef.current[index] = el)}
                     ></p>
                   </div>
@@ -229,8 +268,10 @@ const Register = () => {
 
           <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap justify-center items-center gap-6 cursor-pointer mb-5">
             <button
-              className="bg-card px-18 py-2 rounded-3xl cursor-pointer"
+              className="bg-card px-18 py-2 rounded-3xl cursor-pointer disabled:opacity-50"
+              title="dd"
               type="submit"
+              // disabled
               onClick={registerFormHandler}
             >
               Register

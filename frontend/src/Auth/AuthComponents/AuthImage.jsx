@@ -1,4 +1,4 @@
-import image from "../assets/Images/auth-image.jpg";
+import image from "../../assets/Images/auth-image.jpg";
 const AuthImage = () => {
   return (
     <div className="tablet:w-[60%] w-full h-full relative order-last tablet:order-first">

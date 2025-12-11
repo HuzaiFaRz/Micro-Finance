@@ -1,31 +1,15 @@
 import React, { useContext, useReducer, useRef, useState } from "react";
-import { NavLink, Outlet } from "react-router";
+import { NavLink } from "react-router";
 import {
   ArrowLongRightIcon,
-  ExclamationCircleIcon,
-  ExclamationTriangleIcon,
   EyeIcon,
   EyeSlashIcon,
-  ShieldCheckIcon,
-  ShieldExclamationIcon,
 } from "@heroicons/react/16/solid";
-import AuthHead from "./AuthHead";
-import { GlobalContextCreated } from "../Contexts/GlobalContext";
-import AuthImage from "./AuthImage";
 
-const formReducer = (state, action) => {
-  if (action.type === "INPUT_CHANGE") {
-    return {
-      ...state,
-      [action.inputID]: action.inputValue,
-    };
-  } else if (action.type === "RESET_FORM") {
-    return {
-      ...state,
-      [action.inputID]: "",
-    };
-  }
-};
+import { GlobalContextCreated } from "../Contexts/GlobalContext";
+import AuthImage from "./AuthComponents/AuthImage";
+import AuthHead from "./AuthComponents/AuthHead";
+import FormReducer from "./AuthReducers/FormReducer";
 
 const Register = () => {
   const [passwordEye, setPasswordEye] = useState({
@@ -36,7 +20,6 @@ const Register = () => {
   const [password, setPassword] = useState("");
 
   const passwordEyeHandler = (elem) => {
-    event.preventDefault();
     setPasswordEye((prev) => ({
       ...prev,
       [elem]: !prev[elem],
@@ -85,7 +68,7 @@ const Register = () => {
     return lableRef?.current.filter((e) => e?.id === id);
   };
 
-  const [formValues, formDispatch] = useReducer(formReducer, initialValues);
+  const [formValues, formDispatch] = useReducer(FormReducer, initialValues);
 
   const registerInputHandler = (elem) => {
     let { value, id, name } = elem.target;
@@ -160,43 +143,35 @@ const Register = () => {
       gettingError("ok", errorPara, lable, input);
     }
 
-    if (errorParaRef.current.some((e) => e.innerText !== "OK").valueOf()) {
-      formDispatch({ type: "INPUT_CHANGE", inputID: id, inputValue: value });
-      return;
-    }
+    formDispatch({ type: "INPUT_CHANGE", inputID: id, inputValue: value });
   };
 
   const registerFormHandler = () => {
     event.preventDefault();
-    // fields.forEach((field, index) => {
-    //    if(field.value empty OR errorPara[index].innerText !== "OK"){
-    //        gettingError("required", errorPara[index], label[index], input[index])
-    //    } else {
-    //        gettingError("ok", errorPara[index], label[index], input[index])
-    //    }
-    // })
+    let formValidation = false;
+    Object.entries(formValues).forEach(([, value], i) => {
+      if (
+        value === "" ||
+        value === undefined ||
+        (value === null &&
+          errorParaRef.current.some((e) => e.innerText !== "OK"))
+      ) {
+        gettingError(
+          "required",
+          errorParaRef.current.filter((_, index) => index === i),
+          lableRef.current.filter((_, index) => index === i),
+          inputRef.current.filter((_, index) => index === i)
+        );
+        formValidation = false;
+        return;
+      }
+      formValidation = true;
+    });
 
-    if (
-      Object.values(formValues).some(
-        (e) => e === "" || e === undefined || e === null
-      ) &&
-      errorParaRef.current.some((e) => e.innerText !== "OK")
-    ) {
-      gettingError(
-        "required",
-        errorParaRef.current,
-        lableRef.current,
-        inputRef.current
-      );
+    if (formValidation) {
+      console.log(this);
       return;
     }
-    gettingError(
-      "ok",
-      errorParaRef.current,
-      lableRef.current,
-      inputRef.current
-    );
-    console.log(formValues);
   };
 
   return (
@@ -269,9 +244,7 @@ const Register = () => {
           <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap justify-center items-center gap-6 cursor-pointer mb-5">
             <button
               className="bg-card px-18 py-2 rounded-3xl cursor-pointer disabled:opacity-50"
-              title="dd"
               type="submit"
-              // disabled
               onClick={registerFormHandler}
             >
               Register

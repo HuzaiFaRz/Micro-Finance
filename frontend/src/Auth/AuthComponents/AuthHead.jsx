@@ -1,6 +1,6 @@
 import { Fragment, useContext, useEffect, useState } from "react";
 import { MoonIcon, SunIcon } from "@heroicons/react/16/solid";
-import { GlobalContextCreated } from "../Contexts/GlobalContext";
+import { GlobalContextCreated } from "../../Contexts/GlobalContext";
 
 const AuthHead = () => {
   const { windowMode, setWindowMode, authHeadHeading } =

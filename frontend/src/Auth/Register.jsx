@@ -10,6 +10,7 @@ import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import AuthImage from "./AuthComponents/AuthImage";
 import AuthHead from "./AuthComponents/AuthHead";
 import FormReducer from "./AuthReducers/FormReducer";
+import { app } from "../Firebase/firebase";
 
 const Register = () => {
   const [passwordEye, setPasswordEye] = useState({
@@ -162,6 +163,7 @@ const Register = () => {
           lableRef.current.filter((_, index) => index === i),
           inputRef.current.filter((_, index) => index === i)
         );
+
         formValidation = false;
         return;
       }
@@ -169,17 +171,18 @@ const Register = () => {
     });
 
     if (formValidation) {
-      console.log(this);
       return;
     }
   };
 
   return (
     <>
-      <div className="w-full h-full tablet:h-dvh flex flex-col tablet:flex-row justify-center items-center">
+      <div
+        className={`w-full h-full flex flex-col tablet:flex-row justify-center items-center ${mainColor}`}
+      >
         <AuthImage />
         <div
-          className={`flex flex-col justify-evenly items-center tablet:w-[50%] w-full h-full tablet:h-dvh px-4 ${mainColor}`}
+          className={`flex flex-col justify-evenly items-center tablet:w-[50%] w-full h-full px-4`}
         >
           <AuthHead />
           <form
@@ -241,9 +244,9 @@ const Register = () => {
             })}
           </form>
 
-          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap justify-center items-center gap-6 cursor-pointer mb-5">
+          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-center items-center pb-5">
             <button
-              className="bg-card px-18 py-2 rounded-3xl cursor-pointer disabled:opacity-50"
+              className="bg-card px-18 py-2 rounded-3xl disabled:opacity-50"
               type="submit"
               onClick={registerFormHandler}
             >
@@ -258,6 +261,13 @@ const Register = () => {
               <span>Sign In</span>
               <ArrowLongRightIcon className="tablet:size-6 size-4" />
             </NavLink>
+
+            <button
+              className="w-full rounded-3xl underline underline-offset-4 text-card"
+              type="submit"
+            >
+              Continue With Google
+            </button>
           </div>
         </div>
       </div>

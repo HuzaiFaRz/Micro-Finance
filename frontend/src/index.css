@@ -45,3 +45,8 @@ input,
 button {
   outline: none !important;
 }
+
+
+button{
+  cursor: pointer !important;
+}

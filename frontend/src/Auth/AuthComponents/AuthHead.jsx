@@ -21,7 +21,7 @@ const AuthHead = () => {
   return (
     <Fragment>
       <div
-        className={`w-full flex justify-between items-center font-elmssans-bold text-3xl tablet:text-5xl tracking-tighter py-3 ${
+        className={`w-full flex justify-between items-center font-elmssans-bold text-3xl tablet:text-5xl tracking-tighter py-2 ${
           windowMode === "dark" ? "text-main" : "text-black"
         }`}
       >

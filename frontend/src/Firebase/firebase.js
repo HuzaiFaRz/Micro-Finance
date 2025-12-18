@@ -1,4 +1,6 @@
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore  } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_M_FINANCE_API_KEY,
@@ -9,6 +11,9 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_M_FINANCE_APP_ID,
   measurementId: import.meta.env.VITE_M_FINANCE_MEASUREMENT_ID,
 };
-console.log(firebaseConfig)
-export const app = initializeApp(firebaseConfig);
-console.log(import.meta.env);
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app)
+
+export { app, auth, db };

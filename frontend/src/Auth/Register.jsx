@@ -1,5 +1,5 @@
 import React, { useContext, useReducer, useRef, useState } from "react";
-import { NavLink } from "react-router";
+import { Navigate, NavLink, useNavigate } from "react-router";
 import {
   ArrowLongRightIcon,
   EyeIcon,
@@ -15,6 +15,8 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 
 const Register = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [passwordEye, setPasswordEye] = useState({
     password: false,
     repeatPassword: false,
@@ -79,12 +81,8 @@ const Register = () => {
     const errorPara = gettingErrorPara(`Error-Para-${name}`);
     const lable = gettingLable(`Label-${name}`);
     const input = gettingInput(`${name}`);
-    isValid = true;
-
-    if (isValid) {
-      gettingError("ok", errorPara, lable, input);
-      formDispatch({ type: "INPUT_CHANGE", inputID: id, inputValue: value });
-    }
+    gettingError("ok", errorPara, lable, input);
+    formDispatch({ type: "INPUT_CHANGE", inputID: id, inputValue: value });
 
     if (
       id === "Name" ||
@@ -94,27 +92,24 @@ const Register = () => {
       id === "Repeat Password"
     ) {
       if (!value) {
-        isValid = false;
         gettingError("required", errorPara, lable, input);
         if (id === "Password") {
           setPassword("");
         }
+        return;
       }
     }
 
     if (id === "Name") {
       if (regex.test(value)) {
-        isValid = false;
         gettingError("invalid_chars", errorPara, lable, input);
       } else if (/\s{2,}/.test(value) || value.startsWith(" ")) {
-        isValid = false;
         gettingError("leading_space", errorPara, lable, input);
       }
     }
 
     if (id === "Email") {
       if (!gmailRegex.test(value)) {
-        isValid = false;
         gettingError("invalid_format", errorPara, lable, input);
       }
     }
@@ -133,50 +128,71 @@ const Register = () => {
         )}`;
       }
       elem.target.value = format;
-      if (!digit.length) {
-        isValid = false;
-        gettingError("required", errorPara, lable, input);
-      } else if (digit.length !== 13) {
-        isValid = false;
+      if (digit.length !== 13) {
         gettingError("invalid_length", errorPara, lable, input);
       }
     }
 
     if (id === "Password") {
+      setPassword(value);
       if (/\s+/g.test(value)) {
-        isValid = false;
         gettingError("no_space", errorPara, lable, input);
       } else if (value.length <= 8) {
-        isValid = false;
         gettingError("too_short", errorPara, lable, input);
+        return;
       }
-      setPassword(value);
     }
 
     if (id === "Repeat Password") {
       if (!password.trim()) {
         gettingError("password_empty_when_repeat", errorPara, lable, input);
-        isValid = false;
         elem.target.value = "";
         return;
       }
-      if (value !== password) {
-        isValid = false;
+      if (value && value !== password) {
         gettingError("password_mismatch", errorPara, lable, input);
+        return;
       }
     }
+
+    if (
+      errorParaRef.current
+        .map((e) => e.innerText === "OK")
+        .every((e) => e === true)
+    ) {
+      isValid = true;
+    } else {
+      isValid = false;
+    }
   };
-  const registerFormHandler = () => {
+
+  const resetForm = () => {
+    inputRef.current.map((e) => {
+      return (e.value = ""), (e.style.borderColor = "white");
+    });
+    errorParaRef.current.map((e) => {
+      e.innerHTML = "";
+    });
+    lableRef.current.map((e) => {
+      e.style.textDecorationColor = "white";
+    });
+    setLoading(false);
+    isValid = false;
+  };
+
+  const registerFormHandler = async () => {
     event.preventDefault();
     const errorStatuses = errorParaRef.current.map((e) => e.innerText);
-    const formReady = errorParaRef.current.every((e) => e.innerText === "OK");
 
     Object.entries(formValues).forEach(([, value], i) => {
       if (
         !value ||
         value === undefined ||
         value === null ||
-        errorStatuses[i] !== "OK"
+        errorStatuses[i] !== "OK" ||
+        Object.values(formValues).every(
+          (value) => !value && value === null && value === undefined
+        )
       ) {
         const errorPara = errorParaRef.current[i];
         const label = lableRef.current[i];
@@ -186,33 +202,37 @@ const Register = () => {
         isValid = false;
       }
     });
-    const formValidiate =
-      Object.values(formValues).every(
-        (value) => value !== "" && value !== null && value !== undefined
-      ) && formReady;
-    isValid = formValidiate;
+
     if (isValid) {
-      console.log(this);
+      try {
+        setLoading(true);
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          formValues.Email,
+          formValues.Password
+        );
+        await setDoc(
+          doc(db, "Users", userCredential?.user?.uid),
+          {
+            ...formValues,
+            createdAt: userCredential?.user.metadata.creationTime,
+          },
+          { merge: true }
+        );
+        resetForm();
+        navigate("/sign-in");
+      } catch (error) {
+        setLoading(false);
+        resetForm();
+        alert(error);
+      } finally {
+        setLoading(false);
+        console.log("completed");
+      }
+      return;
     }
   };
-  // console.log("true");
-  // try {
-  //   // const userCredential = await createUserWithEmailAndPassword(
-  //   //   auth,
-  //   //   formValues.Email,
-  //   //   formValues.Password
-  //   // );
-  //   // const userData = await setDoc(
-  //   //   doc(db, "Users", userCredential?.user?.uid),
-  //   //   { ...formValues },
-  //   //   { merge: true }
-  //   // );
-  //   console.log(formValidation, formValues);
-  // } catch (error) {
-  //   console.log(error, formValues);
-  // } finally {
-  //   console.log("error", formValues);
-  // }
+
   return (
     <>
       <div
@@ -247,11 +267,12 @@ const Register = () => {
                       autoComplete="off"
                       id={`${elem}`}
                       name={elem}
+                      disabled={loading}
                       type={
                         elem === "Password" || elem === "Repeat Password"
                           ? passwordEye[elem]
                             ? "text"
-                            : "text"
+                            : "password"
                           : elem === "CNIC"
                           ? "tel"
                           : "text"
@@ -288,6 +309,7 @@ const Register = () => {
                 className="bg-card px-14 py-2 rounded-3xl disabled:opacity-50"
                 type="submit"
                 onClick={registerFormHandler}
+                disabled={loading}
               >
                 Register
               </button>
@@ -296,6 +318,7 @@ const Register = () => {
                 className={`flex items-center px-10 py-2 shadow-xl/70 shadow-card ${
                   windowMode === "dark" && "shadow-none border-b border-r"
                 } ${mainColor}`}
+                disabled={loading}
               >
                 Sign In
                 <ArrowLongRightIcon className="tablet:size-6 size-4 mr-3" />
@@ -305,6 +328,7 @@ const Register = () => {
             <button
               className="w-full rounded-3xl underline underline-offset-4 text-card"
               type="submit"
+              disabled={loading}
             >
               Continue With Google
             </button>

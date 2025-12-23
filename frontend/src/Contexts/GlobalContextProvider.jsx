@@ -9,6 +9,7 @@ const GlobalContextProvider = ({ children }) => {
     checkingLS ? checkingLS : matchMedia.matches ? "dark" : "light"
   );
   const [authHeadHeading, setAuthHeadHeading] = useState();
+  const [errorMsg, setErrorMsg] = useState("");
 
   const inputsError = [
     { type: "required", message: "Required" },
@@ -20,13 +21,14 @@ const GlobalContextProvider = ({ children }) => {
     { type: "numbers_only", message: "Numbers only" },
     { type: "letters_only", message: "Letters only" },
     { type: "password_not_match", message: "Passwords do not match" },
-
     { type: "password_empty_when_repeat", message: "Enter password first" },
     { type: "invalid_length", message: "Invalid length" },
     { type: "password_mismatch", message: "Passwords don't match" },
     { type: "ok", message: "OK" },
   ];
+
   const regex = /[!#$%^&@*()_+\-=\[\]{};':"\\|,.<>\/?~`]/;
+
   const gmailRegex = /^[a-zA-Z0-9._]+@gmail\.com$/;
 
   const pageLocation = useLocation();
@@ -65,11 +67,9 @@ const GlobalContextProvider = ({ children }) => {
         input.forEach((e) => {
           e.style.borderColor = "#22c55e";
         });
-
         lable.forEach((e) => {
           e.style.textDecorationColor = "#22c55e";
         });
-
         errorPara.forEach((e) => {
           e.style.color = "#22c55e";
           e.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" class="size-5 text-[#22c55e]"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" /></svg> ${msg.message}`;
@@ -78,7 +78,6 @@ const GlobalContextProvider = ({ children }) => {
         input.forEach((e) => {
           e.style.borderColor = "#dc2626";
         });
-
         lable.forEach((e) => {
           e.style.textDecorationColor = "#dc2626";
         });
@@ -89,6 +88,36 @@ const GlobalContextProvider = ({ children }) => {
         });
       }
       return;
+    }
+  };
+
+  const convertingFireBaseErrors = (code) => {
+    if (code.includes("auth/email-already-in-use")) {
+      setErrorMsg("This email is already in use");
+    } else if (code.includes("auth/invalid-email")) {
+      setErrorMsg("Please enter a valid email address");
+    } else if (code.includes("auth/user-not-found")) {
+      setErrorMsg("No account found with this email");
+    } else if (code.includes("auth/wrong-password")) {
+      setErrorMsg("Incorrect password");
+    } else if (code.includes("auth/weak-password")) {
+      setErrorMsg("Password must be at least 6 characters");
+    } else if (code.includes("auth/too-many-requests")) {
+      setErrorMsg("Too many attempts. Please try again later");
+    } else if (code.includes("auth/network-request-failed")) {
+      setErrorMsg("Network error. Check your internet connection");
+    } else if (code.includes("permission-denied")) {
+      setErrorMsg("You do not have permission to perform this action");
+    } else if (code.includes("unauthenticated")) {
+      setErrorMsg("Please login to continue");
+    } else if (code.includes("not-found")) {
+      setErrorMsg("Requested data not found");
+    } else if (code.includes("unavailable")) {
+      setErrorMsg("Service is temporarily unavailable");
+    } else if (code.includes("deadline-exceeded")) {
+      setErrorMsg("Request timed out. Please try again");
+    } else {
+      setErrorMsg("Something Went Wrong. Please try again");
     }
   };
 
@@ -117,6 +146,8 @@ const GlobalContextProvider = ({ children }) => {
           regex,
           gmailRegex,
           gettingError,
+          convertingFireBaseErrors,
+          errorMsg,
         }}
       >
         {children}

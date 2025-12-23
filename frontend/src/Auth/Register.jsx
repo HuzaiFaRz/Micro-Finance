@@ -2,8 +2,10 @@ import React, { useContext, useReducer, useRef, useState } from "react";
 import { Navigate, NavLink, useNavigate } from "react-router";
 import {
   ArrowLongRightIcon,
+  ArrowPathRoundedSquareIcon,
   EyeIcon,
   EyeSlashIcon,
+  IdentificationIcon,
 } from "@heroicons/react/16/solid";
 
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
@@ -13,10 +15,13 @@ import FormReducer from "./AuthReducers/FormReducer";
 import { auth, db } from "../Firebase/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import Error from "../ErrorComp/Error";
 
 const Register = () => {
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
+
   const [passwordEye, setPasswordEye] = useState({
     password: false,
     repeatPassword: false,
@@ -53,6 +58,8 @@ const Register = () => {
     gettingError,
     regex,
     gmailRegex,
+    convertingFireBaseErrors,
+    errorMsg,
   } = useContext(GlobalContextCreated);
 
   const inputRef = useRef([]);
@@ -176,6 +183,7 @@ const Register = () => {
     lableRef.current.map((e) => {
       e.style.textDecorationColor = "white";
     });
+    formDispatch({ type: "RESET_FORM" });
     setLoading(false);
     isValid = false;
   };
@@ -211,23 +219,23 @@ const Register = () => {
           formValues.Email,
           formValues.Password
         );
-        await setDoc(
-          doc(db, "Users", userCredential?.user?.uid),
-          {
-            ...formValues,
-            createdAt: userCredential?.user.metadata.creationTime,
-          },
-          { merge: true }
-        );
+        if (userCredential.user) {
+          await setDoc(
+            doc(db, "Users", userCredential?.user?.uid),
+            {
+              ...formValues,
+              createdAt: userCredential?.user.metadata.creationTime,
+            },
+            { merge: true }
+          );
+        }
         resetForm();
-        navigate("/sign-in");
+        // navigate("/sign-in");
       } catch (error) {
         setLoading(false);
-        resetForm();
-        alert(error);
+        convertingFireBaseErrors(error?.message);
       } finally {
         setLoading(false);
-        console.log("completed");
       }
       return;
     }
@@ -238,11 +246,13 @@ const Register = () => {
       <div
         className={`w-full h-full flex flex-col tablet:flex-row justify-start items-start ${mainColor}`}
       >
+        <Error />
         <AuthImage />
         <div
           className={`flex flex-col justify-evenly items-center tablet:w-[50%] w-full h-full px-4`}
         >
           <AuthHead />
+
           <form
             className={`flex flex-col justify-start items-start w-full x-10 py-5 gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider ${mainColor}`}
           >
@@ -287,6 +297,7 @@ const Register = () => {
                         type="button"
                         className={`${passwordEyeCSS}`}
                         onClick={() => passwordEyeHandler(elem)}
+                        disabled={loading}
                       >
                         {passwordEye[elem] ? <EyeIcon /> : <EyeSlashIcon />}
                       </button>
@@ -306,22 +317,31 @@ const Register = () => {
           <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-center items-center pb-5">
             <div className="flex flex-wrap justify-evenly items-center w-full gap-2">
               <button
-                className="bg-card px-14 py-2 rounded-3xl disabled:opacity-50"
+                className="bg-card px-10 py-2 rounded-3xl disabled:opacity-50 flex items-center gap-4"
                 type="submit"
                 onClick={registerFormHandler}
                 disabled={loading}
               >
-                Register
+                Register{" "}
+                {loading ? (
+                  <ArrowPathRoundedSquareIcon className="tablet:size-6 size-4 animate-spin" />
+                ) : (
+                  <IdentificationIcon className="tablet:size-6 size-4" />
+                )}
               </button>
               <NavLink
-                to={"/sign-in"}
-                className={`flex items-center px-10 py-2 shadow-xl/70 shadow-card ${
+                to={loading || `/sign-in`}
+                className={`flex items-center px-10 py-2 shadow-xl/70 shadow-card gap-4 ${
                   windowMode === "dark" && "shadow-none border-b border-r"
                 } ${mainColor}`}
                 disabled={loading}
               >
                 Sign In
-                <ArrowLongRightIcon className="tablet:size-6 size-4 mr-3" />
+                {loading ? (
+                  <ArrowPathRoundedSquareIcon className="tablet:size-6 size-4 animate-spin" />
+                ) : (
+                  <ArrowLongRightIcon className="tablet:size-6 size-4 mr-3" />
+                )}
               </NavLink>
             </div>
 

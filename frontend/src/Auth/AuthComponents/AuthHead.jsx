@@ -21,7 +21,7 @@ const AuthHead = () => {
   return (
     <Fragment>
       <div
-        className={`w-full flex justify-between items-center font-elmssans-bold text-3xl tablet:text-5xl tracking-tighter py-2 ${
+        className={`w-full flex justify-between items-center font-elmssans-bold text-3xl tablet:text-4xl tracking-tighter py-2 ${
           windowMode === "dark" ? "text-main" : "text-black"
         }`}
       >
@@ -32,9 +32,9 @@ const AuthHead = () => {
           onClick={modeButtonHandler}
         >
           {windowMode === "dark" ? (
-            <SunIcon className="tablet:size-10 size-8" />
+            <SunIcon className="tablet:size-9 size-8" />
           ) : (
-            <MoonIcon className="tablet:size-10 size-8" />
+            <MoonIcon className="tablet:size-9 size-8" />
           )}
         </button>
       </div>

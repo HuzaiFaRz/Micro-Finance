@@ -1,23 +1,35 @@
 import React, { useContext, useReducer, useRef, useState } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import {
   ArrowLongRightIcon,
+  ArrowPathRoundedSquareIcon,
   EyeIcon,
   EyeSlashIcon,
+  IdentificationIcon,
 } from "@heroicons/react/16/solid";
 
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import AuthImage from "./AuthComponents/AuthImage";
 import AuthHead from "./AuthComponents/AuthHead";
 import FormReducer from "./AuthReducers/FormReducer";
+import { auth } from "../Firebase/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import Error from "../ErrorComp/Error";
 
-const SignIn = () => {
+const Register = () => {
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+
   const [passwordEye, setPasswordEye] = useState(false);
+
   const passwordEyeHandler = () => {
     setPasswordEye(!passwordEye);
   };
-  const signInInputs = ["Email", "Password"];
-  const initialValues = signInInputs.reduce((loop, currentValue) => {
+
+  const registerInputs = ["Email", "Password"];
+
+  const initialValues = registerInputs.reduce((loop, currentValue) => {
     loop[currentValue] = "";
     return loop;
   }, {});
@@ -30,6 +42,8 @@ const SignIn = () => {
     labelCSS,
     gettingError,
     gmailRegex,
+    convertingFireBaseErrors,
+    heroIconCSS,
   } = useContext(GlobalContextCreated);
 
   const inputRef = useRef([]);
@@ -51,75 +65,120 @@ const SignIn = () => {
   };
 
   const [formValues, formDispatch] = useReducer(FormReducer, initialValues);
+  let isValid = true;
 
-  const signInInputHandler = (elem) => {
+  const registerInputHandler = (elem) => {
     let { value, id, name } = elem.target;
     const errorPara = gettingErrorPara(`Error-Para-${name}`);
     const lable = gettingLable(`Label-${name}`);
     const input = gettingInput(`${name}`);
+    gettingError("ok", errorPara, lable, input);
+    formDispatch({ type: "INPUT_CHANGE", inputID: id, inputValue: value });
+
     if (id === "Email" || id === "Password") {
       if (!value) {
         gettingError("required", errorPara, lable, input);
         return;
       }
     }
+
     if (id === "Email") {
-      if (!gmailRegex.test(value))
-        return gettingError("invalid_format", errorPara, lable, input);
-      gettingError("ok", errorPara, lable, input);
+      if (!gmailRegex.test(value)) {
+        gettingError("invalid_format", errorPara, lable, input);
+      }
     }
 
-    if (id === "Password") {
-      if (/\s+/g.test(value))
-        return gettingError("no_space", errorPara, lable, input);
-      if (value.length <= 8)
-        return gettingError("too_short", errorPara, lable, input);
-      gettingError("ok", errorPara, lable, input);
+    if (
+      errorParaRef.current
+        .map((e) => e.innerText === "OK")
+        .every((e) => e === true)
+    ) {
+      isValid = true;
+    } else {
+      isValid = false;
     }
-
-    formDispatch({ type: "INPUT_CHANGE", inputID: id, inputValue: value });
   };
 
-  const signInFormHandler = () => {
+  const resetForm = () => {
+    inputRef.current.map((e) => {
+      return (e.value = ""), (e.style.borderColor = "white");
+    });
+    errorParaRef.current.map((e) => {
+      e.innerHTML = "";
+    });
+    lableRef.current.map((e) => {
+      e.style.textDecorationColor = "white";
+    });
+    formDispatch({ type: "RESET_FORM" });
+    setLoading(false);
+    isValid = false;
+    convertingFireBaseErrors("");
+  };
+
+  const registerFormHandler = async () => {
     event.preventDefault();
-    let formValidation = false;
+    const errorStatuses = errorParaRef.current.map((e) => e.innerText);
     Object.entries(formValues).forEach(([, value], i) => {
       if (
-        value === "" ||
+        !value ||
         value === undefined ||
-        (value === null &&
-          errorParaRef.current.some((e) => e.innerText !== "OK"))
+        value === null ||
+        errorStatuses[i] !== "OK" ||
+        Object.values(formValues).every(
+          (value) => !value && value === null && value === undefined
+        )
       ) {
-        gettingError(
-          "required",
-          errorParaRef.current.filter((_, index) => index === i),
-          lableRef.current.filter((_, index) => index === i),
-          inputRef.current.filter((_, index) => index === i)
-        );
-        formValidation = false;
-        return;
+        const errorPara = errorParaRef.current[i];
+        const label = lableRef.current[i];
+        const input = inputRef.current[i];
+        gettingError("required", [errorPara], [label], [input]);
+        gettingError("required", [errorPara], [label], [input]);
+        isValid = false;
       }
-      formValidation = true;
     });
 
-    if (formValidation) {
-      console.log(this);
+    if (isValid) {
+      try {
+        setLoading(true);
+        await signInWithEmailAndPassword(
+          auth,
+          formValues.Email,
+          formValues.Password
+        );
+        resetForm();
+        navigate("/");
+      } catch (error) {
+        setLoading(false);
+        console.log(error?.message);
+        convertingFireBaseErrors(
+          error?.message,
+          errorParaRef,
+          lableRef,
+          inputRef
+        );
+      } finally {
+        setLoading(false);
+      }
       return;
     }
   };
 
   return (
     <>
-      <div className="w-full h-full tablet:h-dvh flex flex-col tablet:flex-row justify-center items-center">
+      <div
+        className={`w-full h-dvh flex flex-col tablet:flex-row justify-between items-start ${mainColor}`}
+      >
+        <Error />
         <AuthImage />
         <div
-          className={`flex flex-col justify-between items-center tablet:w-[50%] w-full h-full tablet:h-dvh py-4 px-4 ${mainColor}`}
+          className={`flex flex-col justify-between items-center tablet:w-[50%] w-full h-full px-4`}
         >
           <AuthHead />
+
           <form
             className={`flex flex-col justify-start items-start w-full x-10 py-5 gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider ${mainColor}`}
           >
-            {signInInputs.map((elem, index) => {
+            {registerInputs.map((elem, index) => {
               return (
                 <React.Fragment key={index}>
                   <div className="w-full flex flex-col justify-center items-start relative">
@@ -131,28 +190,31 @@ const SignIn = () => {
                     >
                       {`Insert ${elem}`}
                     </label>
+
                     <input
-                      className={`${inputCSS} pointer-events-auto`}
+                      className={`${inputCSS}`}
                       ref={(el) => (inputRef.current[index] = el)}
                       autoComplete="off"
                       id={`${elem}`}
                       name={elem}
+                      disabled={loading}
                       type={
                         elem === "Password"
                           ? passwordEye
                             ? "text"
                             : "password"
-                          : "email"
+                          : "text"
                       }
                       placeholder={`${elem}...`}
-                      onChange={signInInputHandler}
+                      onChange={registerInputHandler}
                     />
 
                     {elem === "Password" && (
                       <button
                         type="button"
                         className={`${passwordEyeCSS}`}
-                        onClick={() => passwordEyeHandler(elem)}
+                        onClick={() => passwordEyeHandler()}
+                        disabled={loading}
                       >
                         {passwordEye ? <EyeIcon /> : <EyeSlashIcon />}
                       </button>
@@ -169,22 +231,33 @@ const SignIn = () => {
             })}
           </form>
 
-          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap justify-center items-center gap-6 cursor-pointer mb-5">
+          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-center items-center pb-5">
             <button
-              className="bg-card px-18 py-2 rounded-3xl cursor-pointer disabled:opacity-50"
+              className="bg-card px-10 py-2 rounded-3xl disabled:opacity-50 flex items-center gap-4"
               type="submit"
-              onClick={signInFormHandler}
+              onClick={registerFormHandler}
+              disabled={loading}
             >
               Sign In
+              {loading ? (
+                <ArrowPathRoundedSquareIcon className={heroIconCSS} />
+              ) : (
+                <IdentificationIcon className={heroIconCSS} />
+              )}
             </button>
             <NavLink
-              to={"/register"}
-              className={`flex items-center gap-3 px-12 py-2 shadow-xl/70 shadow-card ${
+              to={loading || `/register`}
+              className={`flex items-center px-10 py-2 shadow-xl/70 shadow-card gap-4 ${
                 windowMode === "dark" && "shadow-none border-b border-r"
               } ${mainColor}`}
+              disabled={loading}
             >
-              <span>Register</span>
-              <ArrowLongRightIcon className="tablet:size-6 size-4" />
+              Register
+              {loading ? (
+                <ArrowPathRoundedSquareIcon className={heroIconCSS} />
+              ) : (
+                <ArrowLongRightIcon className={heroIconCSS} />
+              )}
             </NavLink>
           </div>
         </div>
@@ -193,4 +266,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default Register;

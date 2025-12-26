@@ -59,7 +59,7 @@ const Register = () => {
     regex,
     gmailRegex,
     convertingFireBaseErrors,
-    errorMsg,
+    heroIconCSS,
   } = useContext(GlobalContextCreated);
 
   const inputRef = useRef([]);
@@ -112,6 +112,8 @@ const Register = () => {
         gettingError("invalid_chars", errorPara, lable, input);
       } else if (/\s{2,}/.test(value) || value.startsWith(" ")) {
         gettingError("leading_space", errorPara, lable, input);
+      } else if (value.length <= 4) {
+        gettingError("too_short", errorPara, lable, input);
       }
     }
 
@@ -141,24 +143,21 @@ const Register = () => {
     }
 
     if (id === "Password") {
-      setPassword(value);
       if (/\s+/g.test(value)) {
         gettingError("no_space", errorPara, lable, input);
       } else if (value.length <= 8) {
         gettingError("too_short", errorPara, lable, input);
-        return;
+      } else {
+        setPassword(value);
       }
     }
 
     if (id === "Repeat Password") {
-      if (!password.trim()) {
+      if (!password.trim() && password.length <= 8) {
         gettingError("password_empty_when_repeat", errorPara, lable, input);
         elem.target.value = "";
-        return;
-      }
-      if (value && value !== password) {
+      } else if (value !== password) {
         gettingError("password_mismatch", errorPara, lable, input);
-        return;
       }
     }
 
@@ -186,12 +185,12 @@ const Register = () => {
     formDispatch({ type: "RESET_FORM" });
     setLoading(false);
     isValid = false;
+    convertingFireBaseErrors("");
   };
 
   const registerFormHandler = async () => {
     event.preventDefault();
     const errorStatuses = errorParaRef.current.map((e) => e.innerText);
-
     Object.entries(formValues).forEach(([, value], i) => {
       if (
         !value ||
@@ -230,10 +229,15 @@ const Register = () => {
           );
         }
         resetForm();
-        // navigate("/sign-in");
+        navigate("/sign-in");
       } catch (error) {
         setLoading(false);
-        convertingFireBaseErrors(error?.message);
+        convertingFireBaseErrors(
+          error?.message,
+          errorParaRef,
+          lableRef,
+          inputRef
+        );
       } finally {
         setLoading(false);
       }
@@ -244,12 +248,12 @@ const Register = () => {
   return (
     <>
       <div
-        className={`w-full h-full flex flex-col tablet:flex-row justify-start items-start ${mainColor}`}
+        className={`w-full h-dvh flex flex-col tablet:flex-row justify-start items-start ${mainColor}`}
       >
         <Error />
         <AuthImage />
         <div
-          className={`flex flex-col justify-evenly items-center tablet:w-[50%] w-full h-full px-4`}
+          className={`flex flex-col justify-between items-center tablet:w-[50%] w-full h-full px-4`}
         >
           <AuthHead />
 
@@ -272,7 +276,7 @@ const Register = () => {
                     </label>
 
                     <input
-                      className={`${inputCSS} pointer-events-auto`}
+                      className={`${inputCSS}`}
                       ref={(el) => (inputRef.current[index] = el)}
                       autoComplete="off"
                       id={`${elem}`}
@@ -315,43 +319,35 @@ const Register = () => {
           </form>
 
           <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-center items-center pb-5">
-            <div className="flex flex-wrap justify-evenly items-center w-full gap-2">
-              <button
-                className="bg-card px-10 py-2 rounded-3xl disabled:opacity-50 flex items-center gap-4"
-                type="submit"
-                onClick={registerFormHandler}
-                disabled={loading}
-              >
-                Register{" "}
-                {loading ? (
-                  <ArrowPathRoundedSquareIcon className="tablet:size-6 size-4 animate-spin" />
-                ) : (
-                  <IdentificationIcon className="tablet:size-6 size-4" />
-                )}
-              </button>
-              <NavLink
-                to={loading || `/sign-in`}
-                className={`flex items-center px-10 py-2 shadow-xl/70 shadow-card gap-4 ${
-                  windowMode === "dark" && "shadow-none border-b border-r"
-                } ${mainColor}`}
-                disabled={loading}
-              >
-                Sign In
-                {loading ? (
-                  <ArrowPathRoundedSquareIcon className="tablet:size-6 size-4 animate-spin" />
-                ) : (
-                  <ArrowLongRightIcon className="tablet:size-6 size-4 mr-3" />
-                )}
-              </NavLink>
-            </div>
-
             <button
-              className="w-full rounded-3xl underline underline-offset-4 text-card"
+              className="bg-card px-10 py-2 rounded-3xl disabled:opacity-50 flex items-center gap-4"
               type="submit"
+              onClick={registerFormHandler}
               disabled={loading}
             >
-              Continue With Google
+              Register{" "}
+              {loading ? (
+                <ArrowPathRoundedSquareIcon
+                  className={`${heroIconCSS} animate-spin`}
+                />
+              ) : (
+                <IdentificationIcon className={heroIconCSS} />
+              )}
             </button>
+            <NavLink
+              to={loading || `/sign-in`}
+              className={`flex items-center px-10 py-2 shadow-xl/70 shadow-card gap-4 ${
+                windowMode === "dark" && "shadow-none border-b border-r"
+              } ${mainColor}`}
+              disabled={loading}
+            >
+              Sign In
+              {loading ? (
+                <ArrowPathRoundedSquareIcon className={heroIconCSS} />
+              ) : (
+                <ArrowLongRightIcon className={heroIconCSS} />
+              )}
+            </NavLink>
           </div>
         </div>
       </div>

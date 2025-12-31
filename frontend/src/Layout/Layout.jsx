@@ -7,7 +7,7 @@ const Layout = () => {
   return (
     <Fragment>
       <Navbar />
-      <main className={`w-full h-svh pt-16`}>
+      <main className={`w-full h-full pt-16`}>
         <Outlet />
       </main>
       <Footer />

@@ -15,7 +15,7 @@ import FormReducer from "./AuthReducers/FormReducer";
 import { auth, db } from "../Firebase/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import Error from "../ErrorComp/Error";
+import ErrorToast from "../Components/ErrorToast";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -250,10 +250,10 @@ const Register = () => {
       <div
         className={`w-full h-dvh flex flex-col tablet:flex-row justify-start items-start ${mainColor}`}
       >
-        <Error />
+        <ErrorToast />
         <AuthImage />
         <div
-          className={`flex flex-col justify-between items-center tablet:w-[50%] w-full h-full px-4`}
+          className={`flex flex-col justify-evenly items-center tablet:w-[50%] w-full h-full px-4`}
         >
           <AuthHead />
 

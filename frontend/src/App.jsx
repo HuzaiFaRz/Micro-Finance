@@ -12,6 +12,8 @@ import { About } from "./Pages/About";
 import { Fragment, useEffect } from "react";
 import Layout from "./Layout/Layout";
 import GlobalContextProvider from "./Contexts/GlobalContextProvider";
+import AuthContextProvider from "./Contexts/AuthContextProvider";
+import LockRoute from "./Routes/LockRoute";
 
 const App = () => {
   const pageLocation = useLocation();
@@ -34,17 +36,25 @@ const App = () => {
     <Fragment>
       <Routes>
         <Route element={<GlobalContextProvider />}>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="loan-form" element={<LoanForm />} />
-            <Route path="loan-categories" element={<LoanCategories />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="about" element={<About />} />
+          <Route element={<AuthContextProvider />}>
+            <Route element={<Layout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="loan-categories" element={<LoanCategories />} />
+              <Route path="contact" element={<Contact />} />
+              <Route path="about" element={<About />} />
+            </Route>
+
+            <Route element={<LockRoute />}>
+              <Route element={<Layout />}>
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="loan-form" element={<LoanForm />} />
+              </Route>
+            </Route>
+
+            <Route path="register" element={<Register />} />
+            <Route path="sign-in" element={<SignIn />} />
           </Route>
-          <Route path="register" element={<Register />} />
-          <Route path="sign-in" element={<SignIn />} />
         </Route>
       </Routes>
     </Fragment>

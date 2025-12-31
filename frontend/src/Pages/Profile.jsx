@@ -1,9 +1,15 @@
-import React from 'react'
+import React, { Fragment } from "react";
+import { AuthUseContext } from "../Contexts/AuthContextProvider";
 
 const Profile = () => {
-  return (
-    <div>Profile</div>
-  )
-}
+  const { isUser, setIsuser } = AuthUseContext();
 
-export default Profile
+  console.log(isUser);
+  return (
+    <Fragment>
+      <h1>Profile</h1>
+    </Fragment>
+  );
+};
+
+export default Profile;

@@ -6,15 +6,18 @@ import {
   CurrencyDollarIcon,
   XMarkIcon,
 } from "@heroicons/react/16/solid";
+import { AuthUseContext } from "../Contexts/AuthContextProvider";
 
 const Navbar = () => {
+  const { isUser} = AuthUseContext();
+  console.log(isUser)
   let [navbarButton, setNavbarButton] = useState(false);
   const nav_Links = [
     { linkName: "Home", linkURL: "/" },
-    { linkName: "Dashboard", linkURL: "dashboard" },
     { linkName: "Loan Categories", linkURL: "loan-categories" },
     { linkName: "Contact Us", linkURL: "contact" },
     { linkName: "About Us", linkURL: "about" },
+    { linkName: "Dashboard", linkURL: "dashboard" },
     { linkName: "Apply Now", linkURL: "loan-form" },
   ];
   nav_Links.map((e) => {

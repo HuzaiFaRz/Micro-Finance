@@ -99,7 +99,6 @@ const GlobalContextProvider = ({ children }) => {
         lableRef.current.filter((e) => e.id === "Label-Email"),
         inputRef.current.filter((e) => e.id === "Email")
       );
-      console.log(this);
     } else if (code.includes("password")) {
       gettingError(
         "firebase",
@@ -107,7 +106,8 @@ const GlobalContextProvider = ({ children }) => {
         lableRef.current.filter((e) => e.id === "Label-Password"),
         inputRef.current.filter((e) => e.id === "Password")
       );
-    } else if (code.includes("auth/email-already-in-use")) {
+    }
+    if (code.includes("auth/email-already-in-use")) {
       setErrorMsg("This email is already in use");
     } else if (code.includes("auth/invalid-email")) {
       setErrorMsg("Please enter a valid email address");
@@ -130,6 +130,10 @@ const GlobalContextProvider = ({ children }) => {
       setErrorMsg("Too many attempts. Please try again later");
     } else if (code.includes("auth/network-request-failed")) {
       setErrorMsg("Network error. Check your internet connection");
+    } else if (code.includes("auth/user-disabled")) {
+      setErrorMsg(
+        "Your account has been disabled. Please contact support or try again later."
+      );
     } else if (code.includes("permission-denied")) {
       setErrorMsg("You do not have permission to perform this action");
     } else if (code.includes("unauthenticated")) {
@@ -140,9 +144,9 @@ const GlobalContextProvider = ({ children }) => {
       setErrorMsg("Service is temporarily unavailable");
     } else if (code.includes("deadline-exceeded")) {
       setErrorMsg("Request timed out. Please try again");
-    } else {
-      setErrorMsg("");
     }
+
+    setErrorMsg("Plese Try Again Later");
   };
 
   useEffect(() => {

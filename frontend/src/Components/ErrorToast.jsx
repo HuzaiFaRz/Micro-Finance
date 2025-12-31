@@ -1,8 +1,7 @@
 import { Fragment, useContext, useEffect, useState } from "react";
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
-import { XMarkIcon } from "@heroicons/react/16/solid";
 
-const Error = () => {
+const ErrorToast = () => {
   const { setErrorMsg, errorMsg } = useContext(GlobalContextCreated);
   const [errorShowing, setErrorShowing] = useState(true);
   useEffect(() => {
@@ -30,4 +29,4 @@ const Error = () => {
   }
 };
 
-export default Error;
+export default ErrorToast;

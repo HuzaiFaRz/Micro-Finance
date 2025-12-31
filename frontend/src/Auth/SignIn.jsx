@@ -14,7 +14,7 @@ import AuthHead from "./AuthComponents/AuthHead";
 import FormReducer from "./AuthReducers/FormReducer";
 import { auth } from "../Firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import Error from "../ErrorComp/Error";
+import ErrorToast from "../Components/ErrorToast";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -168,7 +168,7 @@ const Register = () => {
       <div
         className={`w-full h-dvh flex flex-col tablet:flex-row justify-between items-start ${mainColor}`}
       >
-        <Error />
+        <ErrorToast />
         <AuthImage />
         <div
           className={`flex flex-col justify-between items-center tablet:w-[50%] w-full h-full px-4`}

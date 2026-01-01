@@ -1,27 +1,27 @@
 import { Fragment, useContext, useEffect, useState } from "react";
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 
-const ErrorToast = () => {
-  const { setErrorMsg, errorMsg } = useContext(GlobalContextCreated);
+const MassegeToast = () => {
+  const { toastMsg, setToastMsg,toastMsgColor } = useContext(GlobalContextCreated);
   const [errorShowing, setErrorShowing] = useState(true);
   useEffect(() => {
-    if (errorMsg) {
+    if (toastMsg) {
       setErrorShowing(true);
       const timer = setTimeout(() => {
         setErrorShowing(false);
-        setErrorMsg("");
+        setToastMsg("");
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [errorMsg, setErrorMsg]);
-  if (errorMsg && errorShowing) {
+  }, [toastMsg, setToastMsg]);
+  if (toastMsg && errorShowing) {
     return (
       <Fragment>
         <>
           <div
-            className={`fixed transition-all bg-black w-full py-4 px-4 font-elmssans-light text-sm text-red-500 z-100 text-center capitalize`}
+            className={`fixed transition-all bg-black w-full py-4 px-4 font-elmssans-light text-lg ${toastMsgColor} z-100 text-center capitalize`}
           >
-            <span>{errorMsg}</span>
+            <span>{toastMsg}</span>
           </div>
         </>
       </Fragment>
@@ -29,4 +29,4 @@ const ErrorToast = () => {
   }
 };
 
-export default ErrorToast;
+export default MassegeToast;

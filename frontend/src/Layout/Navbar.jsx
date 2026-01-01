@@ -9,9 +9,10 @@ import {
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
 
 const Navbar = () => {
-  const { isUser} = AuthUseContext();
-  console.log(isUser)
+  const { isUser } = AuthUseContext();
+  console.log(isUser?.Name);
   let [navbarButton, setNavbarButton] = useState(false);
+
   const nav_Links = [
     { linkName: "Home", linkURL: "/" },
     { linkName: "Loan Categories", linkURL: "loan-categories" },
@@ -80,10 +81,15 @@ const Navbar = () => {
               );
             })}
           </div>
+
           <NavLink
             to={"profile"}
-            className={"w-10 h-10 bg-main rounded-full hidden tablet:flex"}
-          ></NavLink>
+            className={
+              "w-10 h-10 bg-main rounded-full hidden tablet:flex tablet:justify-center tablet:items-center text-black text-xl font-elmssans-bold"
+            }
+          >
+            {isUser?.Name[0].toUpperCase() || `Hi`}
+          </NavLink>
         </nav>
       </>
     </Fragment>

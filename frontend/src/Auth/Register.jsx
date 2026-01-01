@@ -15,7 +15,7 @@ import FormReducer from "./AuthReducers/FormReducer";
 import { auth, db } from "../Firebase/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import ErrorToast from "../Components/ErrorToast";
+import MassegeToast from "../Components/MassegeToast";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ const Register = () => {
     gettingError,
     regex,
     gmailRegex,
-    convertingFireBaseErrors,
+    convertingMassege,
     heroIconCSS,
   } = useContext(GlobalContextCreated);
 
@@ -185,7 +185,6 @@ const Register = () => {
     formDispatch({ type: "RESET_FORM" });
     setLoading(false);
     isValid = false;
-    convertingFireBaseErrors("");
   };
 
   const registerFormHandler = async () => {
@@ -228,16 +227,13 @@ const Register = () => {
             { merge: true }
           );
         }
+        convertingMassege("Register Success", null, null, null);
         resetForm();
         navigate("/sign-in");
       } catch (error) {
         setLoading(false);
-        convertingFireBaseErrors(
-          error?.message,
-          errorParaRef,
-          lableRef,
-          inputRef
-        );
+        convertingMassege(error?.message, errorParaRef, lableRef, inputRef);
+        console.error(error?.message);
       } finally {
         setLoading(false);
       }
@@ -250,7 +246,7 @@ const Register = () => {
       <div
         className={`w-full h-dvh flex flex-col tablet:flex-row justify-start items-start ${mainColor}`}
       >
-        <ErrorToast />
+        <MassegeToast />
         <AuthImage />
         <div
           className={`flex flex-col justify-evenly items-center tablet:w-[50%] w-full h-full px-4`}

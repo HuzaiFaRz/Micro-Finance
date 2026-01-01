@@ -14,7 +14,7 @@ import AuthHead from "./AuthComponents/AuthHead";
 import FormReducer from "./AuthReducers/FormReducer";
 import { auth } from "../Firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import ErrorToast from "../Components/ErrorToast";
+import MassegeToast from "../Components/MassegeToast";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ const Register = () => {
     labelCSS,
     gettingError,
     gmailRegex,
-    convertingFireBaseErrors,
+    convertingMassege,
     heroIconCSS,
   } = useContext(GlobalContextCreated);
 
@@ -112,7 +112,6 @@ const Register = () => {
     formDispatch({ type: "RESET_FORM" });
     setLoading(false);
     isValid = false;
-    convertingFireBaseErrors("");
   };
 
   const registerFormHandler = async () => {
@@ -145,17 +144,13 @@ const Register = () => {
           formValues.Email,
           formValues.Password
         );
+        convertingMassege("Sign In Success", null, null, null);
         resetForm();
         navigate("/");
       } catch (error) {
         setLoading(false);
-        console.log(error?.message);
-        convertingFireBaseErrors(
-          error?.message,
-          errorParaRef,
-          lableRef,
-          inputRef
-        );
+        console.error(error?.message);
+        convertingMassege(error?.message, errorParaRef, lableRef, inputRef);
       } finally {
         setLoading(false);
       }
@@ -168,7 +163,7 @@ const Register = () => {
       <div
         className={`w-full h-dvh flex flex-col tablet:flex-row justify-between items-start ${mainColor}`}
       >
-        <ErrorToast />
+        <MassegeToast />
         <AuthImage />
         <div
           className={`flex flex-col justify-between items-center tablet:w-[50%] w-full h-full px-4`}

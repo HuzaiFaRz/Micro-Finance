@@ -53,7 +53,7 @@ button {
 .loading-dot {
   width: 15px;
   height: 15px;
-  background: black;
+  background: white;
   border-radius: 50px;
   margin-right: 8px;
   margin-top: 20px;

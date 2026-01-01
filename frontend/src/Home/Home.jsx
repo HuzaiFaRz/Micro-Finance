@@ -82,8 +82,8 @@ const Home = () => {
         spaceBetween={50}
         slidesPerView={1}
         className={`w-full h-full`}
-        loop
-        centeredSlides={true}
+        // loop
+        // centeredSlides={true}
       >
         {swiperContent.map((elem, index) => {
           const { heading, paragraph, background } = elem;
@@ -92,6 +92,7 @@ const Home = () => {
               <SwiperSlide className={`w-full h-full relative`} key={index}>
                 <img
                   className="min-w-full h-svh bg-no-repeat object-cover brightness-50"
+                  loading="lazy"
                   src={background}
                 />
                 <div className="absolute top-1/2 -translate-y-1/2 flex flex-col items-start gap-5 px-6 tablet:px-10 text-main">
@@ -113,7 +114,7 @@ const Home = () => {
           );
         })}
       </Swiper>
-      <div className="w-full h-full flex flex-wrap justify-evenly items-center px-3 pb-5 gap-6 bg-black">
+      <div className="w-full h-full flex flex-wrap justify-evenly items-center px-3 pb-5 pt-5 gap-6 bg-black">
         <h1 className="w-full text-main font-elmssans-bold text-center text-6xl">
           Loan Categories
         </h1>
@@ -128,6 +129,7 @@ const Home = () => {
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
+                loading="lazy"
               >
                 <div className="absolute inset-0 bg-black/70 backdop-blur-sm flex flex-col justify-evenly items-start px-5 text-white">
                   <h1 className="text-3xl font-elmssans-bold">{heading}</h1>

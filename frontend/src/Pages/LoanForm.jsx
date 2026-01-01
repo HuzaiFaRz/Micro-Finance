@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const LoanForm = () => {
-  return (
-    <div>LoanForm</div>
-  )
-}
+  return <div className="w-full h-svh">LoanForm</div>;
+};
 
-export default LoanForm
+export default LoanForm;

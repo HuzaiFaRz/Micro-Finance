@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router";
 import { GlobalContextCreated } from "./GlobalContext";
+import MassegeToast from "../Components/MassegeToast";
 
 const GlobalContextProvider = ({ children }) => {
   const matchMedia = window.matchMedia("(prefers-color-scheme: dark)");
@@ -9,8 +10,10 @@ const GlobalContextProvider = ({ children }) => {
     checkingLS ? checkingLS : matchMedia.matches ? "dark" : "light"
   );
   const [authHeadHeading, setAuthHeadHeading] = useState();
-  const [errorMsg, setErrorMsg] = useState("");
+  const [toastMsg, setToastMsg] = useState("");
   const pageLocation = useLocation();
+
+  const [toastMsgColor, setToastMsgColor] = useState("");
 
   const inputsError = [
     { type: "required", message: "Required" },
@@ -91,62 +94,69 @@ const GlobalContextProvider = ({ children }) => {
     }
   };
 
-  const convertingFireBaseErrors = (code, errorParaRef, lableRef, inputRef) => {
+  const convertingMassege = (code, errorParaRef, lableRef, inputRef) => {
+    if (!errorParaRef && !lableRef && !inputRef) {
+      setToastMsg(code);
+      setToastMsgColor("text-green-500");
+      return;
+    }
+
+    setToastMsgColor("text-red-500");
+
     if (code.includes("email")) {
       gettingError(
         "firebase",
-        errorParaRef.current.filter((e) => e.id === "Error-Para-Email"),
-        lableRef.current.filter((e) => e.id === "Label-Email"),
-        inputRef.current.filter((e) => e.id === "Email")
+        errorParaRef?.current.filter((e) => e.id === "Error-Para-Email"),
+        lableRef?.current.filter((e) => e.id === "Label-Email"),
+        inputRef?.current.filter((e) => e.id === "Email")
       );
-    } else if (code.includes("password")) {
-      gettingError(
-        "firebase",
-        errorParaRef.current.filter((e) => e.id === "Error-Para-Password"),
-        lableRef.current.filter((e) => e.id === "Label-Password"),
-        inputRef.current.filter((e) => e.id === "Password")
-      );
+      if (code.includes("email-already-in-use")) {
+        setToastMsg("This email is already in use");
+      } else if (code.includes("invalid-email")) {
+        setToastMsg("Please enter a valid email address");
+      }
+      return;
     }
-    if (code.includes("auth/email-already-in-use")) {
-      setErrorMsg("This email is already in use");
-    } else if (code.includes("auth/invalid-email")) {
-      setErrorMsg("Please enter a valid email address");
-    } else if (
-      code.includes("auth/user-not-found") ||
-      code.includes("auth/invalid-credential")
+
+    if (
+      code.includes("auth/invalid-credential") ||
+      code.includes("auth/user-not-found")
     ) {
       gettingError(
         "firebase",
-        errorParaRef.current,
-        lableRef.current,
-        inputRef.current
+        errorParaRef?.current,
+        lableRef?.current,
+        inputRef?.current
       );
-      setErrorMsg("Invalid email or password");
-    } else if (code.includes("auth/wrong-password")) {
-      setErrorMsg("Incorrect password");
-    } else if (code.includes("auth/weak-password")) {
-      setErrorMsg("Password must be at least 6 characters");
-    } else if (code.includes("auth/too-many-requests")) {
-      setErrorMsg("Too many attempts. Please try again later");
-    } else if (code.includes("auth/network-request-failed")) {
-      setErrorMsg("Network error. Check your internet connection");
-    } else if (code.includes("auth/user-disabled")) {
-      setErrorMsg(
-        "Your account has been disabled. Please contact support or try again later."
-      );
-    } else if (code.includes("permission-denied")) {
-      setErrorMsg("You do not have permission to perform this action");
-    } else if (code.includes("unauthenticated")) {
-      setErrorMsg("Please login to continue");
-    } else if (code.includes("not-found")) {
-      setErrorMsg("Requested data not found");
-    } else if (code.includes("unavailable")) {
-      setErrorMsg("Service is temporarily unavailable");
-    } else if (code.includes("deadline-exceeded")) {
-      setErrorMsg("Request timed out. Please try again");
+
+      setToastMsg("Invalid email or password");
+      return;
     }
 
-    setErrorMsg("Plese Try Again Later");
+    if (code.includes("password")) {
+      gettingError(
+        "firebase",
+        errorParaRef?.current.filter((e) => e.id === "Error-Para-Password"),
+        lableRef?.current.filter((e) => e.id === "Label-Password"),
+        inputRef?.current.filter((e) => e.id === "Password")
+      );
+      if (code.includes("auth/wrong-password")) {
+        setToastMsg("Incorrect password");
+      } else if (code.includes("auth/weak-password")) {
+        setToastMsg("Password must be at least 6 characters");
+      }
+      return;
+    }
+
+    if (code.includes("too-many-requests")) {
+      setToastMsg("Too many attempts. Please try again later");
+    } else if (code.includes("network-request-failed")) {
+      setToastMsg("Network error. Check your internet connection");
+    } else if (code.includes("user-disabled")) {
+      setToastMsg("Your account has been disabled");
+    } else {
+      setToastMsg("Something went wrong. Please try again later.");
+    }
   };
 
   useEffect(() => {
@@ -174,13 +184,15 @@ const GlobalContextProvider = ({ children }) => {
           regex,
           gmailRegex,
           gettingError,
-          convertingFireBaseErrors,
-          setErrorMsg,
-          errorMsg,
+          convertingMassege,
+          toastMsg,
+          setToastMsg,
           heroIconCSS,
+          toastMsgColor,
         }}
       >
         {children}
+        <MassegeToast />
         <Outlet />
       </GlobalContextCreated.Provider>
     </Fragment>

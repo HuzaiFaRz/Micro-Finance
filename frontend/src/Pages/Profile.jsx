@@ -7,7 +7,10 @@ const Profile = () => {
   console.log(isUser);
   return (
     <Fragment>
+      <div className="w-full h-svh">
+
       <h1>Profile</h1>
+      </div>
     </Fragment>
   );
 };

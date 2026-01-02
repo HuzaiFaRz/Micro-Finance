@@ -5,10 +5,12 @@ import AuthLoading from "../Components/AuthLoading";
 
 const LockRoute = () => {
   const { isUser, loading } = AuthUseContext();
+
   if (loading) {
     return <AuthLoading />;
   }
-  if (!isUser) {
+
+  if (isUser?.userCredential === null) {
     return <Navigate to={"/sign-in"} replace />;
   }
 

@@ -128,7 +128,6 @@ const GlobalContextProvider = ({ children }) => {
         lableRef?.current,
         inputRef?.current
       );
-
       setToastMsg("Invalid email or password");
       return;
     }

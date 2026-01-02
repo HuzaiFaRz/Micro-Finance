@@ -4,13 +4,13 @@ import { useContext, useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../Firebase/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
+import AuthLoading from "../Components/AuthLoading";
 
 export const AuthUseContext = () => useContext(AuthContextCreated);
 
 const AuthContextProvider = ({ children }) => {
-  const [isUser, setIsuser] = useState(null);
+  const [isUser, setIsuser] = useState();
   const [loading, setLoading] = useState(true);
-  const location = useLocation();
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       setLoading(false);
@@ -23,7 +23,10 @@ const AuthContextProvider = ({ children }) => {
           }));
         });
       } else {
-        setIsuser(null);
+        setIsuser((prev) => ({
+          ...prev,
+          userCredential: null,
+        }));
       }
     });
   }, []);
@@ -32,8 +35,14 @@ const AuthContextProvider = ({ children }) => {
     <AuthContextCreated.Provider
       value={{ isUser, setIsuser, loading, setLoading }}
     >
-      {children}
-      <Outlet />
+      {loading ? (
+        <AuthLoading />
+      ) : (
+        <>
+          {children}
+          <Outlet />
+        </>
+      )}
     </AuthContextCreated.Provider>
   );
 };

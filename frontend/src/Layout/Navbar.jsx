@@ -1,8 +1,7 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { NavLink } from "react-router";
 import {
   Bars3BottomRightIcon,
-  Bars3Icon,
   CurrencyDollarIcon,
   XMarkIcon,
 } from "@heroicons/react/16/solid";
@@ -10,17 +9,17 @@ import { AuthUseContext } from "../Contexts/AuthContextProvider";
 
 const Navbar = () => {
   const { isUser } = AuthUseContext();
-  console.log(isUser?.Name);
+
   let [navbarButton, setNavbarButton] = useState(false);
 
   const nav_Links = [
     { linkName: "Home", linkURL: "/" },
-    { linkName: "Loan Categories", linkURL: "loan-categories" },
     { linkName: "Contact Us", linkURL: "contact" },
     { linkName: "About Us", linkURL: "about" },
     { linkName: "Dashboard", linkURL: "dashboard" },
     { linkName: "Apply Now", linkURL: "loan-form" },
   ];
+
   nav_Links.map((e) => {
     return Object.freeze(e);
   });
@@ -30,6 +29,18 @@ const Navbar = () => {
   };
 
   document.body.style.overflow = navbarButton ? "hidden" : "";
+
+  const windowResizeing = () => {
+    if (window.innerWidth < 830) {
+      document.body.style.overflow = "";
+      return;
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", windowResizeing);
+    return () => window.removeEventListener("resize", windowResizeing);
+  }, []);
 
   return (
     <Fragment>
@@ -48,8 +59,13 @@ const Navbar = () => {
           )}
           <NavLink
             to={"profile"}
-            className={"w-10 h-10 bg-main rounded-full"}
-          ></NavLink>
+            className={
+              "w-10 h-10 bg-main rounded-full flex justify-center items-center text-black text-xl font-elmssans-bold "
+            }
+          >
+            {" "}
+            {isUser ? isUser?.Name[0].toUpperCase() : `Hi`}
+          </NavLink>
         </header>
 
         <nav
@@ -71,7 +87,7 @@ const Navbar = () => {
                   <NavLink
                     to={linkURL}
                     className={`px-3 py-2 hover:bg-hover rounded-lg ${
-                      index === 5 &&
+                      index === 4 &&
                       "bg-card rounded-lg ml-0 desktop:ml-8 tablet:ml-3px px-4 py-2"
                     }`}
                   >
@@ -88,7 +104,7 @@ const Navbar = () => {
               "w-10 h-10 bg-main rounded-full hidden tablet:flex tablet:justify-center tablet:items-center text-black text-xl font-elmssans-bold"
             }
           >
-            {isUser?.Name[0].toUpperCase() || `Hi`}
+            {isUser ? isUser?.Name[0].toUpperCase() : `Hi`}
           </NavLink>
         </nav>
       </>

@@ -1,6 +1,11 @@
-import React from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
+import React, { Fragment, useEffect, useState } from "react";
 import { NavLink } from "react-router";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 import homeSlideImage1 from "../assets/Images/home-slide-img-1.jpg";
 import homeSlideImage2 from "../assets/Images/home-slide-img-2.jpg";
@@ -13,6 +18,8 @@ import vehicleLoanImg from "../assets/Images/vehicleLoanImg.jpg";
 import emergencyLoanImg from "../assets/Images/emergencyLoanImg.jpg";
 
 const Home = () => {
+  const [cardPreview, setCardPreview] = useState();
+
   const swiperContent = [
     {
       heading: "Smart Micro - Finance Solutions",
@@ -33,6 +40,7 @@ const Home = () => {
       background: homeSlideImage3,
     },
   ];
+
   const cardContent = [
     {
       heading: "Home Loan",
@@ -76,79 +84,117 @@ const Home = () => {
     return Object.freeze(e);
   });
 
+  cardContent.map((e) => {
+    return Object.freeze(e);
+  });
+
+  const windowResizeing = () => {
+    if (window.innerWidth < 800) {
+      setCardPreview(true);
+    } else {
+      setCardPreview(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", windowResizeing);
+    return () => window.removeEventListener("resize", windowResizeing);
+  }, []);
+
   return (
-    <React.Fragment>
-      <Swiper
-        spaceBetween={50}
-        slidesPerView={1}
-        className={`w-full h-full`}
-        // loop
-        // centeredSlides={true}
-      >
-        {swiperContent.map((elem, index) => {
-          const { heading, paragraph, background } = elem;
-          return (
-            <React.Fragment key={index}>
-              <SwiperSlide className={`w-full h-full relative`} key={index}>
-                <img
-                  className="min-w-full h-svh bg-no-repeat object-cover brightness-50"
-                  loading="lazy"
-                  src={background}
-                />
-                <div className="absolute top-1/2 -translate-y-1/2 flex flex-col items-start gap-5 px-6 tablet:px-10 text-main">
-                  <h1 className="text-6xl tablet:text-7xl desktop:text-8xl  w-full desktop:w-full font-elmssans-bold">
-                    {heading}
-                  </h1>
-                  <p className="text-2xl font-elmssans-medium w-full desktop:w-full">
-                    {paragraph}
-                  </p>
-                  <NavLink
-                    to={"/loan-form"}
-                    className="bg-card text-main rounded-2xl px-5 py-2 font-elmssans-medium tracking-wider mt-5"
+    <Fragment>
+      <div className="w-full h-dvh">
+        <Swiper
+          modules={[Autoplay, Pagination, Navigation]}
+          pagination={{ clickable: true }}
+          loop={true}
+          slidesPerView={1}
+          className="w-full h-full"
+        >
+          {swiperContent.map((elem, index) => {
+            const { heading, paragraph, background } = elem;
+            return (
+              <React.Fragment key={index}>
+                <SwiperSlide key={index}>
+                  <div
+                    className="w-full h-full text-main"
+                    style={{
+                      backgroundImage: `url(${background})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
                   >
-                    Apply Now
-                  </NavLink>
-                </div>
-              </SwiperSlide>
-            </React.Fragment>
-          );
-        })}
-      </Swiper>
-      <div className="w-full h-full flex flex-wrap justify-evenly items-center px-3 pb-5 pt-5 gap-6 bg-black">
-        <h1 className="w-full text-main font-elmssans-bold text-center text-6xl">
+                    <div className="absolute inset-0 bg-black/70 backdop-blur-sm  flex flex-col items-start justify-center gap-5 px-6 tablet:px-10">
+                      <h1 className="text-6xl tablet:text-7xl desktop:text-8xl  w-full desktop:w-full font-elmssans-bold">
+                        {heading}
+                      </h1>
+                      <p className="text-2xl font-elmssans-medium w-full desktop:w-full">
+                        {paragraph}
+                      </p>
+                      <NavLink
+                        to={"/loan-form"}
+                        className="bg-card text-main rounded-2xl px-5 py-2 font-elmssans-medium tracking-wider mt-5"
+                      >
+                        Apply Now
+                      </NavLink>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              </React.Fragment>
+            );
+          })}
+        </Swiper>
+      </div>
+
+      <div className="w-full h-full pt-12 pb-10 bg-black flex flex-col justify-center items-center px-10">
+        <h1 className="w-full text-main font-elmssans-bold text-center tablet:text-6xl text-4xl mb-12">
           Loan Categories
         </h1>
-        {cardContent.map((elem, i) => {
-          const { heading, paragraph, background } = elem;
-          return (
-            <React.Fragment key={i}>
-              <div
-                className={`w-[400px] h-[300px]   rounded-md relative overflow-hidden shadow-lg`}
-                style={{
-                  backgroundImage: `url(${background})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-                loading="lazy"
-              >
-                <div className="absolute inset-0 bg-black/70 backdop-blur-sm flex flex-col justify-evenly items-start px-5 text-white">
-                  <h1 className="text-3xl font-elmssans-bold">{heading}</h1>
-                  <p className="text-xl font-elmssans-light">{paragraph}</p>
-                  <NavLink
-                    className={
-                      "text-xl font-elmssans-light bg-layout px-5 py-2 text-main"
-                    }
-                    to={"loan-form"}
+        <Swiper
+          modules={[Autoplay, Pagination, Navigation]}
+          slidesPerView={cardPreview ? 1 : 2}
+          spaceBetween={20}
+          loop={true}
+          autoplay={{
+            delay: 1500,
+            stopOnLastSlide: false,
+          }}
+          allowTouchMove={false}
+          className="w-full h-full cursor-grab"
+        >
+          {cardContent.map((elem, index) => {
+            const { heading, paragraph, background } = elem;
+            return (
+              <React.Fragment key={index}>
+                <SwiperSlide key={index}>
+                  <div
+                    className={`w-full h-[300px] rounded-md relative overflow-hidden shadow-lg`}
+                    style={{
+                      backgroundImage: `url(${background})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
                   >
-                    Apply Now
-                  </NavLink>
-                </div>
-              </div>
-            </React.Fragment>
-          );
-        })}
+                    <div className="absolute inset-0 bg-black/70 backdop-blur-sm flex flex-col justify-evenly items-start px-5 text-white">
+                      <h1 className="text-3xl font-elmssans-bold">{heading}</h1>
+                      <p className="text-xl font-elmssans-light">{paragraph}</p>
+                      <NavLink
+                        className={
+                          "text-xl font-elmssans-light bg-layout px-5 py-2 text-main"
+                        }
+                        to={"loan-form"}
+                      >
+                        Apply Now
+                      </NavLink>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              </React.Fragment>
+            );
+          })}
+        </Swiper>
       </div>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

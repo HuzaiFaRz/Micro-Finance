@@ -216,7 +216,7 @@ const Register = () => {
                     )}
 
                     <p
-                      className={`absolute text-sm top-2 right-2 flex items-center gap-2 tracking-widest text-red-500`}
+                      className={`absolute text-xs tablet:text-sm top-2 right-2 flex items-center gap-2 tracking-widest text-red-500`}
                       id={`Error-Para-${elem}`}
                       ref={(el) => (errorParaRef.current[index] = el)}
                     ></p>
@@ -235,7 +235,7 @@ const Register = () => {
             >
               Sign In
               {loading ? (
-                <ArrowPathRoundedSquareIcon className={heroIconCSS} />
+                <ArrowPathRoundedSquareIcon className={`${heroIconCSS} animate-spin`} />
               ) : (
                 <IdentificationIcon className={heroIconCSS} />
               )}
@@ -249,7 +249,7 @@ const Register = () => {
             >
               Register
               {loading ? (
-                <ArrowPathRoundedSquareIcon className={heroIconCSS} />
+                <ArrowPathRoundedSquareIcon className={`${heroIconCSS} animate-spin`} />
               ) : (
                 <ArrowLongRightIcon className={heroIconCSS} />
               )}

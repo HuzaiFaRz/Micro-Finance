@@ -10,7 +10,7 @@ const LockRoute = () => {
     return <AuthLoading />;
   }
 
-  if (isUser?.userCredential === null) {
+  if (isUser === null) {
     return <Navigate to={"/sign-in"} replace />;
   }
 

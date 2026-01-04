@@ -156,8 +156,9 @@ const Home = () => {
           spaceBetween={20}
           loop={true}
           autoplay={{
-            delay: 1500,
+            delay: 600,
             stopOnLastSlide: false,
+            pauseOnMouseEnter: true,
           }}
           allowTouchMove={false}
           className="w-full h-full cursor-grab"

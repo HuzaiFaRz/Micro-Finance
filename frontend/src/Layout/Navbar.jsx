@@ -1,16 +1,28 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router";
 import {
+  ArrowLeftEndOnRectangleIcon,
   Bars3BottomRightIcon,
   CurrencyDollarIcon,
+  UserIcon,
+  UserPlusIcon,
   XMarkIcon,
 } from "@heroicons/react/16/solid";
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
+import { GlobalContextCreated } from "../Contexts/GlobalContext";
+import Tippy from "@tippyjs/react";
 
 const Navbar = () => {
   const { isUser } = AuthUseContext();
 
+  const { heroIconCSS } = useContext(GlobalContextCreated);
+
   let [navbarButton, setNavbarButton] = useState(false);
+
+  const authButton = [
+    { linkName: "Register", linkURL: "register" },
+    { linkName: "Sign In", linkURL: "sign-in" },
+  ];
 
   const nav_Links = [
     { linkName: "Home", linkURL: "/" },
@@ -57,14 +69,14 @@ const Navbar = () => {
               onClick={() => navbarEvent()}
             />
           )}
+
           <NavLink
             to={"profile"}
             className={
               "w-10 h-10 bg-main rounded-full flex justify-center items-center text-black text-xl font-elmssans-bold "
             }
           >
-            {" "}
-            {isUser ? isUser?.Name[0].toUpperCase() : `Hi`}
+            {isUser?.Name?.toUpperCase()[0] || `Hi`}
           </NavLink>
         </header>
 
@@ -86,9 +98,9 @@ const Navbar = () => {
                 <React.Fragment key={index}>
                   <NavLink
                     to={linkURL}
-                    className={`px-3 py-2 hover:bg-hover rounded-lg ${
-                      index === 4 &&
-                      "bg-card rounded-lg ml-0 desktop:ml-8 tablet:ml-3px px-4 py-2"
+                    className={`px-3 py-2 text-sm hover:underline underline-offset-2 ${
+                      linkName === "Apply Now" &&
+                      "bg-card hover:bg-hover rounded-lg w-fit tablet:w-auto"
                     }`}
                   >
                     {linkName}
@@ -98,14 +110,50 @@ const Navbar = () => {
             })}
           </div>
 
-          <NavLink
-            to={"profile"}
-            className={
-              "w-10 h-10 bg-main rounded-full hidden tablet:flex tablet:justify-center tablet:items-center text-black text-xl font-elmssans-bold"
-            }
-          >
-            {isUser ? isUser?.Name[0].toUpperCase() : `Hi`}
-          </NavLink>
+          <div className="flex justify-center items-center gap-3 font-elmssans-medium mt-12 tablet:mt-0">
+            {isUser === null ? (
+              authButton.map((elem, index) => {
+                const { linkName, linkURL } = elem;
+                return (
+                  <React.Fragment key={index}>
+                    <NavLink
+                      className={
+                        "px-3 py-2 text-sm flex gap-3 bg-green-600 rounded-lg hover:bg-hover"
+                      }
+                      to={linkURL}
+                    >
+                      {linkName}
+                      {index === 0 ? (
+                        <UserPlusIcon className={heroIconCSS} />
+                      ) : (
+                        <UserIcon className={heroIconCSS} />
+                      )}
+                    </NavLink>
+                  </React.Fragment>
+                );
+              })
+            ) : (
+              <button
+                className={
+                  "px-3 py-2 text-sm flex gap-3 bg-red-600 rounded-lg hover:bg-hover"
+                }
+              >
+                LogOut
+                <ArrowLeftEndOnRectangleIcon className={heroIconCSS} />
+              </button>
+            )}
+
+            <Tippy content="Profile" placement="top">
+              <NavLink
+                to={"profile"}
+                className={
+                  "w-10 h-10 bg-main rounded-full hidden tablet:flex tablet:justify-center tablet:items-center text-black text-xl font-elmssans-bold"
+                }
+              >
+                {isUser?.Name?.toUpperCase()[0] || `Hi`}
+              </NavLink>
+            </Tippy>
+          </div>
         </nav>
       </>
     </Fragment>

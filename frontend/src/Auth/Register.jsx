@@ -112,8 +112,6 @@ const Register = () => {
         gettingError("invalid_chars", errorPara, lable, input);
       } else if (/\s{2,}/.test(value) || value.startsWith(" ")) {
         gettingError("leading_space", errorPara, lable, input);
-      } else if (value.length <= 4) {
-        gettingError("too_short", errorPara, lable, input);
       }
     }
 
@@ -144,8 +142,10 @@ const Register = () => {
 
     if (id === "Password") {
       if (/\s+/g.test(value)) {
+        setPassword("");
         gettingError("no_space", errorPara, lable, input);
       } else if (value.length <= 8) {
+        setPassword("");
         gettingError("too_short", errorPara, lable, input);
       } else {
         setPassword(value);
@@ -304,7 +304,7 @@ const Register = () => {
                     )}
 
                     <p
-                      className={`absolute text-sm top-2 right-2 flex items-center gap-2 tracking-widest text-red-500`}
+                      className={`absolute text-xs tablet:text-sm top-2 right-2 flex items-center gap-2 tracking-widest text-red-500`}
                       id={`Error-Para-${elem}`}
                       ref={(el) => (errorParaRef.current[index] = el)}
                     ></p>
@@ -339,7 +339,9 @@ const Register = () => {
             >
               Sign In
               {loading ? (
-                <ArrowPathRoundedSquareIcon className={heroIconCSS} />
+                <ArrowPathRoundedSquareIcon
+                  className={`${heroIconCSS} animate-spin`}
+                />
               ) : (
                 <ArrowLongRightIcon className={heroIconCSS} />
               )}

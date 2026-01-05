@@ -94,68 +94,61 @@ const GlobalContextProvider = ({ children }) => {
     }
   };
 
+  const authErrorMessages = {
+    "invalid-email": "The email address is badly formatted.",
+    "user-disabled": "This user account has been disabled.",
+    "auth/user-not-found": "No user found with this email.",
+    "auth/wrong-password": "Incorrect password. Try again.",
+    "too-many-requests": "Too many attempts. Please try again later.",
+    "network-request-failed": "Network error. Check your internet.",
+    "invalid-user-token": "Session expired. Login again.",
+    "user-token-expired": "Session expired. Login again.",
+    "requires-recent-login": "Please login again to continue.",
+    "operation-not-allowed": "This sign-in method is not enabled.",
+    "internal-error": "Something went wrong. Please try again.",
+    "email-already-in-use": "This email is already in use.",
+    "auth/weak-password":
+      "Password is too weak. Minimum 6 characters required.",
+    "auth/invalid-credential": "Invalid email or password",
+    "credential-already-in-use":
+      "This credential is already linked to another account.",
+    "account-exists-with-different-credential":
+      "An account already exists with a different credential.",
+    "app-not-authorized": "App is not authorized. Please contact support.",
+  };
+
   const convertingMassege = (code, errorParaRef, lableRef, inputRef) => {
-    if (!errorParaRef && !lableRef && !inputRef) {
+    if (errorParaRef === 200 && lableRef === 200 && inputRef === 200) {
       setToastMsg(code);
       setToastMsgColor("text-green-500");
+    } else if (errorParaRef === 501 && lableRef === 501 && inputRef === 501) {
+      setToastMsg(code);
+      setToastMsgColor("text-red-500");
       return;
     }
-
     setToastMsgColor("text-red-500");
 
-    if (code.includes("email")) {
-      gettingError(
-        "firebase",
-        errorParaRef?.current.filter((e) => e.id === "Error-Para-Email"),
-        lableRef?.current.filter((e) => e.id === "Label-Email"),
-        inputRef?.current.filter((e) => e.id === "Email")
-      );
-      if (code.includes("email-already-in-use")) {
-        setToastMsg("This email is already in use");
-      } else if (code.includes("invalid-email")) {
-        setToastMsg("Please enter a valid email address");
+    Object.entries(authErrorMessages).forEach(([type, msg]) => {
+      if (code.includes(type)) {
+        setToastMsg(msg);
+        return;
       }
-      return;
-    }
-
-    if (
-      code.includes("auth/invalid-credential") ||
-      code.includes("auth/user-not-found")
-    ) {
-      gettingError(
-        "firebase",
-        errorParaRef?.current,
-        lableRef?.current,
-        inputRef?.current
-      );
-      setToastMsg("Invalid email or password");
-      return;
-    }
-
-    if (code.includes("password")) {
-      gettingError(
-        "firebase",
-        errorParaRef?.current.filter((e) => e.id === "Error-Para-Password"),
-        lableRef?.current.filter((e) => e.id === "Label-Password"),
-        inputRef?.current.filter((e) => e.id === "Password")
-      );
-      if (code.includes("auth/wrong-password")) {
-        setToastMsg("Incorrect password");
-      } else if (code.includes("auth/weak-password")) {
-        setToastMsg("Password must be at least 6 characters");
-      }
-      return;
-    }
-
-    if (code.includes("too-many-requests")) {
-      setToastMsg("Too many attempts. Please try again later");
-    } else if (code.includes("network-request-failed")) {
-      setToastMsg("Network error. Check your internet connection");
-    } else if (code.includes("user-disabled")) {
-      setToastMsg("Your account has been disabled");
-    } else {
-      setToastMsg("Something went wrong. Please try again later.");
-    }
+    });
+    gettingError(
+      "firebase",
+      errorParaRef?.current.filter(
+        (e) =>
+          e.id ===
+          (code.includes("email") ? "Error-Para-Email" : "Error-Para-Password")
+      ),
+      lableRef?.current.filter(
+        (e) =>
+          e.id === (code.includes("email") ? "Label-Email" : "Label-Password")
+      ),
+      inputRef?.current.filter(
+        (e) => e.id === (code.includes("email") ? "Email" : "Password")
+      )
+    );
   };
 
   useEffect(() => {

@@ -1,11 +1,10 @@
-import { Outlet, useLocation } from "react-router";
+import { Outlet} from "react-router";
 import { AuthContextCreated } from "./AuthContext";
 import { useContext, useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../Firebase/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import AuthLoading from "../Components/AuthLoading";
-import { GlobalContextCreated } from "./GlobalContext";
 
 export const AuthUseContext = () => useContext(AuthContextCreated);
 

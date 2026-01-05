@@ -1,6 +1,8 @@
 import { Route, Routes, useLocation } from "react-router";
 import "swiper/css";
-import 'tippy.js/dist/tippy.css';
+
+import 'react-tooltip/dist/react-tooltip.css'
+
 import Home from "./Home/Home";
 import Register from "./Auth/Register";
 import SignIn from "./Auth/SignIn";

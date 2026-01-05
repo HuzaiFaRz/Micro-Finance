@@ -144,13 +144,13 @@ const Register = () => {
           formValues.Email,
           formValues.Password
         );
-        convertingMassege("Sign In Success", null, null, null);
+        convertingMassege("Sign In Success", 200, 200, 200);
         resetForm();
         navigate("/");
       } catch (error) {
         setLoading(false);
         console.error(error?.message);
-        convertingMassege(error?.message, errorParaRef, lableRef, inputRef);
+        convertingMassege(error?.code, errorParaRef, lableRef, inputRef);
       } finally {
         setLoading(false);
       }
@@ -235,7 +235,9 @@ const Register = () => {
             >
               Sign In
               {loading ? (
-                <ArrowPathRoundedSquareIcon className={`${heroIconCSS} animate-spin`} />
+                <ArrowPathRoundedSquareIcon
+                  className={`${heroIconCSS} animate-spin`}
+                />
               ) : (
                 <IdentificationIcon className={heroIconCSS} />
               )}
@@ -249,7 +251,9 @@ const Register = () => {
             >
               Register
               {loading ? (
-                <ArrowPathRoundedSquareIcon className={`${heroIconCSS} animate-spin`} />
+                <ArrowPathRoundedSquareIcon
+                  className={`${heroIconCSS} animate-spin`}
+                />
               ) : (
                 <ArrowLongRightIcon className={heroIconCSS} />
               )}

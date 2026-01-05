@@ -2,7 +2,8 @@ import { Fragment, useContext, useEffect, useState } from "react";
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 
 const MassegeToast = () => {
-  const { toastMsg, setToastMsg,toastMsgColor } = useContext(GlobalContextCreated);
+  const { toastMsg, setToastMsg, toastMsgColor } =
+    useContext(GlobalContextCreated);
   const [errorShowing, setErrorShowing] = useState(true);
   useEffect(() => {
     if (toastMsg) {

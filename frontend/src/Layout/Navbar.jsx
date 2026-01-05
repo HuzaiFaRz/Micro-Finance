@@ -10,12 +10,16 @@ import {
 } from "@heroicons/react/16/solid";
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
-import Tippy from "@tippyjs/react";
+import { Tooltip } from "react-tooltip";
+import { signOut } from "firebase/auth";
+import { auth } from "../Firebase/firebase";
 
 const Navbar = () => {
   const { isUser } = AuthUseContext();
 
-  const { heroIconCSS } = useContext(GlobalContextCreated);
+  const [loading, setLoading] = useState(false);
+
+  const { heroIconCSS, convertingMassege } = useContext(GlobalContextCreated);
 
   let [navbarButton, setNavbarButton] = useState(false);
 
@@ -54,6 +58,20 @@ const Navbar = () => {
     return () => window.removeEventListener("resize", windowResizeing);
   }, []);
 
+  const logoutHandler = async () => {
+    try {
+      setLoading(true);
+      await signOut(auth);
+      convertingMassege("Sign Out Success", 200, 200, 200);
+    } catch (error) {
+      setLoading(false);
+      console.error(error?.message);
+      convertingMassege(error?.code, 501, 501, 501);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Fragment>
       <>
@@ -85,7 +103,7 @@ const Navbar = () => {
             navbarButton && "left-0"
           }`}
         >
-          <div className="nav-start absolute bottom-8 tablet:static">
+          <div className="nav-start absolute top-20 tablet:static">
             <NavLink to={"/"}>
               <CurrencyDollarIcon className="size-14 tablet:size-10" />
             </NavLink>
@@ -110,7 +128,7 @@ const Navbar = () => {
             })}
           </div>
 
-          <div className="flex justify-center items-center gap-3 font-elmssans-medium mt-12 tablet:mt-0">
+          <div className="flex justify-center items-center gap-3 font-elmssans-medium mt-12 tablet:mt-0 absolute bottom-5 tablet:static">
             {isUser === null ? (
               authButton.map((elem, index) => {
                 const { linkName, linkURL } = elem;
@@ -137,22 +155,36 @@ const Navbar = () => {
                 className={
                   "px-3 py-2 text-sm flex gap-3 bg-red-600 rounded-lg hover:bg-hover"
                 }
+                onClick={logoutHandler}
+                disabled={loading}
               >
                 LogOut
-                <ArrowLeftEndOnRectangleIcon className={heroIconCSS} />
+                {loading ? (
+                  <ArrowPathRoundedSquareIcon
+                    className={`${heroIconCSS} animate-spin`}
+                  />
+                ) : (
+                  <ArrowLeftEndOnRectangleIcon className={heroIconCSS} />
+                )}
               </button>
             )}
 
-            <Tippy content="Profile" placement="top">
-              <NavLink
-                to={"profile"}
-                className={
-                  "w-10 h-10 bg-main rounded-full hidden tablet:flex tablet:justify-center tablet:items-center text-black text-xl font-elmssans-bold"
-                }
-              >
-                {isUser?.Name?.toUpperCase()[0] || `Hi`}
-              </NavLink>
-            </Tippy>
+            <Tooltip
+              id="my-tooltip"
+              variant="dark"
+              place="bottom-end"
+              content="Profile"
+              anchorSelect=".profile-button"
+            />
+
+            <NavLink
+              to={"profile"}
+              className={
+                "profile-button w-10 h-10 bg-main rounded-full hidden tablet:flex tablet:justify-center tablet:items-center text-black text-xl font-elmssans-bold"
+              }
+            >
+              {isUser?.Name?.toUpperCase()[0] || `Hi`}
+            </NavLink>
           </div>
         </nav>
       </>

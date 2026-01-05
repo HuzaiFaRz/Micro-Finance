@@ -227,13 +227,13 @@ const Register = () => {
             { merge: true }
           );
         }
-        convertingMassege("Register Success", null, null, null);
+        convertingMassege("Register Success", 200, 200, 200);
         resetForm();
         navigate("/sign-in");
       } catch (error) {
         setLoading(false);
-        convertingMassege(error?.message, errorParaRef, lableRef, inputRef);
         console.error(error?.message);
+        convertingMassege(error?.code, errorParaRef, lableRef, inputRef);
       } finally {
         setLoading(false);
       }

@@ -2,6 +2,7 @@ import React, { Fragment, useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router";
 import {
   ArrowLeftEndOnRectangleIcon,
+  ArrowPathRoundedSquareIcon,
   Bars3BottomRightIcon,
   CurrencyDollarIcon,
   UserIcon,
@@ -19,7 +20,7 @@ const Navbar = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const { heroIconCSS, convertingMassege } = useContext(GlobalContextCreated);
+  const { heroIconCSS, errorToast } = useContext(GlobalContextCreated);
 
   let [navbarButton, setNavbarButton] = useState(false);
 
@@ -59,14 +60,15 @@ const Navbar = () => {
   }, []);
 
   const logoutHandler = async () => {
+    event.preventDefault();
     try {
       setLoading(true);
       await signOut(auth);
-      convertingMassege("Sign Out Success", 200, 200, 200);
+      errorToast("Sign Out Success", 200, 200, 200);
     } catch (error) {
       setLoading(false);
       console.error(error?.message);
-      convertingMassege(error?.code, 501, 501, 501);
+      errorToast(error?.code, null, null, null);
     } finally {
       setLoading(false);
     }

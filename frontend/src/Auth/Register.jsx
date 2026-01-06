@@ -55,10 +55,10 @@ const Register = () => {
     mainColor,
     inputCSS,
     labelCSS,
-    gettingError,
+    inputsErrors,
     regex,
     gmailRegex,
-    convertingMassege,
+    errorToast,
     heroIconCSS,
   } = useContext(GlobalContextCreated);
 
@@ -88,7 +88,7 @@ const Register = () => {
     const errorPara = gettingErrorPara(`Error-Para-${name}`);
     const lable = gettingLable(`Label-${name}`);
     const input = gettingInput(`${name}`);
-    gettingError("ok", errorPara, lable, input);
+    inputsErrors("ok", errorPara, lable, input);
     formDispatch({ type: "INPUT_CHANGE", inputID: id, inputValue: value });
 
     if (
@@ -99,7 +99,7 @@ const Register = () => {
       id === "Repeat Password"
     ) {
       if (!value) {
-        gettingError("required", errorPara, lable, input);
+        inputsErrors("required", errorPara, lable, input);
         if (id === "Password") {
           setPassword("");
         }
@@ -109,15 +109,15 @@ const Register = () => {
 
     if (id === "Name") {
       if (regex.test(value)) {
-        gettingError("invalid_chars", errorPara, lable, input);
+        inputsErrors("invalid_chars", errorPara, lable, input);
       } else if (/\s{2,}/.test(value) || value.startsWith(" ")) {
-        gettingError("leading_space", errorPara, lable, input);
+        inputsErrors("leading_space", errorPara, lable, input);
       }
     }
 
     if (id === "Email") {
       if (!gmailRegex.test(value)) {
-        gettingError("invalid_format", errorPara, lable, input);
+        inputsErrors("invalid_format", errorPara, lable, input);
       }
     }
 
@@ -136,17 +136,17 @@ const Register = () => {
       }
       elem.target.value = format;
       if (digit.length !== 13) {
-        gettingError("invalid_length", errorPara, lable, input);
+        inputsErrors("invalid_length", errorPara, lable, input);
       }
     }
 
     if (id === "Password") {
       if (/\s+/g.test(value)) {
         setPassword("");
-        gettingError("no_space", errorPara, lable, input);
+        inputsErrors("no_space", errorPara, lable, input);
       } else if (value.length <= 8) {
         setPassword("");
-        gettingError("too_short", errorPara, lable, input);
+        inputsErrors("too_short", errorPara, lable, input);
       } else {
         setPassword(value);
       }
@@ -154,10 +154,10 @@ const Register = () => {
 
     if (id === "Repeat Password") {
       if (!password.trim() && password.length <= 8) {
-        gettingError("password_empty_when_repeat", errorPara, lable, input);
+        inputsErrors("password_empty_when_repeat", errorPara, lable, input);
         elem.target.value = "";
       } else if (value !== password) {
-        gettingError("password_mismatch", errorPara, lable, input);
+        inputsErrors("password_mismatch", errorPara, lable, input);
       }
     }
 
@@ -203,8 +203,8 @@ const Register = () => {
         const errorPara = errorParaRef.current[i];
         const label = lableRef.current[i];
         const input = inputRef.current[i];
-        gettingError("required", [errorPara], [label], [input]);
-        gettingError("required", [errorPara], [label], [input]);
+        inputsErrors("required", [errorPara], [label], [input]);
+        inputsErrors("required", [errorPara], [label], [input]);
         isValid = false;
       }
     });
@@ -227,13 +227,13 @@ const Register = () => {
             { merge: true }
           );
         }
-        convertingMassege("Register Success", 200, 200, 200);
+        errorToast("Register Success", 200, 200, 200);
         resetForm();
         navigate("/sign-in");
       } catch (error) {
         setLoading(false);
         console.error(error?.message);
-        convertingMassege(error?.code, errorParaRef, lableRef, inputRef);
+        errorToast(error?.code, errorParaRef, lableRef, inputRef);
       } finally {
         setLoading(false);
       }

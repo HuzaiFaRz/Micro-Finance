@@ -1,7 +1,7 @@
-import { Route, Routes, useLocation } from "react-router";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 import "swiper/css";
 
-import 'react-tooltip/dist/react-tooltip.css'
+import "react-tooltip/dist/react-tooltip.css";
 
 import Home from "./Home/Home";
 import Register from "./Auth/Register";
@@ -12,11 +12,12 @@ import LoanForm from "./Pages/LoanForm";
 import LoanCategories from "./Pages/LoanCategories";
 import Contact from "./Pages/Contact";
 import { About } from "./Pages/About";
-import { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import Layout from "./Layout/Layout";
 import GlobalContextProvider from "./Contexts/GlobalContextProvider";
 import AuthContextProvider from "./Contexts/AuthContextProvider";
 import LockRoute from "./Routes/LockRoute";
+import MassegeToast from "./Components/MassegeToast";
 
 const App = () => {
   const pageLocation = useLocation();
@@ -36,31 +37,28 @@ const App = () => {
   }, [pageLocation]);
 
   return (
-    <Fragment>
+    <React.Fragment>
+      <MassegeToast />
       <Routes>
         <Route element={<GlobalContextProvider />}>
           <Route element={<AuthContextProvider />}>
+            <Route path="register" element={<Register />} />
+            <Route path="sign-in" element={<SignIn />} />
             <Route element={<Layout />}>
               <Route path="/" element={<Home />} />
               <Route path="loan-categories" element={<LoanCategories />} />
               <Route path="contact" element={<Contact />} />
               <Route path="about" element={<About />} />
-            </Route>
-
-            <Route element={<LockRoute />}>
-              <Route element={<Layout />}>
+              <Route element={<LockRoute />}>
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="loan-form" element={<LoanForm />} />
               </Route>
             </Route>
-
-            <Route path="register" element={<Register />} />
-            <Route path="sign-in" element={<SignIn />} />
           </Route>
         </Route>
       </Routes>
-    </Fragment>
+    </React.Fragment>
   );
 };
 

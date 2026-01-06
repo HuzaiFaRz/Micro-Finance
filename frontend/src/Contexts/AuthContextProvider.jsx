@@ -1,19 +1,18 @@
-import { Outlet} from "react-router";
 import { AuthContextCreated } from "./AuthContext";
 import { useContext, useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../Firebase/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
+import { Outlet } from "react-router";
 import AuthLoading from "../Components/AuthLoading";
 
 export const AuthUseContext = () => useContext(AuthContextCreated);
 
-const AuthContextProvider = ({ children }) => {
+const AuthContextProvider = () => {
   const [isUser, setIsuser] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      setLoading(false);
       if (user) {
         onSnapshot(doc(db, "Users", user.uid), (doc) => {
           if (doc.exists()) {
@@ -21,10 +20,12 @@ const AuthContextProvider = ({ children }) => {
               userCredential: user,
               ...doc.data(),
             });
+            setLoading(false);
             return;
           }
         });
       } else {
+        setLoading(false);
         setIsuser(null);
       }
     });
@@ -34,16 +35,8 @@ const AuthContextProvider = ({ children }) => {
     <AuthContextCreated.Provider
       value={{ isUser, setIsuser, loading, setLoading }}
     >
-      {loading ? (
-        <AuthLoading />
-      ) : (
-        <>
-          {children}
-          <Outlet />
-        </>
-      )}
+      {loading ? <AuthLoading /> : <Outlet />}
     </AuthContextCreated.Provider>
   );
 };
-
 export default AuthContextProvider;

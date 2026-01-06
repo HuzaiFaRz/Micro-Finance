@@ -40,9 +40,9 @@ const Register = () => {
     mainColor,
     inputCSS,
     labelCSS,
-    gettingError,
+    inputsErrors,
     gmailRegex,
-    convertingMassege,
+    errorToast,
     heroIconCSS,
   } = useContext(GlobalContextCreated);
 
@@ -72,19 +72,19 @@ const Register = () => {
     const errorPara = gettingErrorPara(`Error-Para-${name}`);
     const lable = gettingLable(`Label-${name}`);
     const input = gettingInput(`${name}`);
-    gettingError("ok", errorPara, lable, input);
+    inputsErrors("ok", errorPara, lable, input);
     formDispatch({ type: "INPUT_CHANGE", inputID: id, inputValue: value });
 
     if (id === "Email" || id === "Password") {
       if (!value) {
-        gettingError("required", errorPara, lable, input);
+        inputsErrors("required", errorPara, lable, input);
         return;
       }
     }
 
     if (id === "Email") {
       if (!gmailRegex.test(value)) {
-        gettingError("invalid_format", errorPara, lable, input);
+        inputsErrors("invalid_format", errorPara, lable, input);
       }
     }
 
@@ -130,8 +130,8 @@ const Register = () => {
         const errorPara = errorParaRef.current[i];
         const label = lableRef.current[i];
         const input = inputRef.current[i];
-        gettingError("required", [errorPara], [label], [input]);
-        gettingError("required", [errorPara], [label], [input]);
+        inputsErrors("required", [errorPara], [label], [input]);
+        inputsErrors("required", [errorPara], [label], [input]);
         isValid = false;
       }
     });
@@ -144,13 +144,13 @@ const Register = () => {
           formValues.Email,
           formValues.Password
         );
-        convertingMassege("Sign In Success", 200, 200, 200);
+        errorToast("Sign In Success", 200, 200 , 200);
         resetForm();
         navigate("/");
       } catch (error) {
         setLoading(false);
         console.error(error?.message);
-        convertingMassege(error?.code, errorParaRef, lableRef, inputRef);
+        errorToast(error?.code, errorParaRef, lableRef, inputRef);
       } finally {
         setLoading(false);
       }

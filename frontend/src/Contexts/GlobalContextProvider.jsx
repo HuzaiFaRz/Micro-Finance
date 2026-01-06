@@ -3,7 +3,7 @@ import { Outlet, useLocation } from "react-router";
 import { GlobalContextCreated } from "./GlobalContext";
 import MassegeToast from "../Components/MassegeToast";
 
-const GlobalContextProvider = ({ children }) => {
+const GlobalContextProvider = () => {
   const matchMedia = window.matchMedia("(prefers-color-scheme: dark)");
   const checkingLS = localStorage.getItem("theme");
   const [windowMode, setWindowMode] = useState(
@@ -15,7 +15,7 @@ const GlobalContextProvider = ({ children }) => {
 
   const [toastMsgColor, setToastMsgColor] = useState("");
 
-  const inputsError = [
+  const inputErrorMsg = [
     { type: "required", message: "Required" },
     { type: "firebase", message: "Error" },
     { type: "no_space", message: "No spaces" },
@@ -63,8 +63,8 @@ const GlobalContextProvider = ({ children }) => {
       : setAuthHeadHeading("Sign In");
   };
 
-  const gettingError = (type, errorPara, lable, input) => {
-    const msg = inputsError.find((e) => e.type === type);
+  const inputsErrors = (type, errorPara, lable, input) => {
+    const msg = inputErrorMsg.find((e) => e.type === type);
     if (errorPara && lable && input) {
       if (msg.type === "ok") {
         input?.forEach((e) => {
@@ -117,38 +117,46 @@ const GlobalContextProvider = ({ children }) => {
     "app-not-authorized": "App is not authorized. Please contact support.",
   };
 
-  const convertingMassege = (code, errorParaRef, lableRef, inputRef) => {
+  const errorToast = (code, errorParaRef, lableRef, inputRef) => {
     if (errorParaRef === 200 && lableRef === 200 && inputRef === 200) {
       setToastMsg(code);
       setToastMsgColor("text-green-500");
-    } else if (errorParaRef === 501 && lableRef === 501 && inputRef === 501) {
-      setToastMsg(code);
-      setToastMsgColor("text-red-500");
       return;
     }
+
     setToastMsgColor("text-red-500");
 
-    Object.entries(authErrorMessages).forEach(([type, msg]) => {
-      if (code.includes(type)) {
-        setToastMsg(msg);
-        return;
-      }
+    const gettingError = Object.entries(authErrorMessages).find(([type]) => {
+      return code.includes(type);
     });
-    gettingError(
-      "firebase",
-      errorParaRef?.current.filter(
-        (e) =>
-          e.id ===
-          (code.includes("email") ? "Error-Para-Email" : "Error-Para-Password")
-      ),
-      lableRef?.current.filter(
-        (e) =>
-          e.id === (code.includes("email") ? "Label-Email" : "Label-Password")
-      ),
-      inputRef?.current.filter(
-        (e) => e.id === (code.includes("email") ? "Email" : "Password")
-      )
-    );
+
+    if (gettingError) {
+      setToastMsg(`${gettingError[0]} : ${gettingError[1]}`);
+      if (gettingError[0].includes("email")) {
+        inputsErrors(
+          "firebase",
+          errorParaRef.current.filter((e) => e.id === "Error-Para-Email"),
+          lableRef.current.filter((e) => e.id === "Label-Email"),
+          inputRef.current.filter((e) => e.id === "Email")
+        );
+      } else if (gettingError[0].includes("password")) {
+        inputsErrors(
+          "firebase",
+          errorParaRef.current.filter((e) => e.id === "Error-Para-password"),
+          lableRef.current.filter((e) => e.id === "Label-password"),
+          inputRef.current.filter((e) => e.id === "password")
+        );
+      } else if (code.includes("auth/invalid-credential")) {
+        inputsErrors(
+          "firebase",
+          errorParaRef.current.map((e) => e),
+          lableRef.current.map((e) => e),
+          inputRef.current.map((e) => e)
+        );
+      }
+    } else {
+      setToastMsg(code);
+    }
   };
 
   useEffect(() => {
@@ -172,19 +180,17 @@ const GlobalContextProvider = ({ children }) => {
           mainColor,
           inputCSS,
           labelCSS,
-          inputsError,
+          inputErrorMsg,
           regex,
           gmailRegex,
-          gettingError,
-          convertingMassege,
+          inputsErrors,
+          errorToast,
           toastMsg,
           setToastMsg,
           heroIconCSS,
           toastMsgColor,
         }}
       >
-        {children}
-        <MassegeToast />
         <Outlet />
       </GlobalContextCreated.Provider>
     </Fragment>

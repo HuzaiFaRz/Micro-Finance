@@ -1,9 +1,8 @@
 import { Fragment, useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router";
 import { GlobalContextCreated } from "./GlobalContext";
-import MassegeToast from "../Components/MassegeToast";
 
-const GlobalContextProvider = () => {
+const GlobalContextProvider = ({ children }) => {
   const matchMedia = window.matchMedia("(prefers-color-scheme: dark)");
   const checkingLS = localStorage.getItem("theme");
   const [windowMode, setWindowMode] = useState(
@@ -132,27 +131,45 @@ const GlobalContextProvider = () => {
 
     if (gettingError) {
       setToastMsg(`${gettingError[0]} : ${gettingError[1]}`);
-      if (gettingError[0].includes("email")) {
-        inputsErrors(
-          "firebase",
-          errorParaRef.current.filter((e) => e.id === "Error-Para-Email"),
-          lableRef.current.filter((e) => e.id === "Label-Email"),
-          inputRef.current.filter((e) => e.id === "Email")
-        );
-      } else if (gettingError[0].includes("password")) {
-        inputsErrors(
-          "firebase",
-          errorParaRef.current.filter((e) => e.id === "Error-Para-password"),
-          lableRef.current.filter((e) => e.id === "Label-password"),
-          inputRef.current.filter((e) => e.id === "password")
-        );
-      } else if (code.includes("auth/invalid-credential")) {
+      inputsErrors(
+        "firebase",
+        errorParaRef.current.filter(
+          (e) =>
+            e.id ===
+            (gettingError[0].includes("email")
+              ? "Error-Para-Email"
+              : gettingError[0].includes("password") && "Error-Para-Password")
+        ),
+        lableRef.current.filter(
+          (e) =>
+            e.id ===
+            (gettingError[0].includes("email")
+              ? "Label-Email"
+              : gettingError[0].includes("password") && "Label-password")
+        ),
+        inputRef.current.filter(
+          (e) =>
+            e.id ===
+            (gettingError[0].includes("email")
+              ? "Email"
+              : gettingError[0].includes("password") && "Password")
+        )
+      );
+
+      if (
+        code.includes("auth/invalid-credential") ||
+        code.includes("auth/wrong-password") ||
+        code.includes("auth/user-not-found") ||
+        code.includes("auth/missing-password") ||
+        code.includes("auth/user-disabled")
+      ) {
         inputsErrors(
           "firebase",
           errorParaRef.current.map((e) => e),
           lableRef.current.map((e) => e),
           inputRef.current.map((e) => e)
         );
+        return;
       }
     } else {
       setToastMsg(code);
@@ -191,6 +208,7 @@ const GlobalContextProvider = () => {
           toastMsgColor,
         }}
       >
+        {children}
         <Outlet />
       </GlobalContextCreated.Provider>
     </Fragment>

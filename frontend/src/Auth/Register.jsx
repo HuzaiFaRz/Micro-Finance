@@ -28,6 +28,7 @@ const Register = () => {
   });
 
   const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
 
   const passwordEyeHandler = (elem) => {
     setPasswordEye((prev) => ({
@@ -158,6 +159,8 @@ const Register = () => {
         elem.target.value = "";
       } else if (value !== password) {
         inputsErrors("password_mismatch", errorPara, lable, input);
+      } else {
+        setRepeatPassword(value);
       }
     }
 
@@ -190,6 +193,18 @@ const Register = () => {
   const registerFormHandler = async () => {
     event.preventDefault();
     const errorStatuses = errorParaRef.current.map((e) => e.innerText);
+    if (password !== repeatPassword) {
+      inputsErrors(
+        "password_mismatch",
+        errorParaRef.current.filter(
+          (e) => e.id == "Error-Para-Repeat Password"
+        ),
+        lableRef.current.filter((e) => e.is === "Label-Repeat Password"),
+        inputRef.current.filter((e) => e.id === "Repeat Password")
+      );
+      isValid = false;
+    }
+
     Object.entries(formValues).forEach(([, value], i) => {
       if (
         !value ||
@@ -205,6 +220,7 @@ const Register = () => {
         const input = inputRef.current[i];
         inputsErrors("required", [errorPara], [label], [input]);
         inputsErrors("required", [errorPara], [label], [input]);
+
         isValid = false;
       }
     });

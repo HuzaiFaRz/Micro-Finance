@@ -1,5 +1,5 @@
 import React, { Fragment, useContext, useEffect, useState } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import {
   ArrowLeftEndOnRectangleIcon,
   ArrowPathRoundedSquareIcon,
@@ -16,6 +16,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../Firebase/firebase";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const { isUser } = AuthUseContext();
 
   const [loading, setLoading] = useState(false);
@@ -45,19 +46,23 @@ const Navbar = () => {
     setNavbarButton(!navbarButton);
   };
 
-  document.body.style.overflow = navbarButton ? "hidden" : "";
-
   const windowResizeing = () => {
-    if (window.innerWidth < 830) {
-      document.body.style.overflow = "";
+    if (window.innerWidth > 830) {
+      if (navbarButton) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+      document.body.style.overflow = "auto";
       return;
     }
   };
 
   useEffect(() => {
+    document.body.style.overflow = navbarButton ? "hidden" : "";
     window.addEventListener("resize", windowResizeing);
     return () => window.removeEventListener("resize", windowResizeing);
-  }, []);
+  });
 
   const logoutHandler = async () => {
     event.preventDefault();
@@ -65,6 +70,7 @@ const Navbar = () => {
       setLoading(true);
       await signOut(auth);
       errorToast("Sign Out Success", 200, 200, 200);
+      navigate("/");
     } catch (error) {
       setLoading(false);
       console.error(error?.message);
@@ -101,7 +107,7 @@ const Navbar = () => {
         </header>
 
         <nav
-          className={`bg-layout fixed top-0 tablet:left-0 w-4/5 tablet:w-full h-full tablet:h-16 flex flex-col tablet:flex-row items-center justify-center tablet:justify-between p-4 -left-full z-50 transition-all text-main ${
+          className={`bg-layout fixed top-0 tablet:left-0 w-4/5 tablet:w-full h-full tablet:h-16 flex flex-col tablet:flex-row items-center justify-center tablet:justify-between p-2 -left-full z-50 transition-all text-main ${
             navbarButton && "left-0"
           }`}
         >
@@ -111,14 +117,14 @@ const Navbar = () => {
             </NavLink>
           </div>
 
-          <div className="nav-center flex flex-col tablet:flex-row gap-6 tablet:gap-3 w-full tablet:w-auto font-elmssans-medium tablet:text-sm desktop:text-[16px] text-xl tracking-wide">
+          <div className="nav-center flex flex-col tablet:flex-row gap-4 desktop::gap-3 w-full tablet:w-auto font-elmssans-medium tablet:text-sm desktop:text-[16px] text-xl tracking-wide">
             {nav_Links.map((elem, index) => {
               const { linkName, linkURL } = elem;
               return (
                 <React.Fragment key={index}>
                   <NavLink
                     to={linkURL}
-                    className={`px-3 py-2 text-sm hover:underline underline-offset-2 ${
+                    className={`px-2 desktop:px-5 py-2 desktop:text-sm hover:underline underline-offset-2 ${
                       linkName === "Apply Now" &&
                       "bg-card hover:bg-hover rounded-lg w-fit tablet:w-auto"
                     }`}
@@ -130,7 +136,7 @@ const Navbar = () => {
             })}
           </div>
 
-          <div className="flex justify-center items-center gap-3 font-elmssans-medium mt-12 tablet:mt-0 absolute bottom-5 tablet:static">
+          <div className="flex justify-center items-center tablet:gap-5 gap-3 font-elmssans-medium mt-12 tablet:mt-0 absolute bottom-5 tablet:static">
             {isUser === null ? (
               authButton.map((elem, index) => {
                 const { linkName, linkURL } = elem;
@@ -138,15 +144,15 @@ const Navbar = () => {
                   <React.Fragment key={index}>
                     <NavLink
                       className={
-                        "px-3 py-2 text-sm flex gap-3 bg-green-600 rounded-lg hover:bg-hover"
+                        "px-3 desktop:px-5 py-2 desktop:text-sm text-xs flex gap-1 bg-green-600 rounded-lg hover:bg-hover"
                       }
                       to={linkURL}
                     >
                       {linkName}
                       {index === 0 ? (
-                        <UserPlusIcon className={heroIconCSS} />
+                        <UserPlusIcon className={`size-4`} />
                       ) : (
-                        <UserIcon className={heroIconCSS} />
+                        <UserIcon className={`size-4`} />
                       )}
                     </NavLink>
                   </React.Fragment>
@@ -182,7 +188,7 @@ const Navbar = () => {
             <NavLink
               to={"profile"}
               className={
-                "profile-button w-10 h-10 bg-main rounded-full hidden tablet:flex tablet:justify-center tablet:items-center text-black text-xl font-elmssans-bold"
+                "profile-button w-8 desktop:w-10 desktop:h-10 h-8 bg-main rounded-full hidden tablet:flex tablet:justify-center tablet:items-center text-black desktop:text-xl text-sm font-elmssans-bold"
               }
             >
               {isUser?.Name?.toUpperCase()[0] || `Hi`}

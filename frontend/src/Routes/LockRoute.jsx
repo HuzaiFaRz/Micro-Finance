@@ -13,12 +13,13 @@ const LockRoute = () => {
     }
   }, [errorToast, isUser]);
 
-  if (loading) return <AuthLoading />;
-  if (!isUser) {
-    return <Navigate to={"/sign-in"} replace />;
-  }
-
-  return <Outlet />;
+  return loading ? (
+    <AuthLoading />
+  ) : isUser === null ? (
+    <Navigate to={"/sign-in"} replace />
+  ) : (
+    <Outlet />
+  );
 };
 
 export default LockRoute;

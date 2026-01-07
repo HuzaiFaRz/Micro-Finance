@@ -8,7 +8,7 @@ import AuthLoading from "../Components/AuthLoading";
 
 export const AuthUseContext = () => useContext(AuthContextCreated);
 
-const AuthContextProvider = () => {
+const AuthContextProvider = ({ children }) => {
   const [isUser, setIsuser] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -35,7 +35,14 @@ const AuthContextProvider = () => {
     <AuthContextCreated.Provider
       value={{ isUser, setIsuser, loading, setLoading }}
     >
-      {loading ? <AuthLoading /> : <Outlet />}
+      {loading ? (
+        <AuthLoading />
+      ) : (
+        <>
+          {children}
+          <Outlet />
+        </>
+      )}
     </AuthContextCreated.Provider>
   );
 };

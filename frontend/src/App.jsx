@@ -1,5 +1,4 @@
-import { BrowserRouter, Route, Routes, useLocation } from "react-router";
-import "swiper/css";
+import { Route, Routes, useLocation } from "react-router-dom";
 
 import "react-tooltip/dist/react-tooltip.css";
 
@@ -37,15 +36,15 @@ const App = () => {
   }, [pageLocation]);
 
   return (
-    <React.Fragment>
-      <MassegeToast />
-      <Routes>
-        <Route element={<GlobalContextProvider />}>
-          <Route element={<AuthContextProvider />}>
+    <Fragment>
+      <GlobalContextProvider>
+        <AuthContextProvider>
+          <MassegeToast />
+          <Routes>
             <Route path="register" element={<Register />} />
             <Route path="sign-in" element={<SignIn />} />
-            <Route element={<Layout />}>
-              <Route path="/" element={<Home />} />
+            <Route path="/" element={<Layout />}>
+              <Route path="/" element={<Home />} index />
               <Route path="loan-categories" element={<LoanCategories />} />
               <Route path="contact" element={<Contact />} />
               <Route path="about" element={<About />} />
@@ -55,10 +54,10 @@ const App = () => {
                 <Route path="loan-form" element={<LoanForm />} />
               </Route>
             </Route>
-          </Route>
-        </Route>
-      </Routes>
-    </React.Fragment>
+          </Routes>
+        </AuthContextProvider>
+      </GlobalContextProvider>
+    </Fragment>
   );
 };
 

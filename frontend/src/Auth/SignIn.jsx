@@ -144,7 +144,7 @@ const Register = () => {
           formValues.Email,
           formValues.Password
         );
-        errorToast("Sign In Success", 200, 200 , 200);
+        errorToast("Sign In SuccessFully", 200, 200 , 200);
         resetForm();
         navigate("/");
       } catch (error) {
@@ -163,7 +163,7 @@ const Register = () => {
       <div
         className={`w-full h-dvh flex flex-col tablet:flex-row justify-between items-start ${mainColor}`}
       >
-        <MassegeToast />
+  
         <AuthImage />
         <div
           className={`flex flex-col justify-between items-center tablet:w-[50%] w-full h-full px-4`}

@@ -243,7 +243,7 @@ const Register = () => {
             { merge: true }
           );
         }
-        errorToast("Register Success", 200, 200, 200);
+        errorToast("Register SuccessFully", 200, 200, 200);
         resetForm();
         navigate("/sign-in");
       } catch (error) {
@@ -262,7 +262,6 @@ const Register = () => {
       <div
         className={`w-full h-dvh flex flex-col tablet:flex-row justify-start items-start ${mainColor}`}
       >
-        <MassegeToast />
         <AuthImage />
         <div
           className={`flex flex-col justify-evenly items-center tablet:w-[50%] w-full h-full px-4`}

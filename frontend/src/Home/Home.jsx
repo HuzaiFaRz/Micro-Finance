@@ -116,15 +116,13 @@ const Home = () => {
             return (
               <React.Fragment key={index}>
                 <SwiperSlide key={index}>
-                  <div
-                    className="w-full h-full text-main"
-                    style={{
-                      backgroundImage: `url(${background})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  >
-                    <div className="absolute inset-0 bg-black/70 backdop-blur-sm  flex flex-col items-start justify-center gap-5 px-6 tablet:px-10">
+                  <div className="w-full h-full text-main">
+                    {/* <img
+                      src={background}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover -z-10"
+                    /> */}
+                    <div className="w-full h-full bg-black/70 flex flex-col items-start justify-center gap-5 px-6 tablet:px-10">
                       <h1 className="text-6xl tablet:text-7xl desktop:text-8xl  w-full desktop:w-full font-elmssans-bold">
                         {heading}
                       </h1>
@@ -146,8 +144,8 @@ const Home = () => {
         </Swiper>
       </div>
 
-      <div className="w-full h-full pt-12 pb-10 bg-black flex flex-col justify-center items-center px-10">
-        <h1 className="w-full text-main font-elmssans-bold text-center tablet:text-6xl text-4xl mb-12">
+      <div className="w-full h-dvh bg-black flex flex-col justify-evenly items-center px-10">
+        <h1 className="w-full text-main font-elmssans-bold text-center tablet:text-6xl text-4xl">
           Loan Categories
         </h1>
         <Swiper
@@ -156,12 +154,12 @@ const Home = () => {
           spaceBetween={20}
           loop={true}
           autoplay={{
-            delay: 600,
+            delay: 1000,
             stopOnLastSlide: false,
             pauseOnMouseEnter: true,
           }}
-          allowTouchMove={false}
-          className="w-full h-full cursor-grab"
+          allowTouchMove={true}
+          className="w-full cursor-grab"
         >
           {cardContent.map((elem, index) => {
             const { heading, paragraph, background } = elem;
@@ -169,14 +167,14 @@ const Home = () => {
               <React.Fragment key={index}>
                 <SwiperSlide key={index}>
                   <div
-                    className={`w-full h-[300px] rounded-md relative overflow-hidden shadow-lg`}
-                    style={{
-                      backgroundImage: `url(${background})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
+                    className={`w-full h-[300px] rounded-md relative shadow-lg`}
                   >
-                    <div className="absolute inset-0 bg-black/70 backdop-blur-sm flex flex-col justify-evenly items-start px-5 text-white">
+                    {/* <img
+                      src={background}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover -z-10"
+                    /> */}
+                    <div className="bg-black/70 flex flex-col justify-evenly items-start px-5 text-white w-full h-full">
                       <h1 className="text-3xl font-elmssans-bold">{heading}</h1>
                       <p className="text-xl font-elmssans-light">{paragraph}</p>
                       <NavLink

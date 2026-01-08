@@ -15,6 +15,7 @@ const Footer = () => {
   footer_Links.map((e) => {
     return Object.freeze(e);
   });
+  const currentYear = new Date().getFullYear();
 
   return (
     <Fragment>
@@ -37,7 +38,7 @@ const Footer = () => {
                     <NavLink
                       to={linkURL}
                       className={`px-2 py-2`}
-                      target={index === 3 ? "_blank":undefined}
+                      target={index === 3 ? "_blank" : undefined}
                     >
                       {linkName}
                     </NavLink>
@@ -57,7 +58,7 @@ const Footer = () => {
             </div>
             <div className="w-full tablet:w-[50%] desktop:w-[40%] flex justify-center tablet:justify-end items-center tablet:items-end border-b tablet:border-l tablet:border-b-0 tablet:pb-10 order-1">
               <p className="px-5 text-sm tablet:text-md">
-                © 2025 MicroFinance. All Rights Reserved.
+                © {currentYear} MicroFinance. All Rights Reserved.
               </p>
             </div>
           </div>

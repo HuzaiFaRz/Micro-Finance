@@ -5,6 +5,7 @@ import {
   ArrowPathRoundedSquareIcon,
   Bars3BottomRightIcon,
   CurrencyDollarIcon,
+  TrashIcon,
   UserIcon,
   UserPlusIcon,
   XMarkIcon,
@@ -12,16 +13,23 @@ import {
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import { Tooltip } from "react-tooltip";
-import { signOut } from "firebase/auth";
-import { auth } from "../Firebase/firebase";
+import {
+  deleteUser,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  signOut,
+} from "firebase/auth";
+import { auth, db } from "../Firebase/firebase";
+import { deleteDoc, doc } from "firebase/firestore";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { isUser } = AuthUseContext();
+  const [warn, setWarn] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
-  const { heroIconCSS, errorToast } = useContext(GlobalContextCreated);
+  const { errorToast } = useContext(GlobalContextCreated);
 
   let [navbarButton, setNavbarButton] = useState(false);
 
@@ -46,6 +54,11 @@ const Navbar = () => {
     setNavbarButton(!navbarButton);
   };
 
+  const warnEvent = () => {
+    setNavbarButton(false);
+    setWarn(!warn);
+  };
+
   const windowResizeing = () => {
     if (window.innerWidth > 830) {
       if (navbarButton) {
@@ -59,7 +72,7 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    document.body.style.overflow = navbarButton ? "hidden" : "";
+    document.body.style.overflow = navbarButton || warn ? "hidden" : "";
     window.addEventListener("resize", windowResizeing);
     return () => window.removeEventListener("resize", windowResizeing);
   });
@@ -69,7 +82,32 @@ const Navbar = () => {
     try {
       setLoading(true);
       await signOut(auth);
-      errorToast("Sign Out Success", 200, 200, 200);
+      errorToast("Sign Out SuccessFully", 200, 200, 200);
+      navigate("/sign-in");
+    } catch (error) {
+      setLoading(false);
+      console.error(error?.message);
+      errorToast(error?.code, null, null, null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteAccountHandler = async () => {
+    event.preventDefault();
+    try {
+      setLoading(true);
+      const user = auth.currentUser;
+      const credential = EmailAuthProvider.credential(
+        isUser.Email,
+        isUser.Password
+      );
+      await reauthenticateWithCredential(user, credential);
+      await deleteUser(user);
+      await deleteDoc(doc(db, "Users", user?.uid));
+      errorToast("Account Deleted SuccessFully", 200, 200, 200);
+      setNavbarButton(false);
+      setWarn(false);
       navigate("/");
     } catch (error) {
       setLoading(false);
@@ -83,16 +121,16 @@ const Navbar = () => {
   return (
     <Fragment>
       <>
-        <header className="z-100 w-full h-16 bg-layout text-main fixed top-0 right-0 flex visible tablet:invisible tablet:hidden justify-between items-center p-5">
+        <header className="z-100 tablet:z-0 w-full h-16 bg-layout text-main fixed top-0 right-0 flex visible tablet:invisible tablet:hidden justify-between items-center p-5">
           {navbarButton ? (
             <XMarkIcon
               className="size-10 cursor-pointer"
-              onClick={() => navbarEvent()}
+              onClick={navbarEvent}
             />
           ) : (
             <Bars3BottomRightIcon
               className="size-10 cursor-pointer"
-              onClick={() => navbarEvent()}
+              onClick={navbarEvent}
             />
           )}
 
@@ -107,27 +145,28 @@ const Navbar = () => {
         </header>
 
         <nav
-          className={`bg-layout fixed top-0 tablet:left-0 w-4/5 tablet:w-full h-full tablet:h-16 flex flex-col tablet:flex-row items-center justify-center tablet:justify-between p-2 -left-full z-50 transition-all text-main ${
+          className={`bg-layout fixed top-0 tablet:left-0 w-full h-full tablet:h-16 flex flex-col tablet:flex-row items-center justify-center tablet:justify-between p-2 -left-full z-50 transition-all text-main ${
             navbarButton && "left-0"
           }`}
         >
           <div className="nav-start absolute top-20 tablet:static">
-            <NavLink to={"/"}>
-              <CurrencyDollarIcon className="size-14 tablet:size-10" />
-            </NavLink>
+            <CurrencyDollarIcon className="size-12 tablet:size-10" />
           </div>
 
-          <div className="nav-center flex flex-col tablet:flex-row gap-4 desktop::gap-3 w-full tablet:w-auto font-elmssans-medium tablet:text-sm desktop:text-[16px] text-xl tracking-wide">
+          <div className="nav-center flex flex-col justify-center items-start tablet:items-center w-full tablet:w-auto px-5 tablet:flex-row gap-8 tablet:gap-3 desktop:gap-6 font-elmssans-medium">
             {nav_Links.map((elem, index) => {
               const { linkName, linkURL } = elem;
               return (
                 <React.Fragment key={index}>
                   <NavLink
                     to={linkURL}
-                    className={`px-2 desktop:px-5 py-2 desktop:text-sm hover:underline underline-offset-2 ${
+                    className={`py-2 px-2 tablet:text-xs desktop:text-sm text-xl hover:underline underline-offset-2 ${
                       linkName === "Apply Now" &&
-                      "bg-card hover:bg-hover rounded-lg w-fit tablet:w-auto"
+                      "px-5 bg-blue-600 rounded-lg hover:bg-hover"
                     }`}
+                    onClick={() => {
+                      setNavbarButton(false);
+                    }}
                   >
                     {linkName}
                   </NavLink>
@@ -136,7 +175,7 @@ const Navbar = () => {
             })}
           </div>
 
-          <div className="flex justify-center items-center tablet:gap-5 gap-3 font-elmssans-medium mt-12 tablet:mt-0 absolute bottom-5 tablet:static">
+          <div className="flex justify-evenly w-full tablet:w-auto items-center tablet:gap-5 font-elmssans-medium mt-12 tablet:mt-0 absolute bottom-5 tablet:static">
             {isUser === null ? (
               authButton.map((elem, index) => {
                 const { linkName, linkURL } = elem;
@@ -144,37 +183,50 @@ const Navbar = () => {
                   <React.Fragment key={index}>
                     <NavLink
                       className={
-                        "px-3 desktop:px-5 py-2 desktop:text-sm text-xs flex gap-1 bg-green-600 rounded-lg hover:bg-hover"
+                        "px-4 py-2 tablet:text-xs desktop:text-sm text-xl flex gap-1 items-center bg-green-600 rounded-lg hover:bg-hover"
                       }
                       to={linkURL}
                     >
                       {linkName}
                       {index === 0 ? (
-                        <UserPlusIcon className={`size-4`} />
+                        <UserPlusIcon className={`tablet:size-4 size-5`} />
                       ) : (
-                        <UserIcon className={`size-4`} />
+                        <UserIcon className={`tablet:size-4 size-5`} />
                       )}
                     </NavLink>
                   </React.Fragment>
                 );
               })
             ) : (
-              <button
-                className={
-                  "px-3 py-2 text-sm flex gap-3 bg-red-600 rounded-lg hover:bg-hover"
-                }
-                onClick={logoutHandler}
-                disabled={loading}
-              >
-                LogOut
-                {loading ? (
-                  <ArrowPathRoundedSquareIcon
-                    className={`${heroIconCSS} animate-spin`}
-                  />
-                ) : (
-                  <ArrowLeftEndOnRectangleIcon className={heroIconCSS} />
-                )}
-              </button>
+              <>
+                <button
+                  className={
+                    "px-4 py-2 tablet:text-xs desktop:text-sm text-[17px] flex gap-3 items-center bg-red-600 rounded-lg hover:bg-hover"
+                  }
+                  onClick={logoutHandler}
+                  disabled={loading}
+                >
+                  LogOut
+                  {loading ? (
+                    <ArrowPathRoundedSquareIcon
+                      className={`tablet:size-4 size-5 animate-spin`}
+                    />
+                  ) : (
+                    <ArrowLeftEndOnRectangleIcon
+                      className={`tablet:size-4 size-5`}
+                    />
+                  )}
+                </button>
+                <button
+                  className={
+                    "px-4 py-2 tablet:text-xs desktop:text-sm text-[17px] flex gap-3 items-center bg-red-600 rounded-lg hover:bg-hover"
+                  }
+                  onClick={warnEvent}
+                >
+                  Delete Account
+                  <TrashIcon className={`tablet:size-4 size-5`} />
+                </button>
+              </>
             )}
 
             <Tooltip
@@ -188,13 +240,51 @@ const Navbar = () => {
             <NavLink
               to={"profile"}
               className={
-                "profile-button w-8 desktop:w-10 desktop:h-10 h-8 bg-main rounded-full hidden tablet:flex tablet:justify-center tablet:items-center text-black desktop:text-xl text-sm font-elmssans-bold"
+                "profile-button w-8 tablet::w-10 tablet::h-10 h-8 bg-main rounded-full hidden tablet:flex tablet:justify-center tablet:items-center text-black desktop:text-xl text-sm font-elmssans-bold"
               }
             >
               {isUser?.Name?.toUpperCase()[0] || `Hi`}
             </NavLink>
           </div>
         </nav>
+
+        {warn && (
+          <div
+            className={`fixed top-0 w-full h-svh bg-black z-100 ${
+              warn ? "flex" : "hidden"
+            } flex flex-col justify-center items-center gap-10 font-elmssans-medium text-card text-center px-5`}
+          >
+            <h1 className="text-xl">
+              Are You Sure? This Action Cannot be UnDone{" "}
+            </h1>
+            <div className="text-white flex flex-wrap justify-center items-center gap-5">
+              <button
+                className={"px-4 py-2 text-lg bg-green-600"}
+                onClick={() => {
+                  setWarn(false);
+                }}
+              >
+                Cancle
+              </button>
+              <button
+                className={
+                  "px-4 py-2 text-lg flex gap-3 items-center bg-red-600"
+                }
+                onClick={deleteAccountHandler}
+                disabled={loading}
+              >
+                Delete Account
+                {loading ? (
+                  <ArrowPathRoundedSquareIcon
+                    className={`tablet:size-4 size-5 animate-spin`}
+                  />
+                ) : (
+                  <TrashIcon className={`tablet:size-4 size-5`} />
+                )}
+              </button>
+            </div>
+          </div>
+        )}
       </>
     </Fragment>
   );

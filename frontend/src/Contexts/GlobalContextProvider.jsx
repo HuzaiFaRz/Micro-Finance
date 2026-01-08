@@ -133,21 +133,21 @@ const GlobalContextProvider = ({ children }) => {
       setToastMsg(`${gettingError[0]} : ${gettingError[1]}`);
       inputsErrors(
         "firebase",
-        errorParaRef.current.filter(
+        errorParaRef?.current.filter(
           (e) =>
             e.id ===
             (gettingError[0].includes("email")
               ? "Error-Para-Email"
               : gettingError[0].includes("password") && "Error-Para-Password")
         ),
-        lableRef.current.filter(
+        lableRef?.current.filter(
           (e) =>
             e.id ===
             (gettingError[0].includes("email")
               ? "Label-Email"
               : gettingError[0].includes("password") && "Label-password")
         ),
-        inputRef.current.filter(
+        inputRef?.current.filter(
           (e) =>
             e.id ===
             (gettingError[0].includes("email")

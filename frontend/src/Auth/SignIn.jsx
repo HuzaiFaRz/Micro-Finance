@@ -1,4 +1,10 @@
-import React, { useContext, useReducer, useRef, useState } from "react";
+import React, {
+  useContext,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { NavLink, useNavigate } from "react-router";
 import {
   ArrowLongRightIcon,
@@ -16,7 +22,7 @@ import { auth } from "../Firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import MassegeToast from "../Components/MassegeToast";
 
-const Register = () => {
+const SignIn = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -27,12 +33,20 @@ const Register = () => {
     setPasswordEye(!passwordEye);
   };
 
-  const registerInputs = ["Email", "Password"];
+  const sigInInputs = useMemo(() => ["Email", "Password"], []);
+  // const initialValues = registerInputs.reduce((loop, currentValue) => {
+  //   loop[currentValue] = "";
+  //   return loop;
+  // }, {});
 
-  const initialValues = registerInputs.reduce((loop, currentValue) => {
-    loop[currentValue] = "";
-    return loop;
-  }, {});
+  const initialValues = useMemo(
+    () =>
+      sigInInputs.reduce((loop, currentValue) => {
+        loop[currentValue] = "";
+        return loop;
+      }, {}),
+    [sigInInputs]
+  );
 
   const {
     windowMode,
@@ -67,7 +81,7 @@ const Register = () => {
   const [formValues, formDispatch] = useReducer(FormReducer, initialValues);
   let isValid = true;
 
-  const registerInputHandler = (elem) => {
+  const signInInputHandler = (elem) => {
     let { value, id, name } = elem.target;
     const errorPara = gettingErrorPara(`Error-Para-${name}`);
     const lable = gettingLable(`Label-${name}`);
@@ -114,7 +128,7 @@ const Register = () => {
     isValid = false;
   };
 
-  const registerFormHandler = async () => {
+  const signInFormHandler = async () => {
     event.preventDefault();
     const errorStatuses = errorParaRef.current.map((e) => e.innerText);
     Object.entries(formValues).forEach(([, value], i) => {
@@ -144,7 +158,7 @@ const Register = () => {
           formValues.Email,
           formValues.Password
         );
-        errorToast("Sign In SuccessFully", 200, 200 , 200);
+        errorToast("Sign In SuccessFully", 200, 200, 200);
         resetForm();
         navigate("/");
       } catch (error) {
@@ -163,7 +177,6 @@ const Register = () => {
       <div
         className={`w-full h-dvh flex flex-col tablet:flex-row justify-between items-start ${mainColor}`}
       >
-  
         <AuthImage />
         <div
           className={`flex flex-col justify-between items-center tablet:w-[50%] w-full h-full px-4`}
@@ -173,7 +186,7 @@ const Register = () => {
           <form
             className={`flex flex-col justify-start items-start w-full x-10 py-5 gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider ${mainColor}`}
           >
-            {registerInputs.map((elem, index) => {
+            {sigInInputs.map((elem, index) => {
               return (
                 <React.Fragment key={index}>
                   <div className="w-full flex flex-col justify-center items-start relative">
@@ -201,7 +214,7 @@ const Register = () => {
                           : "text"
                       }
                       placeholder={`${elem}...`}
-                      onChange={registerInputHandler}
+                      onChange={signInInputHandler}
                     />
 
                     {elem === "Password" && (
@@ -230,7 +243,7 @@ const Register = () => {
             <button
               className="bg-card px-10 py-2 rounded-3xl disabled:opacity-50 flex items-center gap-4"
               type="submit"
-              onClick={registerFormHandler}
+              onClick={signInFormHandler}
               disabled={loading}
             >
               Sign In
@@ -265,4 +278,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default SignIn;

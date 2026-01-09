@@ -1,4 +1,11 @@
-import React, { useContext, useReducer, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { Navigate, NavLink, useNavigate } from "react-router";
 import {
   ArrowLongRightIcon,
@@ -28,27 +35,27 @@ const Register = () => {
   });
 
   const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
 
-  const passwordEyeHandler = (elem) => {
+  const passwordEyeHandler = useCallback((elem) => {
     setPasswordEye((prev) => ({
       ...prev,
       [elem]: !prev[elem],
     }));
-  };
+  }, [setPasswordEye]);
 
-  const registerInputs = [
-    "Name",
-    "Email",
-    "CNIC",
-    "Password",
-    "Repeat Password",
-  ];
+  const registerInputs = useMemo(
+    () => ["Name", "Email", "CNIC", "Password", "Repeat Password"],
+    []
+  );
 
-  const initialValues = registerInputs.reduce((loop, currentValue) => {
-    loop[currentValue] = "";
-    return loop;
-  }, {});
+  const initialValues = useMemo(
+    () =>
+      registerInputs.reduce((loop, currentValue) => {
+        loop[currentValue] = "";
+        return loop;
+      }, {}),
+    [registerInputs]
+  );
 
   const {
     windowMode,
@@ -159,8 +166,6 @@ const Register = () => {
         elem.target.value = "";
       } else if (value !== password) {
         inputsErrors("password_mismatch", errorPara, lable, input);
-      } else {
-        setRepeatPassword(value);
       }
     }
 
@@ -193,19 +198,7 @@ const Register = () => {
   const registerFormHandler = async () => {
     event.preventDefault();
     const errorStatuses = errorParaRef.current.map((e) => e.innerText);
-    if (password !== repeatPassword) {
-      inputsErrors(
-        "password_mismatch",
-        errorParaRef.current.filter(
-          (e) => e.id == "Error-Para-Repeat Password"
-        ),
-        lableRef.current.filter((e) => e.is === "Label-Repeat Password"),
-        inputRef.current.filter((e) => e.id === "Repeat Password")
-      );
-      isValid = false;
-    }
-
-    Object.entries(formValues).forEach(([, value], i) => {
+    Object.entries(formValues).forEach(([key, value], i) => {
       if (
         !value ||
         value === undefined ||
@@ -222,6 +215,19 @@ const Register = () => {
         inputsErrors("required", [errorPara], [label], [input]);
 
         isValid = false;
+      }
+      if (key === "Repeat Password") {
+        if (value !== password) {
+          inputsErrors(
+            "password_mismatch",
+            errorParaRef.current.filter(
+              (e) => e.id == "Error-Para-Repeat Password"
+            ),
+            lableRef.current.filter((e) => e.id === "Label-Repeat Password"),
+            inputRef.current.filter((e) => e.id === "Repeat Password")
+          );
+          isValid = false;
+        }
       }
     });
 

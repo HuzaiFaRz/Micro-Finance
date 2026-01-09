@@ -105,11 +105,11 @@ const Home = () => {
     <Fragment>
       <div className="w-full h-dvh">
         <Swiper
-          modules={[Autoplay, Pagination, Navigation]}
-          pagination={{ clickable: true }}
-          loop={true}
-          slidesPerView={1}
-          className="w-full h-full"
+        // modules={[Autoplay, Pagination, Navigation]}
+        // pagination={{ clickable: true }}
+        // loop={true}
+        // slidesPerView={1}
+        // className="w-full h-full"
         >
           {swiperContent.map((elem, index) => {
             const { heading, paragraph, background } = elem;
@@ -117,25 +117,25 @@ const Home = () => {
               <React.Fragment key={index}>
                 <SwiperSlide key={index}>
                   <div className="w-full h-full text-main">
-                    {/* <img
+                    <img
                       src={background}
-                      loading="lazy"
-                      className="absolute inset-0 w-full h-full object-cover -z-10"
-                    /> */}
-                    <div className="w-full h-full bg-black/70 flex flex-col items-start justify-center gap-5 px-6 tablet:px-10">
-                      <h1 className="text-6xl tablet:text-7xl desktop:text-8xl  w-full desktop:w-full font-elmssans-bold">
+                      // loading="lazy"
+                      className="w-full h-full"
+                    />
+                    {/* <div className="w-full h-full bg-black/70 flex flex-col items-start justify-center gap-5 px-6 tablet:px-10">
+                      <h1 className="text-6xl tablet:text-7xl desktop:text-8xl font-elmssans-bold">
                         {heading}
                       </h1>
-                      <p className="text-2xl font-elmssans-medium w-full desktop:w-full">
+                      <p className="text-2xl font-elmssans-medium">
                         {paragraph}
                       </p>
                       <NavLink
                         to={"/loan-form"}
-                        className="bg-card text-main rounded-2xl px-5 py-2 font-elmssans-medium tracking-wider mt-5"
+                        className="bg-card text-main rounded-tl-2xl rounded-br-2xl px-5 py-2 font-elmssans-medium tracking-wider mt-5"
                       >
                         Apply Now
                       </NavLink>
-                    </div>
+                    </div> */}
                   </div>
                 </SwiperSlide>
               </React.Fragment>
@@ -148,7 +148,7 @@ const Home = () => {
         <h1 className="w-full text-main font-elmssans-bold text-center tablet:text-6xl text-4xl">
           Loan Categories
         </h1>
-        <Swiper
+        {/*  <Swiper
           modules={[Autoplay, Pagination, Navigation]}
           slidesPerView={cardPreview ? 1 : 2}
           spaceBetween={20}
@@ -169,17 +169,17 @@ const Home = () => {
                   <div
                     className={`w-full h-[300px] rounded-md relative shadow-lg`}
                   >
-                    {/* <img
+                   <img
                       src={background}
                       loading="lazy"
                       className="absolute inset-0 w-full h-full object-cover -z-10"
-                    /> */}
+                    /> 
                     <div className="bg-black/70 flex flex-col justify-evenly items-start px-5 text-white w-full h-full">
                       <h1 className="text-3xl font-elmssans-bold">{heading}</h1>
                       <p className="text-xl font-elmssans-light">{paragraph}</p>
                       <NavLink
                         className={
-                          "text-xl font-elmssans-light bg-layout px-5 py-2 text-main"
+                          "text-xl font-elmssans-light bg-layout px-5 py-2 text-main rounded-tr-2xl rounded-bl-2xl"
                         }
                         to={"loan-form"}
                       >
@@ -192,6 +192,7 @@ const Home = () => {
             );
           })}
         </Swiper>
+        */}
       </div>
     </Fragment>
   );

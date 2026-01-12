@@ -1,7 +1,7 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 
 import "react-tooltip/dist/react-tooltip.css";
-
+import "swiper/css";
 import Home from "./Home/Home";
 import Register from "./Auth/Register";
 import SignIn from "./Auth/SignIn";

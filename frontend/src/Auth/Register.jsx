@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Navigate, NavLink, useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import {
   ArrowLongRightIcon,
   ArrowPathRoundedSquareIcon,
@@ -22,7 +22,6 @@ import FormReducer from "./AuthReducers/FormReducer";
 import { auth, db } from "../Firebase/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import MassegeToast from "../Components/MassegeToast";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -266,7 +265,7 @@ const Register = () => {
   return (
     <>
       <div
-        className={`w-full h-dvh flex flex-col tablet:flex-row justify-start items-start ${mainColor}`}
+        className={`w-full h-svh flex flex-col tablet:flex-row justify-start items-start ${mainColor}`}
       >
         <AuthImage />
         <div

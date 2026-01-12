@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { NavLink } from "react-router";
-import logo from "../assets/Images/logo.png";
+import logo from "../assets/Images/logo.webp";
 const Footer = () => {
   const footer_Links = [
     { linkName: "Home", linkURL: "/" },

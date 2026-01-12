@@ -13,14 +13,12 @@ import {
   EyeSlashIcon,
   IdentificationIcon,
 } from "@heroicons/react/16/solid";
-
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import AuthImage from "./AuthComponents/AuthImage";
 import AuthHead from "./AuthComponents/AuthHead";
 import FormReducer from "./AuthReducers/FormReducer";
 import { auth } from "../Firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import MassegeToast from "../Components/MassegeToast";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -34,10 +32,6 @@ const SignIn = () => {
   };
 
   const sigInInputs = useMemo(() => ["Email", "Password"], []);
-  // const initialValues = registerInputs.reduce((loop, currentValue) => {
-  //   loop[currentValue] = "";
-  //   return loop;
-  // }, {});
 
   const initialValues = useMemo(
     () =>
@@ -175,7 +169,7 @@ const SignIn = () => {
   return (
     <>
       <div
-        className={`w-full h-dvh flex flex-col tablet:flex-row justify-between items-start ${mainColor}`}
+        className={`w-full h-svh flex flex-col tablet:flex-row justify-between items-start ${mainColor}`}
       >
         <AuthImage />
         <div

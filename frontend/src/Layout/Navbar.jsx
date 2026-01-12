@@ -156,7 +156,7 @@ const Navbar = () => {
             <CurrencyDollarIcon className="size-12 tablet:size-10" />
           </div>
 
-          <div className="nav-center flex flex-col justify-center items-start tablet:items-center w-full tablet:w-auto px-5 tablet:flex-row gap-8 tablet:gap-3 desktop:gap-6 font-elmssans-medium">
+          <div className="nav-center flex flex-col tablet:flex-row justify-center items-start tablet:items-center w-full tablet:w-auto px-0 desktop:px-5 gap-8 tablet:gap-3 desktop:gap-6 font-elmssans-medium">
             {nav_Links.map((elem, index) => {
               const { linkName, linkURL } = elem;
               return (
@@ -165,7 +165,7 @@ const Navbar = () => {
                     to={linkURL}
                     className={`py-2 px-2 tablet:text-xs desktop:text-sm text-xl hover:underline underline-offset-2 ${
                       linkName === "Apply Now" &&
-                      "px-5 bg-blue-600 rounded-lg hover:bg-hover"
+                      "px-4 bg-blue-600 rounded-lg hover:bg-hover"
                     }`}
                     onClick={() => {
                       setNavbarButton(false);
@@ -178,7 +178,7 @@ const Navbar = () => {
             })}
           </div>
 
-          <div className="flex justify-evenly w-full tablet:w-auto items-center tablet:gap-5 font-elmssans-medium mt-12 tablet:mt-0 absolute bottom-5 tablet:static">
+          <div className="flex justify-evenly w-full tablet:w-auto items-center tablet:gap-3 desktop:gap-5 font-elmssans-medium mt-12 tablet:mt-0 absolute bottom-5 tablet:static">
             {isUser === null
               ? authButton.map((elem, index) => {
                   const { linkName, linkURL } = elem;
@@ -186,7 +186,7 @@ const Navbar = () => {
                     <React.Fragment key={index}>
                       <NavLink
                         className={
-                          "px-4 py-2 tablet:text-xs desktop:text-sm text-xl flex gap-1 items-center bg-green-600 rounded-lg hover:bg-hover"
+                          "px-3 desktop:px-4 py-2 tablet:text-xs desktop:text-sm text-xl flex gap-1 items-center bg-green-600 rounded-lg hover:bg-hover"
                         }
                         to={linkURL}
                       >
@@ -205,7 +205,7 @@ const Navbar = () => {
                     <React.Fragment key={i}>
                       <button
                         className={
-                          "px-4 py-2 tablet:text-xs desktop:text-sm text-[17px] flex gap-3 items-center bg-red-600 rounded-lg hover:bg-hover"
+                          "px-3 desktop:px-4 py-2 tablet:text-xs desktop:text-sm text-[17px] flex gap-3 items-center bg-red-600 rounded-lg hover:bg-hover"
                         }
                         onClick={() => {
                           warnEvent(e);

@@ -57,7 +57,6 @@ button {
   border-radius: 50px;
   margin-right: 8px;
   margin-top: 20px;
-
   opacity: 0;
   animation-name: showhide;
   animation-duration: 1.5s;
@@ -84,4 +83,57 @@ button {
   100% {
     opacity: 0;
   }
+}
+
+.slick-slide {
+  pointer-events: none !important;
+}
+
+.slick-dots {
+  bottom: 20px !important;
+  display: flex !important;
+  justify-content: center;
+  gap: 12px !important;
+}
+
+.slick-dots li {
+  width: auto;
+  z-index: 20 !important;
+}
+
+.slick-dots li button:before {
+  content: "" !important;
+  width: 15px !important;
+  height: 15px !important;
+  border-radius: 50%;
+  background: #2f80ed;
+  opacity: 1 !important;
+}
+
+.slick-dots li.slick-active button:before {
+  background: #1f4e79;
+  opacity: 1;
+}
+.slick-prev,
+.slick-next {
+  width: 45px !important;
+  height: 45px !important;
+  z-index: 20 !important;
+}
+
+.slick-prev {
+  top: 90% !important;
+  left: 20px !important;
+}
+
+.slick-next {
+  top: 90% !important;
+  right: 40px !important;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  font-size: 40px !important;
+  color: white;
+  opacity: 1;
 }

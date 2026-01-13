@@ -1,7 +1,13 @@
+import { Fragment, useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 
 import "react-tooltip/dist/react-tooltip.css";
-import "swiper/css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+
+import Lenis from "lenis";
+
 import Home from "./Home/Home";
 import Register from "./Auth/Register";
 import SignIn from "./Auth/SignIn";
@@ -11,7 +17,6 @@ import LoanForm from "./Pages/LoanForm";
 import LoanCategories from "./Pages/LoanCategories";
 import Contact from "./Pages/Contact";
 import { About } from "./Pages/About";
-import React, { Fragment, useEffect } from "react";
 import Layout from "./Layout/Layout";
 import GlobalContextProvider from "./Contexts/GlobalContextProvider";
 import AuthContextProvider from "./Contexts/AuthContextProvider";
@@ -34,6 +39,12 @@ const App = () => {
     }
     document.title = `M - Finance - Home`;
   }, [pageLocation]);
+
+  const lenis = new Lenis({
+    autoRaf: true,
+  });
+
+  lenis.on("scroll");
 
   return (
     <Fragment>

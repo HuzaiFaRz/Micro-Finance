@@ -1,7 +1,7 @@
-import { Fragment } from "react";
+import React, { Fragment, memo } from "react";
 import { NavLink } from "react-router";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+
+import Slider from "react-slick";
 
 import homeSlideImage1 from "/src/assets/Images/home-slide-img-1.webp";
 import homeSlideImage2 from "/src/assets/Images/home-slide-img-2.webp";
@@ -74,111 +74,119 @@ const Home = () => {
     },
   ];
 
-  swiperContent.map((e) => {
-    return Object.freeze(e);
-  });
+  const heroSliderSetting = {
+    dots: true,
+    lazyLoad: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    initialSlide: 2,
+    swipe: true,
+    touchMove: true,
+    draggable: true,
+  };
 
-  cardContent.map((e) => {
-    return Object.freeze(e);
-  });
+  const cardSliderSetting = {
+    mobileFirst: true,
+    arrows: false,
+    dots: false,
+    infinite: true,
+    autoplay: true,
+    lazyLoad: true,
+    autoplaySpeed: 0,
+    speed: 3000,
+
+    swipe: true,
+    touchMove: true,
+    draggable: true,
+
+    slidesToShow: 3,
+    slidesToScroll: 1,
+
+    pauseOnHover: true,
+    pauseOnFocus: false,
+    responsive: [
+      {
+        breakpoint: 1000,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+        },
+      },
+      {
+        breakpoint: 830,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
 
   return (
     <Fragment>
-      <div className="w-full h-full">
-        <Swiper
-          modules={[Autoplay]}
-          loop={true}
-          autoplay={{
-            delay: 3000,
-            stopOnLastSlide: false,
-          }}
-          className="w-full h-dvh"
-        >
+      <div className="w-full min-h-screen text-main font-elmssans-medium bg-black">
+        <Slider {...heroSliderSetting}>
           {swiperContent.map((elem, index) => {
             const { heading, paragraph, background } = elem;
             return (
-              <SwiperSlide key={index}>
-                <div
-                  className="w-full h-full text-main font-elmssans-medium flex justify-start items-center"
-                  style={{
-                    backgroundImage: `url(${background})`,
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
-                  }}
-                >
-                  <div className="flex flex-col items-start justify-center gap-5 px-6 tablet:px-10 backdrop-blur-xs bg-black/50 p-5">
-                    <h1 className="text-6xl tablet:text-7xl desktop:text-8xl font-elmssans-bold">
-                      {heading}
-                    </h1>
-                    <p className="text-2xl">{paragraph}</p>
-                    <NavLink
-                      to={"/loan-form"}
-                      className="bg-card text-main rounded-tl-2xl rounded-br-2xl px-5 py-2 tracking-wider mt-5"
-                    >
-                      Apply Now
-                    </NavLink>
-                  </div>
+              <div className="relative w-full h-screen cursor-grap" key={index}>
+                <img
+                  src={background}
+                  alt="Hero"
+                  className="w-full h-full object-cover"
+                />
+                <div className="w-full h-full absolute inset-0 flex flex-col items-start justify-center gap-5 px-6 tablet:px-10 bg-black/75">
+                  <h1 className="text-6xl tablet:text-7xl desktop:text-8xl font-elmssans-bold">
+                    {heading}
+                  </h1>
+                  <p className="text-2xl">{paragraph}</p>
+                  <NavLink
+                    to={"/loan-form"}
+                    className="bg-card rounded-tl-2xl rounded-br-2xl px-5 py-2 tracking-wider mt-5"
+                  >
+                    Apply Now
+                  </NavLink>
                 </div>
-              </SwiperSlide>
+              </div>
             );
           })}
-        </Swiper>
+        </Slider>
 
-        <div className="w-full h-[600px] flex flex-col justify-evenly items-centent bg-black px-4">
-          <h1 className="w-full text-layout font-elmssans-bold text-end tablet:text-6xl text-4xl">
-            Loan Categories
-          </h1>
-          <Swiper
-            modules={[Autoplay]}
-            breakpoints={{
-              0: { slidesPerView: 1 },
-              800: { slidesPerView: 2 },
-            }}
-            spaceBetween={20}
-            loop={true}
-            autoplay={{
-              delay: 2000,
-              stopOnLastSlide: false,
-              pauseOnMouseEnter: true,
-            }}
-            allowTouchMove={true}
-            className="w-full cursor-grab"
-          >
-            {cardContent.map((elem, index) => {
-              const { heading, paragraph, background } = elem;
-              return (
-                <SwiperSlide key={index}>
-                  <div
-                    className="w-full h-[300px] text-main font-elmssans-light flex justify-start items-center"
-                    style={{
-                      backgroundImage: `url(${background})`,
-                      backgroundPosition: "center",
-                      backgroundSize: "cover",
-                      backgroundRepeat: "no-repeat",
-                    }}
+        <h1 className="text-5xl tablet:text-7xl text-card font-elmssans-bold p-10 w-full text-center">
+          Loan Catogries
+        </h1>
+        <Slider {...cardSliderSetting}>
+          {cardContent.map((elem, index) => {
+            const { heading, paragraph, background } = elem;
+            return (
+              <div className="relative w-full h-[800px] mb-10" key={index}>
+                <img
+                  src={background}
+                  alt="Hero"
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+                <div className="w-full h-full absolute inset-0 flex flex-col items-start justify-center gap-5 px-6 tablet:px-10 bg-black/75">
+                  <h1 className="text-5xl tablet:text-6xl font-elmssans-bold">
+                    {heading}
+                  </h1>
+                  <p className="text-sm tablet:text-xl">{paragraph}</p>
+                  <NavLink
+                    to={"/loan-form"}
+                    className="bg-card rounded-tl-2xl rounded-br-2xl px-5 py-2 tracking-wider mt-5"
                   >
-                    <div className="w-full h-full bg-black/70 flex flex-col justify-evenly items-start px-5 text-white">
-                      <h1 className="text-3xl font-elmssans-bold">{heading}</h1>
-                      <p className="text-xl">{paragraph}</p>
-                      <NavLink
-                        className={
-                          "text-xl bg-layout px-5 py-2 text-main rounded-tr-2xl rounded-bl-2xl"
-                        }
-                        to={"loan-form"}
-                      >
-                        Apply Now
-                      </NavLink>
-                    </div>
-                  </div>
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
-        </div>
+                    Apply Now
+                  </NavLink>
+                </div>
+              </div>
+            );
+          })}
+        </Slider>
       </div>
     </Fragment>
   );
 };
 
-export default Home;
+export default memo(Home);

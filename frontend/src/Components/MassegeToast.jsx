@@ -21,7 +21,7 @@ const MassegeToast = () => {
       <Fragment>
         <>
           <div
-            className={`fixed transition-all z-10000 bg-black w-full py-4 px-4 font-elmssans-light text-lg ${toastMsgColor} z-100 text-center capitalize`}
+            className={`fixed transition-all z-10000 bg-black w-full py-4 px-4 font-elmssans-light text-sm tablet:text-lg ${toastMsgColor} z-100 text-center capitalize`}
           >
             <span>{toastMsg}</span>
             <Outlet />

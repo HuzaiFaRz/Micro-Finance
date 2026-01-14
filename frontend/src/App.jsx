@@ -1,13 +1,6 @@
 import { Fragment, useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-
-import "react-tooltip/dist/react-tooltip.css";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-
-
 import Lenis from "lenis";
-
 import Home from "./Home/Home";
 import Register from "./Auth/Register";
 import SignIn from "./Auth/SignIn";

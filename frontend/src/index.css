@@ -30,24 +30,24 @@
   --breakpoint-tablet: 830px;
 }
 body {
-  user-select: none !important;
-  -moz-user-select: none !important;
-  -webkit-user-drag: none !important;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
 }
 
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
-  display: none !important;
+  display: none;
   color: rgb(47, 128, 237);
 }
 
 input,
 button {
-  outline: none !important;
+  outline: none;
 }
 
 button {
-  cursor: pointer !important;
+  cursor: pointer;
 }
 
 .loading-dot {
@@ -86,54 +86,63 @@ button {
 }
 
 .slick-slide {
-  pointer-events: none !important;
+  pointer-events: none;
 }
 
 .slick-dots {
-  bottom: 20px !important;
-  display: flex !important;
+  bottom: 20px;
+  display: flex;
   justify-content: center;
-  gap: 12px !important;
+  gap: 2px;
 }
 
 .slick-dots li {
   width: auto;
-  z-index: 20 !important;
+  z-index: 20;
 }
 
 .slick-dots li button:before {
-  content: "" !important;
-  width: 15px !important;
-  height: 15px !important;
-  border-radius: 50%;
-  background: #2f80ed;
-  opacity: 1 !important;
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 0%;
+  background: #1f4e79;
+  opacity: 1;
 }
 
 .slick-dots li.slick-active button:before {
-  background: #1f4e79;
+  background: #2f80ed;
   opacity: 1;
 }
 .slick-prev,
 .slick-next {
-  width: 45px !important;
-  height: 45px !important;
-  z-index: 20 !important;
+  width: 45px;
+  height: 45px;
+  z-index: 20;
+  background-color: white;
+  border-radius: 50%;
 }
-
+.slick-prev:hover,
+.slick-next:hover {
+  background-color: white;
+}
+.slick-prev:focus,
+.slick-next:focus {
+  background-color: white;
+}
 .slick-prev {
-  top: 90% !important;
-  left: 20px !important;
+  top: 90%;
+  left: 20px;
 }
 
 .slick-next {
-  top: 90% !important;
-  right: 40px !important;
+  top: 90%;
+  right: 40px;
 }
 
 .slick-prev:before,
 .slick-next:before {
-  font-size: 40px !important;
-  color: white;
   opacity: 1;
+  font-size: 40px;
+  color: #1f4e79;
 }

@@ -22,7 +22,7 @@ const Home = () => {
 
   const swiperContent = [
     {
-      heading: "Smart Micro - Finance Solutions",
+      heading: "Smart Micro Finance Solutions",
       paragraph:
         "Manage your loans and payments easily — fast, secure, and hassle-free.",
       background:
@@ -92,12 +92,10 @@ const Home = () => {
   const heroSliderSetting = {
     vertical: true,
     dots: true,
-    lazyLoad: "progressive",
     infinite: true,
     speed: 1000,
     slidesToShow: 1,
     slidesToScroll: 1,
-    initialSlide: 1,
     swipe: true,
     touchMove: true,
     draggable: true,
@@ -105,11 +103,11 @@ const Home = () => {
   };
 
   const cardSliderSetting = {
+    slidesToShow: deviceWidth,
     arrows: false,
     dots: true,
     infinite: true,
     autoplay: "progressive",
-    lazyLoad: true,
     autoplaySpeed: 800,
     speed: 1000,
     swipe: false,
@@ -127,16 +125,19 @@ const Home = () => {
           {swiperContent.map((elem, index) => {
             const { heading, paragraph, background } = elem;
             return (
-              <div className="relative w-full h-screen cursor-grap" key={index}>
+              <div
+                className={`relative w-full h-screen bg-red-500`}
+                key={index}
+              >
                 <img
                   src={background}
                   loading="lazy"
                   decoding="async"
                   alt="Hero"
-                  className="w-full h-full object-cover"
+                  className="object-cover object-center w-full min-h-full"
                 />
-                <div className="w-full h-full absolute inset-0 flex flex-col items-start justify-center gap-5 px-6 tablet:px-10 bg-black/60">
-                  <h1 className="text-6xl tablet:text-7xl desktop:text-8xl font-elmssans-bold">
+                <div className="w-full h-full absolute inset-0  flex flex-col items-start justify-center gap-5 px-6 tablet:px-12 bg-black/60 scale-103">
+                  <h1 className="text-5xl tablet:text-6xl desktop:text-8xl font-elmssans-bold w-full desktop:w-[1200px]">
                     {heading}
                   </h1>
                   <p className="text-2xl">{paragraph}</p>
@@ -156,11 +157,11 @@ const Home = () => {
           Loan Catogries
         </h1>
 
-        <Slider {...cardSliderSetting} slidesToShow={deviceWidth}>
+        <Slider {...cardSliderSetting}>
           {cardContent.map((elem, index) => {
             const { heading, paragraph, background } = elem;
             return (
-              <div className="relative w-full h-[700px]" key={index}>
+              <div className="relative w-full h-full" key={index}>
                 <img
                   src={background}
                   alt="Hero"

@@ -39,7 +39,7 @@ const SignIn = () => {
         loop[currentValue] = "";
         return loop;
       }, {}),
-    [sigInInputs]
+    [sigInInputs],
   );
 
   const {
@@ -88,11 +88,9 @@ const SignIn = () => {
         inputsErrors("required", errorPara, lable, input);
         return;
       }
-    }
-
-    if (id === "Email") {
-      if (!gmailRegex.test(value)) {
+      if (id === "Email" && !gmailRegex.test(value)) {
         inputsErrors("invalid_format", errorPara, lable, input);
+        return;
       }
     }
 
@@ -109,7 +107,7 @@ const SignIn = () => {
 
   const resetForm = () => {
     inputRef.current.map((e) => {
-      return (e.value = ""), (e.style.borderColor = "white");
+      return ((e.value = ""), (e.style.borderColor = "white"));
     });
     errorParaRef.current.map((e) => {
       e.innerHTML = "";
@@ -132,7 +130,7 @@ const SignIn = () => {
         value === null ||
         errorStatuses[i] !== "OK" ||
         Object.values(formValues).every(
-          (value) => !value && value === null && value === undefined
+          (value) => !value && value === null && value === undefined,
         )
       ) {
         const errorPara = errorParaRef.current[i];
@@ -150,7 +148,7 @@ const SignIn = () => {
         await signInWithEmailAndPassword(
           auth,
           formValues.Email,
-          formValues.Password
+          formValues.Password,
         );
         errorToast("Sign In SuccessFully", 200, 200, 200);
         resetForm();

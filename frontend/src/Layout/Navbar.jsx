@@ -111,7 +111,7 @@ const Navbar = () => {
       errorToast("Account Deleted SuccessFully", 200, 200, 200);
       setNavbarButton(false);
       setWarn(false);
-      navigate("/");
+        navigate("/register");
     } catch (error) {
       setLoading(false);
       console.error(error?.message);

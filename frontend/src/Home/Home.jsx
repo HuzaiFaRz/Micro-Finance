@@ -154,7 +154,7 @@ const Home = () => {
         </Slider>
 
         <h1 className="text-5xl tablet:text-7xl text-card font-elmssans-bold p-10 w-full text-center">
-          Loan Catogries
+          Loan Categories
         </h1>
 
         <Slider {...cardSliderSetting}>

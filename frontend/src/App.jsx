@@ -12,9 +12,12 @@ import Contact from "./Pages/Contact";
 import { About } from "./Pages/About";
 import Layout from "./Layout/Layout";
 import GlobalContextProvider from "./Contexts/GlobalContextProvider";
-import AuthContextProvider from "./Contexts/AuthContextProvider";
+import AuthContextProvider, {
+  AuthUseContext,
+} from "./Contexts/AuthContextProvider";
 import LockRoute from "./Routes/LockRoute";
 import MassegeToast from "./Components/MassegeToast";
+import AuthRoute from "./Routes/AuthRoute";
 
 const App = () => {
   const pageLocation = useLocation();
@@ -45,8 +48,11 @@ const App = () => {
         <AuthContextProvider>
           <MassegeToast />
           <Routes>
-            <Route path="register" element={<Register />} />
-            <Route path="sign-in" element={<SignIn />} />
+            <Route element={<AuthRoute />}>
+              <Route path="register" element={<Register />} />
+              <Route path="sign-in" element={<SignIn />} />
+            </Route>
+
             <Route path="/" element={<Layout />}>
               <Route path="/" element={<Home />} index />
               <Route path="loan-categories" element={<LoanCategories />} />

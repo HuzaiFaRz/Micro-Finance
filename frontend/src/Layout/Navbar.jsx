@@ -103,15 +103,15 @@ const Navbar = () => {
       const user = auth.currentUser;
       const credential = EmailAuthProvider.credential(
         isUser.Email,
-        isUser.Password
+        isUser.Password,
       );
       await reauthenticateWithCredential(user, credential);
-      await deleteUser(user);
       await deleteDoc(doc(db, "Users", user?.uid));
-      errorToast("Account Deleted SuccessFully", 200, 200, 200);
+      await deleteUser(user);
       setNavbarButton(false);
       setWarn(false);
-        navigate("/register");
+      errorToast("Account Deleted SuccessFully", 200, 200, 200);
+      navigate("/");
     } catch (error) {
       setLoading(false);
       console.error(error?.message);

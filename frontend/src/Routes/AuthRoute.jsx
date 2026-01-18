@@ -1,18 +1,11 @@
 import { Navigate, Outlet } from "react-router";
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
-import AuthLoading from "../Components/AuthLoading";
+import AuthLoadingPage from "../Components/AuthLoadingPage";
 
 const AuthRoute = () => {
-  const { isUser, loading } = AuthUseContext();
-  if (loading) {
-    return <AuthLoading />;
-  }
-
-  if (isUser) {
-    return <Navigate to={"/"} replace />;
-  }
-
-  return <Outlet />;
+  const { isUser, authLoading, isRegistering } = AuthUseContext();
+  if (authLoading) return <AuthLoadingPage />;
+  return isUser && !isRegistering ? <Navigate to="/" replace /> : <Outlet />;
 };
 
 export default AuthRoute;

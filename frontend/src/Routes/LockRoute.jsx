@@ -1,19 +1,24 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Navigate, Outlet } from "react-router";
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
-import AuthLoading from "../Components/AuthLoading";
+import AuthLoadingPage from "../Components/AuthLoadingPage";
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 
 const LockRoute = () => {
-  const { isUser, loading } = AuthUseContext();
+  const { isUser, authLoading } = AuthUseContext();
   const { errorToast } = useContext(GlobalContextCreated);
 
-  if (loading) {
-    return <AuthLoading />;
+  useEffect(() => {
+    if (!isUser) {
+      return errorToast("First Sign In or Register");
+    }
+  }, [errorToast, isUser]);
+
+  if (authLoading) {
+    return <AuthLoadingPage />;
   }
 
   if (isUser === null) {
-    errorToast("First Sign In or Register");
     return <Navigate to={"/sign-in"} replace />;
   }
 

@@ -3,46 +3,47 @@ import { useContext, useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../Firebase/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
-import { Outlet } from "react-router";
-import AuthLoading from "../Components/AuthLoading";
+import AuthLoadingPage from "../Components/AuthLoadingPage";
 
 export const AuthUseContext = () => useContext(AuthContextCreated);
 
 const AuthContextProvider = ({ children }) => {
-  const [isUser, setIsuser] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [isUser, setIsuser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const authSubcribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        onSnapshot(doc(db, "Users", user.uid), (doc) => {
+        const dataSubcribe = onSnapshot(doc(db, "Users", user.uid), (doc) => {
           if (doc.exists()) {
             setIsuser({
               userCredential: user,
               ...doc.data(),
             });
-            setLoading(false);
-            return;
           }
+          setAuthLoading(false);
         });
+        return () => dataSubcribe();
       } else {
-        setLoading(false);
+        setAuthLoading(false);
         setIsuser(null);
       }
     });
+    return () => authSubcribe();
   }, []);
 
   return (
     <AuthContextCreated.Provider
-      value={{ isUser, setIsuser, loading, setLoading }}
+      value={{
+        isUser,
+        setIsuser,
+        authLoading,
+        setAuthLoading,
+        isRegistering,
+        setIsRegistering,
+      }}
     >
-      {loading ? (
-        <AuthLoading />
-      ) : (
-        <>
-          {children}
-          <Outlet />
-        </>
-      )}
+      {authLoading ? <AuthLoadingPage /> : children}
     </AuthContextCreated.Provider>
   );
 };

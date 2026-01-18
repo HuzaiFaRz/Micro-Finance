@@ -150,7 +150,7 @@ const SignIn = () => {
           formValues.Email,
           formValues.Password,
         );
-        errorToast("Sign In SuccessFully", 200, 200, 200);
+        errorToast("Welcome To M_Finance", 200, 200, 200);
         resetForm();
         navigate("/");
       } catch (error) {

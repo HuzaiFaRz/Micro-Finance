@@ -12,9 +12,7 @@ import Contact from "./Pages/Contact";
 import { About } from "./Pages/About";
 import Layout from "./Layout/Layout";
 import GlobalContextProvider from "./Contexts/GlobalContextProvider";
-import AuthContextProvider, {
-  AuthUseContext,
-} from "./Contexts/AuthContextProvider";
+import AuthContextProvider from "./Contexts/AuthContextProvider";
 import LockRoute from "./Routes/LockRoute";
 import MassegeToast from "./Components/MassegeToast";
 import AuthRoute from "./Routes/AuthRoute";
@@ -45,12 +43,12 @@ const App = () => {
   return (
     <Fragment>
       <GlobalContextProvider>
+        <MassegeToast />
         <AuthContextProvider>
-          <MassegeToast />
           <Routes>
             <Route element={<AuthRoute />}>
-              <Route path="register" element={<Register />} />
-              <Route path="sign-in" element={<SignIn />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/sign-in" element={<SignIn />} />
             </Route>
 
             <Route path="/" element={<Layout />}>

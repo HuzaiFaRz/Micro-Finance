@@ -20,12 +20,13 @@ import AuthImage from "./AuthComponents/AuthImage";
 import AuthHead from "./AuthComponents/AuthHead";
 import FormReducer from "./AuthReducers/FormReducer";
 import { auth, db } from "../Firebase/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { AuthUseContext } from "../Contexts/AuthContextProvider";
 
 const Register = () => {
   const navigate = useNavigate();
-
+  const {  setIsuser, setIsRegistering } = AuthUseContext();
   const [loading, setLoading] = useState(false);
 
   const [passwordEye, setPasswordEye] = useState({
@@ -35,16 +36,19 @@ const Register = () => {
 
   const [password, setPassword] = useState("");
 
-  const passwordEyeHandler = useCallback((elem) => {
-    setPasswordEye((prev) => ({
-      ...prev,
-      [elem]: !prev[elem],
-    }));
-  }, [setPasswordEye]);
+  const passwordEyeHandler = useCallback(
+    (elem) => {
+      setPasswordEye((prev) => ({
+        ...prev,
+        [elem]: !prev[elem],
+      }));
+    },
+    [setPasswordEye],
+  );
 
   const registerInputs = useMemo(
     () => ["Name", "Email", "CNIC", "Password", "Repeat Password"],
-    []
+    [],
   );
 
   const initialValues = useMemo(
@@ -53,7 +57,7 @@ const Register = () => {
         loop[currentValue] = "";
         return loop;
       }, {}),
-    [registerInputs]
+    [registerInputs],
   );
 
   const {
@@ -138,7 +142,7 @@ const Register = () => {
       } else {
         format = `${digit.slice(0, 5)}-${digit.slice(5, 12)}-${digit.slice(
           12,
-          13
+          13,
         )}`;
       }
       elem.target.value = format;
@@ -181,7 +185,7 @@ const Register = () => {
 
   const resetForm = () => {
     inputRef.current.map((e) => {
-      return (e.value = ""), (e.style.borderColor = "white");
+      return ((e.value = ""), (e.style.borderColor = "white"));
     });
     errorParaRef.current.map((e) => {
       e.innerHTML = "";
@@ -204,7 +208,7 @@ const Register = () => {
         value === null ||
         errorStatuses[i] !== "OK" ||
         Object.values(formValues).every(
-          (value) => !value && value === null && value === undefined
+          (value) => !value && value === null && value === undefined,
         )
       ) {
         const errorPara = errorParaRef.current[i];
@@ -220,10 +224,10 @@ const Register = () => {
           inputsErrors(
             "password_mismatch",
             errorParaRef.current.filter(
-              (e) => e.id == "Error-Para-Repeat Password"
+              (e) => e.id == "Error-Para-Repeat Password",
             ),
             lableRef.current.filter((e) => e.id === "Label-Repeat Password"),
-            inputRef.current.filter((e) => e.id === "Repeat Password")
+            inputRef.current.filter((e) => e.id === "Repeat Password"),
           );
           isValid = false;
         }
@@ -233,10 +237,11 @@ const Register = () => {
     if (isValid) {
       try {
         setLoading(true);
+        setIsRegistering(true);
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           formValues.Email,
-          formValues.Password
+          formValues.Password,
         );
         if (userCredential.user) {
           await setDoc(
@@ -245,11 +250,14 @@ const Register = () => {
               ...formValues,
               createdAt: userCredential?.user.metadata.creationTime,
             },
-            { merge: true }
+            { merge: true },
           );
+          await signOut(auth);
+          setIsuser(null);
         }
-        errorToast("Register SuccessFully", 200, 200, 200);
+        errorToast("Account Created! Please Sign In!", 200, 200, 200);
         resetForm();
+        setIsRegistering(false);
         navigate("/sign-in");
       } catch (error) {
         setLoading(false);
@@ -304,8 +312,8 @@ const Register = () => {
                             ? "text"
                             : "password"
                           : elem === "CNIC"
-                          ? "tel"
-                          : "text"
+                            ? "tel"
+                            : "text"
                       }
                       placeholder={`${elem}...`}
                       maxLength={elem === "CNIC" ? "15" : ""}

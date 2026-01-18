@@ -1,6 +1,6 @@
 import React from "react";
 
-const AuthLoading = () => {
+const AuthLoadingPage = () => {
   return (
     <>
       <div className="bg-layout text-white w-full h-dvh text-4xl tablet:text-6xl flex justify-center items-center font-elmssans-bold">
@@ -17,4 +17,4 @@ const AuthLoading = () => {
   );
 };
 
-export default AuthLoading;
+export default AuthLoadingPage;

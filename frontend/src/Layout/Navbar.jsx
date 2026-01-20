@@ -42,8 +42,8 @@ const Navbar = () => {
 
   const nav_Links = [
     { linkName: "Home", linkURL: "/" },
-    { linkName: "Contact Us", linkURL: "contact" },
-    { linkName: "About Us", linkURL: "about" },
+    { linkName: "Contact Us", linkURL: "contact-us" },
+    { linkName: "About Us", linkURL: "about-us" },
     { linkName: "Dashboard", linkURL: "dashboard" },
     { linkName: "Apply Now", linkURL: "loan-form" },
   ];

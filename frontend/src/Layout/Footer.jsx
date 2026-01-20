@@ -4,8 +4,8 @@ import logo from "../assets/Images/logo.webp";
 const Footer = () => {
   const footer_Links = [
     { linkName: "Home", linkURL: "/" },
-    { linkName: "Contact Us", linkURL: "contact" },
-    { linkName: "About Us", linkURL: "about" },
+    { linkName: "Contact Us", linkURL: "contact-us" },
+    { linkName: "About Us", linkURL: "about-us" },
     {
       linkName: "Projects",
       linkURL: "https://github.com/HuzaiFaRz?tab=repositories",

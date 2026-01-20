@@ -1,16 +1,45 @@
 import { Fragment, useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router";
 import { GlobalContextCreated } from "./GlobalContext";
+import Lenis from "lenis";
 
 const GlobalContextProvider = ({ children }) => {
+  const lenis = new Lenis({
+    autoRaf: true,
+  });
+  lenis.on("scroll");
+
   const matchMedia = window.matchMedia("(prefers-color-scheme: dark)");
+
   const checkingLS = localStorage.getItem("theme");
+
   const [windowMode, setWindowMode] = useState(
-    checkingLS ? checkingLS : matchMedia.matches ? "dark" : "light"
+    checkingLS ? checkingLS : matchMedia.matches ? "dark" : "light",
   );
+
   const [authHeadHeading, setAuthHeadHeading] = useState();
+
+  const [pageHeadingText, setPageHeadingText] = useState(null);
+
   const [toastMsg, setToastMsg] = useState("");
+
   const pageLocation = useLocation();
+
+  useEffect(() => {
+    if (pageLocation.pathname !== "/") {
+      const currentPageURL = pageLocation.pathname
+        .slice(1)
+        .split("-")
+        .map((e) => {
+          return e.charAt(0).toUpperCase() + e.slice(1).toLowerCase();
+        })
+        .join(" ");
+      setPageHeadingText(currentPageURL);
+      document.title = `M - Finance - ${currentPageURL}`;
+      return;
+    }
+    document.title = `M - Finance - Home`;
+  }, [pageLocation]);
 
   const [toastMsgColor, setToastMsgColor] = useState("");
 
@@ -32,8 +61,11 @@ const GlobalContextProvider = ({ children }) => {
   ];
 
   const regex = /[!#$%^&@*()_+\-=\[\]{};':"\\|,.<>\/?~`]/;
+
   const gmailRegex = /^[a-zA-Z0-9._]+@gmail\.com$/;
+
   const passwordEyeCSS = `size-5 absolute right-2 top-[60%] cursor-pointer`;
+
   const mainColor =
     windowMode === "dark" ? "bg-black text-main" : "bg-main text-black";
 
@@ -122,9 +154,7 @@ const GlobalContextProvider = ({ children }) => {
       setToastMsgColor("text-green-500");
       return;
     }
-
     setToastMsgColor("text-red-500");
-
     const gettingError = Object.entries(authErrorMessages).find(([type]) => {
       return code.includes(type);
     });
@@ -138,22 +168,22 @@ const GlobalContextProvider = ({ children }) => {
             e.id ===
             (gettingError[0].includes("email")
               ? "Error-Para-Email"
-              : gettingError[0].includes("password") && "Error-Para-Password")
+              : gettingError[0].includes("password") && "Error-Para-Password"),
         ),
         lableRef?.current.filter(
           (e) =>
             e.id ===
             (gettingError[0].includes("email")
               ? "Label-Email"
-              : gettingError[0].includes("password") && "Label-password")
+              : gettingError[0].includes("password") && "Label-password"),
         ),
         inputRef?.current.filter(
           (e) =>
             e.id ===
             (gettingError[0].includes("email")
               ? "Email"
-              : gettingError[0].includes("password") && "Password")
-        )
+              : gettingError[0].includes("password") && "Password"),
+        ),
       );
 
       if (
@@ -167,7 +197,7 @@ const GlobalContextProvider = ({ children }) => {
           "firebase",
           errorParaRef.current.map((e) => e),
           lableRef.current.map((e) => e),
-          inputRef.current.map((e) => e)
+          inputRef.current.map((e) => e),
         );
         return;
       }
@@ -206,6 +236,7 @@ const GlobalContextProvider = ({ children }) => {
           setToastMsg,
           heroIconCSS,
           toastMsgColor,
+          pageHeadingText,
         }}
       >
         {children}

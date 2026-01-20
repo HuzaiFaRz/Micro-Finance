@@ -147,11 +147,12 @@ button {
   color: #1f4e79;
 }
 select {
+  font-family: elmssans-medium;
   appearance: base-select;
   overflow: hidden;
-  padding: 10px 10px 10px 12px;
-  border: none !important;
-  outline: none !important;
+  padding: 10px;
+  border: none;
+  outline: none;
 }
 ::picker(select) {
   border: none;

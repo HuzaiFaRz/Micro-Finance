@@ -18,7 +18,7 @@ import {
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import AuthImage from "./AuthComponents/AuthImage";
 import AuthHead from "./AuthComponents/AuthHead";
-import FormReducer from "./AuthReducers/FormReducer";
+import AuthFormReducer from "../Reducers/AuthFormReducer";
 import { auth, db } from "../Firebase/firebase";
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
@@ -26,7 +26,7 @@ import { AuthUseContext } from "../Contexts/AuthContextProvider";
 
 const Register = () => {
   const navigate = useNavigate();
-  const {  setIsuser, setIsRegistering } = AuthUseContext();
+  const { setIsuser, setIsRegistering } = AuthUseContext();
   const [loading, setLoading] = useState(false);
 
   const [passwordEye, setPasswordEye] = useState({
@@ -91,7 +91,7 @@ const Register = () => {
     return lableRef?.current.filter((e) => e?.id === id);
   };
 
-  const [formValues, formDispatch] = useReducer(FormReducer, initialValues);
+  const [formValues, formDispatch] = useReducer(AuthFormReducer, initialValues);
   let isValid = true;
 
   const registerInputHandler = (elem) => {
@@ -101,7 +101,6 @@ const Register = () => {
     const input = gettingInput(`${name}`);
     inputsErrors("ok", errorPara, lable, input);
     formDispatch({ type: "INPUT_CHANGE", inputID: id, inputValue: value });
-
     if (
       id === "Name" ||
       id === "Email" ||

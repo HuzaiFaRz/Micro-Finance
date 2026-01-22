@@ -16,7 +16,7 @@ import {
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import AuthImage from "./AuthComponents/AuthImage";
 import AuthHead from "./AuthComponents/AuthHead";
-import FormReducer from "./AuthReducers/FormReducer";
+import AuthFormReducer from "../Reducers/AuthFormReducer";
 import { auth } from "../Firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
@@ -72,7 +72,7 @@ const SignIn = () => {
     return lableRef?.current.filter((e) => e?.id === id);
   };
 
-  const [formValues, formDispatch] = useReducer(FormReducer, initialValues);
+  const [formValues, formDispatch] = useReducer(AuthFormReducer, initialValues);
   let isValid = true;
 
   const signInInputHandler = (elem) => {

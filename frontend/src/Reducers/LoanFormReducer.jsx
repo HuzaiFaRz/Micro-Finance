@@ -1,4 +1,4 @@
-const FormReducer = (state, action) => {
+const LoanFormReducer = (state, action) => {
   if (action.type === "INPUT_CHANGE") {
     return {
       ...state,
@@ -12,4 +12,4 @@ const FormReducer = (state, action) => {
   }
 };
 
-export default FormReducer;
+export default LoanFormReducer;

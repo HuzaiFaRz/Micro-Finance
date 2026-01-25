@@ -10,6 +10,7 @@ const LoanFormReducer = (state, action) => {
       [action.inputID]: "",
     };
   }
+  return state;
 };
 
 export default LoanFormReducer;

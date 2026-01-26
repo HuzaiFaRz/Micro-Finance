@@ -13,6 +13,7 @@ import {
   EyeIcon,
   EyeSlashIcon,
   IdentificationIcon,
+  InformationCircleIcon,
 } from "@heroicons/react/16/solid";
 
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
@@ -269,6 +270,9 @@ const Register = () => {
     }
   };
 
+
+ 
+
   return (
     <>
       <div
@@ -297,6 +301,8 @@ const Register = () => {
                         elem === "Repeat Password" ? "Password" : elem
                       }`}
                     </label>
+
+                  
 
                     <input
                       className={`${inputCSS}`}

@@ -1,4 +1,11 @@
-import { Fragment, useContext, useReducer, useRef, useState } from "react";
+import {
+  Fragment,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import LoanFormReducer from "../Reducers/LoanFormReducer";
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import {
@@ -26,6 +33,8 @@ const LoanForm = () => {
   ];
 
   const [valid, setValid] = useState(false);
+
+  const [errorMsg, setErrorMsg] = useState(null);
 
   const [interest, setInterest] = useState(null);
   const [m_Install, setM_Install] = useState(null);
@@ -120,6 +129,7 @@ const LoanForm = () => {
   };
 
   const settingErrorMsg = (msg, id) => {
+    setErrorMsg(msg);
     const errorP = errorParaRef.current.find((e) => e.id === id);
     if (errorP) {
       errorP.innerHTML = msg;
@@ -130,28 +140,72 @@ const LoanForm = () => {
     }
   };
 
-  // useEffect(() => {
-  //   Object.entries(loanFormValues).map(([key, value]) => {
-  //     if (key === "Loan_Duration") {
-  //       if (value === "Loan_Duration") {
-  //         settingErrorMsg(`First Select ${key.replace("Loan_", "")}`, "llll");
-  //       }
-  //     }
+  const formatingPKR = (amount) =>
+    new Intl.NumberFormat("en-PK", {
+      style: "currency",
+      currency: "PKR",
+      minimumFractionDigits: 2,
+    }).format(amount.toFixed(2));
 
-  //     if (key === "Loan_Category") {
-  //       if (value === "Loan_Category") {
-  //         (setIsLoanSelectPass(false),
-  //           settingErrorMsg(
-  //             `First Select ${key.replace("Loan_", "")}`,
-  //             "llll",
-  //           ));
-  //       }
-  //     }
-  //     // console.log(this);
-  //     // settingErrorMsg(``, ``);
-  //     // setIsLoanSelectPass(true);
-  //   });
-  // }, [loanFormValues]);
+  useEffect(() => {
+    const { Loan_Category, Loan_Duration, Loan_Amount, Initial_Amount } =
+      loanFormValues;
+
+    if (!Loan_Category || Loan_Category === "Loan_Category") {
+      return;
+    }
+    if (!Loan_Duration || Loan_Duration === "Loan_Duration") {
+      return;
+    }
+    const { maxLoan, minLoan, initialPercent, interest } =
+      whatCategorySelected[0][1];
+
+    const gettingInitialAmount =
+      (+loanFormValues.Loan_Amount * initialPercent) / 100;
+    if (!Loan_Amount) {
+      return;
+    }
+    if (+Loan_Amount > maxLoan) {
+      return settingErrorMsg(
+        `Maximum loan for this category is ${formatingPKR(maxLoan)}`,
+        "Loan_Amount",
+      );
+    }
+    if (+Loan_Amount < minLoan) {
+      return settingErrorMsg(
+        `Minimum loan amount is ${formatingPKR(minLoan)}`,
+        "Loan_Amount",
+      );
+    }
+
+    if (!Initial_Amount) {
+      return;
+    }
+
+    if (Initial_Amount < gettingInitialAmount) {
+      return settingErrorMsg(
+        `Initial payment must be at least ${initialPercent}% of the loan amount Your Initial Amount is ${formatingPKR(gettingInitialAmount)}`,
+        "Initial_Amount",
+      );
+    }
+    if (Initial_Amount > gettingInitialAmount) {
+      return settingErrorMsg(
+        `Initial amount cannot be equal to or greater than the loan amount`,
+        "Initial_Amount",
+      );
+    }
+    setM_Install(
+      formatingPKR(
+        (Loan_Amount -
+          gettingInitialAmount +
+          ((Loan_Amount - gettingInitialAmount) *
+            interest *
+            parseInt(Loan_Duration)) /
+            100) /
+          (parseInt(Loan_Duration) * 12),
+      ),
+    );
+  }, [loanFormValues, whatCategorySelected]);
 
   const loanFormInputHandler = (event) => {
     let id = event.target.id;
@@ -168,28 +222,27 @@ const LoanForm = () => {
     );
 
     if (id === "Loan_Duration" && value === "Loan_Duration") {
+      settingErrorMsg("Select Duration", id);
       setM_Install(null);
       setValid(false);
-      settingErrorMsg(`Select Duration`, id);
       errorToast("Please Select Duration");
       return;
     }
 
-    settingErrorMsg(``, id);
+    settingErrorMsg("", id);
 
     if (id === "Loan_Category") {
       if (value === "Loan_Category") {
         setValid(false);
+        settingErrorMsg("Select Category", id);
         setM_Install(null);
         setInterest(null);
-        settingErrorMsg(`Select Category`, id);
         errorToast("Please Select Category");
         setLoanDurationRange([1, 5]);
         setWhatCategorySelected(null);
         // localStorage.removeItem("SelectedCategory");
         return;
       }
-      settingErrorMsg(``, id);
       setInterest(`${categoryGetting[0][1].interest}%`);
       setWhatCategorySelected(categoryGetting);
       setLoanDurationRange(categoryGetting[0][1].duration);
@@ -204,37 +257,34 @@ const LoanForm = () => {
     if (id === "Loan_Amount" || id === "Initial_Amount") {
       setValid(false);
       setM_Install(null);
-      if (!whatCategorySelected) {
-        settingErrorMsg(`Select Category`, id);
+      if (
+        loanFormValues.Loan_Category === "Loan_Category" ||
+        !loanFormValues.Loan_Category ||
+        !whatCategorySelected
+      ) {
         event.target.removeAttribute("max");
         event.target.removeAttribute("min");
+        settingErrorMsg("Select Category", id);
         return;
       }
-      settingErrorMsg(``, id);
+
       if (
         loanFormValues.Loan_Duration === "Loan_Duration" ||
-        loanFormValues.Loan_Duration === ""
+        !loanFormValues.Loan_Duration
       ) {
-        settingErrorMsg(`Select Duration`, id);
-        event.target.removeAttribute("max");
-        event.target.removeAttribute("min");
-        return;
+        return settingErrorMsg("Select Duration", id);
       }
+
+      settingErrorMsg("", id);
 
       const { maxLoan, minLoan, initialPercent, interest } =
         whatCategorySelected[0][1];
 
-      const formatingPKR = (amount) =>
-        new Intl.NumberFormat("en-PK", {
-          style: "currency",
-          currency: "PKR",
-          minimumFractionDigits: 2,
-        }).format(amount.toFixed(2));
+      settingErrorMsg(``, id);
 
       if (id === "Loan_Amount") {
         if (!value) {
-          settingErrorMsg(`Enter ${id}`, id);
-          return;
+          return settingErrorMsg(`Enter ${id}`, id);
         }
         event.target.setAttribute("max", maxLoan);
         event.target.setAttribute("min", minLoan);
@@ -259,13 +309,13 @@ const LoanForm = () => {
           loanFormValues.Loan_Amount > maxLoan ||
           loanFormValues.Loan_Amount < minLoan
         ) {
-          settingErrorMsg(`Enter Loan Amount`, id);
-          return;
+          return settingErrorMsg(`Enter Loan Amount`, id);
         }
+
         if (!value) {
-          settingErrorMsg(`Enter ${id}`, id);
-          return;
+          return settingErrorMsg(`Enter ${id}`, id);
         }
+
         const initialAmount =
           (+loanFormValues.Loan_Amount * initialPercent) / 100;
         event.target.setAttribute("max", initialAmount);
@@ -306,15 +356,22 @@ const LoanForm = () => {
       errorToast("Kindly Complete Form");
       return;
     }
-    if (loanFormValues.Loan_Category === "Loan_Category") {
+    if (
+      loanFormValues.Loan_Category === "Loan_Category" ||
+      !loanFormValues.Loan_Amount
+    ) {
       errorToast("Please Select Category");
       return;
     }
-    if (loanFormValues.Loan_Duration === "Loan_Duration") {
+    if (
+      loanFormValues.Loan_Duration === "Loan_Duration" ||
+      !loanFormValues.Loan_Duration
+    ) {
       errorToast("Please Select Duration");
       return;
     }
     if (!loanFormValues.Loan_Amount || !loanFormValues.Initial_Amount) {
+      console.log(loanFormValues.Loan_Category);
       errorToast("Please Enter Loan or Initial Amount");
       return;
     }
@@ -329,7 +386,7 @@ const LoanForm = () => {
         interest: interest,
         monthlyInstallMent: m_Install,
       });
-      errorToast("Apply SuccessFully", 200, 200, 200);
+      errorToast("Loan Created SuccessFully", 200, 200, 200);
       navigate("/dashboard");
     } catch (error) {
       setLoading(false);

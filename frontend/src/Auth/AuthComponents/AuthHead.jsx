@@ -15,7 +15,11 @@ const AuthHead = () => {
   };
 
   useEffect(() => {
-    setWindowMode(localStorage.getItem("theme"));
+    const gettingThemeFromL_S = localStorage.getItem("theme");
+    if (gettingThemeFromL_S) {
+      setWindowMode(gettingThemeFromL_S);
+      return;
+    }
   });
 
   return (

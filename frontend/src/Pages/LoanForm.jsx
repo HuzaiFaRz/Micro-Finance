@@ -14,11 +14,24 @@ import {
   InformationCircleIcon,
 } from "@heroicons/react/16/solid";
 import { auth, db } from "../Firebase/firebase";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
 import { useNavigate } from "react-router";
+import { AuthUseContext } from "../Contexts/AuthContextProvider";
 
 const LoanForm = () => {
   const navigate = useNavigate();
+
+  const { loan, setLoan } = AuthUseContext();
+
+  console.log(loan);
+
   const labelCssL_form =
     "flex flex-wrap justify-start items-center gap-2 relative text-sm font-elmssans-light w-full desktop:w-[350px]";
 
@@ -36,7 +49,7 @@ const LoanForm = () => {
 
   const [errorMsg, setErrorMsg] = useState(null);
 
-  const [interest, setInterest] = useState(null);
+  const [profitRate, setProfitRate] = useState(null);
   const [m_Install, setM_Install] = useState(null);
 
   const errorParaRef = useRef([]);
@@ -85,44 +98,44 @@ const LoanForm = () => {
 
   const LOAN_CATEGORIES = {
     Home: {
-      minLoan: 500000,
+      minLoan: 100000,
       maxLoan: 5000000,
-      interest: 1.5,
+      profitRate: 2,
       duration: [1, 5],
       initialPercent: 10,
     },
     Education: {
-      minLoan: 100000,
+      minLoan: 10000,
       maxLoan: 500000,
-      interest: 1.2,
+      profitRate: 0,
       duration: [1, 2],
       initialPercent: 5,
     },
     Business: {
-      minLoan: 200000,
+      minLoan: 100000,
       maxLoan: 1000000,
-      interest: 2.5,
+      profitRate: 5,
       duration: [1, 2],
       initialPercent: 10,
     },
     Personal: {
-      minLoan: 50000,
+      minLoan: 5000,
       maxLoan: 300000,
-      interest: 3,
+      profitRate: 2,
       duration: [1, 2],
       initialPercent: 2,
     },
     Vehicle: {
-      minLoan: 200000,
+      minLoan: 50000,
       maxLoan: 2000000,
-      interest: 2,
+      profitRate: 2,
       duration: [1, 3],
       initialPercent: 15,
     },
     Emergency: {
       minLoan: 10000,
       maxLoan: 100000,
-      interest: 4,
+      profitRate: 0,
       duration: [1, 5],
       initialPercent: 2,
     },
@@ -152,25 +165,36 @@ const LoanForm = () => {
       loanFormValues;
 
     if (!Loan_Category || Loan_Category === "Loan_Category") {
-      return;
+      return settingErrorMsg(`Select Loan Category`, [
+        "Loan_Amount",
+        "Initial_Amount",
+      ]);
     }
+
     if (!Loan_Duration || Loan_Duration === "Loan_Duration") {
-      return;
+      return settingErrorMsg(`Select Loan Duration`, [
+        "Loan_Amount",
+        "Initial_Amount",
+      ]);
     }
-    const { maxLoan, minLoan, initialPercent, interest } =
+
+    const { maxLoan, minLoan, initialPercent, profitRate } =
       whatCategorySelected[0][1];
 
     const gettingInitialAmount =
       (+loanFormValues.Loan_Amount * initialPercent) / 100;
+
     if (!Loan_Amount) {
       return;
     }
+
     if (+Loan_Amount > maxLoan) {
       return settingErrorMsg(
         `Maximum loan for this category is ${formatingPKR(maxLoan)}`,
         "Loan_Amount",
       );
     }
+
     if (+Loan_Amount < minLoan) {
       return settingErrorMsg(
         `Minimum loan amount is ${formatingPKR(minLoan)}`,
@@ -188,18 +212,20 @@ const LoanForm = () => {
         "Initial_Amount",
       );
     }
+
     if (Initial_Amount > gettingInitialAmount) {
       return settingErrorMsg(
         `Initial amount cannot be equal to or greater than the loan amount`,
         "Initial_Amount",
       );
     }
+
     setM_Install(
       formatingPKR(
         (Loan_Amount -
           gettingInitialAmount +
           ((Loan_Amount - gettingInitialAmount) *
-            interest *
+            profitRate *
             parseInt(Loan_Duration)) /
             100) /
           (parseInt(Loan_Duration) * 12),
@@ -236,14 +262,14 @@ const LoanForm = () => {
         setValid(false);
         settingErrorMsg("Select Category", id);
         setM_Install(null);
-        setInterest(null);
+        setProfitRate(null);
         errorToast("Please Select Category");
         setLoanDurationRange([1, 5]);
         setWhatCategorySelected(null);
         // localStorage.removeItem("SelectedCategory");
         return;
       }
-      setInterest(`${categoryGetting[0][1].interest}%`);
+      setProfitRate(`${categoryGetting[0][1].profitRate}%`);
       setWhatCategorySelected(categoryGetting);
       setLoanDurationRange(categoryGetting[0][1].duration);
       // localStorage.setItem("SelectedCategory", JSON.stringify(categoryGetting));
@@ -277,7 +303,7 @@ const LoanForm = () => {
 
       settingErrorMsg("", id);
 
-      const { maxLoan, minLoan, initialPercent, interest } =
+      const { maxLoan, minLoan, initialPercent, profitRate } =
         whatCategorySelected[0][1];
 
       settingErrorMsg(``, id);
@@ -337,7 +363,7 @@ const LoanForm = () => {
             (loanFormValues.Loan_Amount -
               value +
               ((loanFormValues.Loan_Amount - value) *
-                interest *
+                profitRate *
                 parseInt(loanFormValues.Loan_Duration)) /
                 100) /
               (parseInt(loanFormValues.Loan_Duration) * 12),
@@ -350,44 +376,59 @@ const LoanForm = () => {
     return setValid(true);
   };
 
+  // const a = async () => {
+  //   try {
+  //     const gettingLoans = await getDocs(
+  //       collection(db, "Users", auth.currentUser.uid, "Loans"),
+  //     );
+
+  //     gettingLoans.forEach((e) => {
+  //       console.log(e.data());
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   a();
+  // }, []);
+
   const applyLoanFormHandler = async () => {
     event.preventDefault();
-    if (!valid) {
+    if (
+      !valid ||
+      loanFormValues.Loan_Category === "Loan_Category" ||
+      !loanFormValues.Loan_Amount ||
+      loanFormValues.Loan_Duration === "Loan_Duration" ||
+      !loanFormValues.Loan_Duration ||
+      !loanFormValues.Loan_Amount ||
+      !loanFormValues.Initial_Amount
+    ) {
       errorToast("Kindly Complete Form");
       return;
     }
-    if (
-      loanFormValues.Loan_Category === "Loan_Category" ||
-      !loanFormValues.Loan_Amount
-    ) {
-      errorToast("Please Select Category");
-      return;
-    }
-    if (
-      loanFormValues.Loan_Duration === "Loan_Duration" ||
-      !loanFormValues.Loan_Duration
-    ) {
-      errorToast("Please Select Duration");
-      return;
-    }
-    if (!loanFormValues.Loan_Amount || !loanFormValues.Initial_Amount) {
-      console.log(loanFormValues.Loan_Category);
-      errorToast("Please Enter Loan or Initial Amount");
+
+    if (errorMsg !== "") {
+      errorToast("Kindly Complete Form");
       return;
     }
 
     try {
       setLoading(true);
+      if (!auth.currentUser) {
+        return navigate("/sign-in");
+      }
       await addDoc(collection(db, "Users", auth.currentUser.uid, "Loans"), {
         ...loanFormValues,
         isInitialAmountPaid: false,
         applyAt: serverTimestamp(),
         approved: false,
-        interest: interest,
+        interest: profitRate,
         monthlyInstallMent: m_Install,
       });
       errorToast("Loan Created SuccessFully", 200, 200, 200);
-      navigate("/dashboard");
+      // navigate("/dashboard");
     } catch (error) {
       setLoading(false);
       errorToast(error?.code);
@@ -496,8 +537,10 @@ const LoanForm = () => {
             {/* Loan Info */}
             <div className="w-[300px] flex flex-col gap-1 bg-gray-50 rounded-lg p-3 shadow-sm border border-gray-200">
               <span className="text-gray-700 text-base tracking-wide">
-                Interest Rate:{" "}
-                <span className="font-semibold text-gray-900">{interest}</span>
+                Profit Rate:
+                <span className="font-semibold text-gray-900">
+                  {profitRate}
+                </span>
               </span>
               <span className="text-gray-700 text-base tracking-wide">
                 Monthly Installment:{" "}

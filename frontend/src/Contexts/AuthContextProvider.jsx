@@ -5,9 +5,9 @@ import { auth, db } from "../Firebase/firebase";
 import {
   collection,
   doc,
-  getDoc,
-  getDocs,
   onSnapshot,
+  orderBy,
+  query,
 } from "firebase/firestore";
 import AuthLoadingPage from "../Components/AuthLoadingPage";
 
@@ -16,43 +16,42 @@ export const AuthUseContext = () => useContext(AuthContextCreated);
 const AuthContextProvider = ({ children }) => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isUser, setIsuser] = useState(null);
-  const [loan, setLoan] = useState([]);
+  const [loan, setLoan] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   useEffect(() => {
     const authSubcribe = onAuthStateChanged(auth, (user) => {
       if (user && auth.currentUser) {
         try {
-          const userQuery = doc(db, "Users", user.uid);
-          const dataSubcribe = onSnapshot(userQuery, (doc) => {
+          onSnapshot(doc(db, "Users", user.uid), (doc) => {
             if (doc.exists()) {
               setIsuser({
                 userCredential: user,
                 ...doc.data(),
               });
+            } else {
+              setIsuser(null);
+              setLoan(null);
             }
-            // console.log(auth);
             setAuthLoading(false);
           });
 
-          const a = async () => {
-            try {
-              const gettingLoans = await getDocs(
-                collection(db, "Users", auth.currentUser.uid, "Loans"),
-              );
-              if (!gettingLoans.empty) {
-                gettingLoans.docs.map((e) => {
-                  return setLoan(...e.data());
+          onSnapshot(
+            query(
+              collection(db, "Users", auth.currentUser.uid, "Loans"),
+              orderBy("applyAt", "desc"),
+            ),
+            (realTimeLoan) => {
+              if (!realTimeLoan.empty) {
+                const a = realTimeLoan.docs.map((data) => {
+                  return { loanID: data.id, loanData: data.data() };
                 });
-                return;
+                setLoan(a);
+              } else {
+                setLoan(null);
               }
-              setLoan(null);
-            } catch (error) {
-              console.error(error);
-            }
-          };
-          a();
-
-          return () => dataSubcribe();
+              setAuthLoading(false);
+            },
+          );
         } catch (error) {
           console.error(error);
         }

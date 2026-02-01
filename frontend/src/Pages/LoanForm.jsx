@@ -14,23 +14,11 @@ import {
   InformationCircleIcon,
 } from "@heroicons/react/16/solid";
 import { auth, db } from "../Firebase/firebase";
-import {
-  addDoc,
-  collection,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  serverTimestamp,
-} from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router";
-import { AuthUseContext } from "../Contexts/AuthContextProvider";
 
 const LoanForm = () => {
   const navigate = useNavigate();
-
-  const { loan, setLoan } = AuthUseContext();
-
-  console.log(loan);
 
   const labelCssL_form =
     "flex flex-wrap justify-start items-center gap-2 relative text-sm font-elmssans-light w-full desktop:w-[350px]";
@@ -50,7 +38,27 @@ const LoanForm = () => {
   const [errorMsg, setErrorMsg] = useState(null);
 
   const [profitRate, setProfitRate] = useState(null);
+
   const [m_Install, setM_Install] = useState(null);
+
+  const loanCategoryImgURL = {
+    "Home Loan":
+      "https://images.unsplash.com/photo-1691941209466-e981f3a192a7?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+
+    "Education Loan":
+      "https://images.unsplash.com/photo-1672839414428-e3de65ce981c?q=80&w=424&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+
+    "Business Loan":
+      "https://images.unsplash.com/photo-1506787497326-c2736dde1bef?q=80&w=392&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+
+    "Personal Loan":
+      "https://images.unsplash.com/photo-1764231467852-b609a742e082?q=80&w=421&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+
+    "Vehicle Loan":
+      "https://images.unsplash.com/photo-1684082018938-9c30f2a7045d?q=80&w=436&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "Emergency Loan":
+      "https://images.unsplash.com/photo-1758404958502-44f156617bae?q=80&w=436&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  };
 
   const errorParaRef = useRef([]);
 
@@ -113,7 +121,7 @@ const LoanForm = () => {
     },
     Business: {
       minLoan: 100000,
-      maxLoan: 1000000,
+      maxLoan: 10000000,
       profitRate: 5,
       duration: [1, 2],
       initialPercent: 10,
@@ -155,10 +163,9 @@ const LoanForm = () => {
 
   const formatingPKR = (amount) =>
     new Intl.NumberFormat("en-PK", {
-      style: "currency",
-      currency: "PKR",
       minimumFractionDigits: 2,
-    }).format(amount.toFixed(2));
+      maximumFractionDigits: 2,
+    }).format(amount);
 
   useEffect(() => {
     const { Loan_Category, Loan_Duration, Loan_Amount, Initial_Amount } =
@@ -220,6 +227,7 @@ const LoanForm = () => {
       );
     }
 
+    settingErrorMsg("", null);
     setM_Install(
       formatingPKR(
         (Loan_Amount -
@@ -376,24 +384,6 @@ const LoanForm = () => {
     return setValid(true);
   };
 
-  // const a = async () => {
-  //   try {
-  //     const gettingLoans = await getDocs(
-  //       collection(db, "Users", auth.currentUser.uid, "Loans"),
-  //     );
-
-  //     gettingLoans.forEach((e) => {
-  //       console.log(e.data());
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   a();
-  // }, []);
-
   const applyLoanFormHandler = async () => {
     event.preventDefault();
     if (
@@ -403,16 +393,16 @@ const LoanForm = () => {
       loanFormValues.Loan_Duration === "Loan_Duration" ||
       !loanFormValues.Loan_Duration ||
       !loanFormValues.Loan_Amount ||
-      !loanFormValues.Initial_Amount
+      !loanFormValues.Initial_Amount ||
+      errorMsg !== ""
     ) {
       errorToast("Kindly Complete Form");
       return;
     }
 
-    if (errorMsg !== "") {
-      errorToast("Kindly Complete Form");
-      return;
-    }
+    const url = Object.entries(loanCategoryImgURL).find(
+      ([key]) => key === loanFormValues.Loan_Category,
+    );
 
     try {
       setLoading(true);
@@ -424,11 +414,12 @@ const LoanForm = () => {
         isInitialAmountPaid: false,
         applyAt: serverTimestamp(),
         approved: false,
-        interest: profitRate,
-        monthlyInstallMent: m_Install,
+        profitRate: profitRate,
+        monthlyInstallment: m_Install,
+        loanImageURL: url[1],
       });
       errorToast("Loan Created SuccessFully", 200, 200, 200);
-      // navigate("/dashboard");
+      navigate("/dashboard");
     } catch (error) {
       setLoading(false);
       errorToast(error?.code);
@@ -537,7 +528,7 @@ const LoanForm = () => {
             {/* Loan Info */}
             <div className="w-[300px] flex flex-col gap-1 bg-gray-50 rounded-lg p-3 shadow-sm border border-gray-200">
               <span className="text-gray-700 text-base tracking-wide">
-                Profit Rate:
+                Profit Rate:{" "}
                 <span className="font-semibold text-gray-900">
                   {profitRate}
                 </span>

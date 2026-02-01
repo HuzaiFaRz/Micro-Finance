@@ -167,7 +167,7 @@ const Home = () => {
                   alt="Hero"
                   loading="lazy"
                   decoding="async"
-                  className="w-full h-full object-cover"
+                  className="w-full h-svh"
                 />
                 <div className="w-full h-full absolute inset-0 flex flex-col items-start justify-center gap-5 px-6 tablet:px-10 bg-black/60">
                   <h1 className="text-5xl tablet:text-6xl font-elmssans-bold">

@@ -23,10 +23,27 @@ import { auth, db } from "../Firebase/firebase";
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
+import { useEffect } from "react";
 
 const Register = () => {
   const navigate = useNavigate();
+  const {
+    windowMode,
+    passwordEyeCSS,
+    mainColor,
+    inputCSS,
+    labelCSS,
+    inputsErrors,
+    regex,
+    gmailRegex,
+    errorToast,
+    heroIconCSS,
+    isButtonClick,
+    setIsButtonClick,
+  } = useContext(GlobalContextCreated);
+
   const { setIsuser, setIsRegistering } = AuthUseContext();
+
   const [loading, setLoading] = useState(false);
 
   const [passwordEye, setPasswordEye] = useState({
@@ -47,7 +64,7 @@ const Register = () => {
   );
 
   const registerInputs = useMemo(
-    () => ["Name", "Email", "CNIC", "Password", "Repeat Password"],
+    () => ["Name", "Email", "CNIC", "Password", "RepeatPassword"],
     [],
   );
 
@@ -59,19 +76,6 @@ const Register = () => {
       }, {}),
     [registerInputs],
   );
-
-  const {
-    windowMode,
-    passwordEyeCSS,
-    mainColor,
-    inputCSS,
-    labelCSS,
-    inputsErrors,
-    regex,
-    gmailRegex,
-    errorToast,
-    heroIconCSS,
-  } = useContext(GlobalContextCreated);
 
   const inputRef = useRef([]);
   const gettingInput = (id) => {
@@ -94,6 +98,18 @@ const Register = () => {
   const [formValues, formDispatch] = useReducer(AuthFormReducer, initialValues);
   let isValid = true;
 
+  useEffect(() => {
+    const { Name, Email, CNIC, Password, RepeatPassword } = formValues;
+    if (!Name || !Email || !CNIC || !Password || !RepeatPassword) {
+      errorToast("Kindly Complete Form", errorParaRef, lableRef, inputRef);
+      return;
+    }
+    if (RepeatPassword !== password) {
+      errorToast("Password Don't Match", errorParaRef, lableRef, inputRef);
+      return;
+    }
+  }, [isButtonClick]);
+
   const registerInputHandler = (elem) => {
     let { value, id, name } = elem.target;
     const errorPara = gettingErrorPara(`Error-Para-${name}`);
@@ -101,12 +117,13 @@ const Register = () => {
     const input = gettingInput(`${name}`);
     inputsErrors("ok", errorPara, lable, input);
     formDispatch({ type: "INPUT_CHANGE", inputID: id, inputValue: value });
+
     if (
       id === "Name" ||
       id === "Email" ||
       id === "CNIC" ||
       id === "Password" ||
-      id === "Repeat Password"
+      id === "RepeatPassword"
     ) {
       if (!value) {
         inputsErrors("required", errorPara, lable, input);
@@ -162,7 +179,7 @@ const Register = () => {
       }
     }
 
-    if (id === "Repeat Password") {
+    if (id === "RepeatPassword") {
       if (!password.trim() && password.length <= 8) {
         inputsErrors("password_empty_when_repeat", errorPara, lable, input);
         elem.target.value = "";
@@ -199,6 +216,7 @@ const Register = () => {
 
   const registerFormHandler = async () => {
     event.preventDefault();
+    setIsButtonClick(!isButtonClick);
     const errorStatuses = errorParaRef.current.map((e) => e.innerText);
     Object.entries(formValues).forEach(([key, value], i) => {
       if (
@@ -214,21 +232,21 @@ const Register = () => {
         const label = lableRef.current[i];
         const input = inputRef.current[i];
         inputsErrors("required", [errorPara], [label], [input]);
-        inputsErrors("required", [errorPara], [label], [input]);
-
         isValid = false;
+        return;
       }
-      if (key === "Repeat Password") {
+      if (key === "RepeatPassword") {
         if (value !== password) {
           inputsErrors(
             "password_mismatch",
             errorParaRef.current.filter(
-              (e) => e.id == "Error-Para-Repeat Password",
+              (e) => e.id == "Error-Para-RepeatPassword",
             ),
-            lableRef.current.filter((e) => e.id === "Label-Repeat Password"),
-            inputRef.current.filter((e) => e.id === "Repeat Password"),
+            lableRef.current.filter((e) => e.id === "Label-RepeatPassword"),
+            inputRef.current.filter((e) => e.id === "RepeatPassword"),
           );
           isValid = false;
+          return;
         }
       }
     });
@@ -269,9 +287,6 @@ const Register = () => {
     }
   };
 
-
- 
-
   return (
     <>
       <div
@@ -297,11 +312,9 @@ const Register = () => {
                       ref={(el) => (lableRef.current[index] = el)}
                     >
                       {`Insert ${
-                        elem === "Repeat Password" ? "Password" : elem
+                        elem === "RepeatPassword" ? "Password" : elem
                       }`}
                     </label>
-
-                  
 
                     <input
                       className={`${inputCSS}`}
@@ -311,7 +324,7 @@ const Register = () => {
                       name={elem}
                       disabled={loading}
                       type={
-                        elem === "Password" || elem === "Repeat Password"
+                        elem === "Password" || elem === "RepeatPassword"
                           ? passwordEye[elem]
                             ? "text"
                             : "password"
@@ -324,7 +337,7 @@ const Register = () => {
                       onChange={registerInputHandler}
                     />
 
-                    {(elem === "Password" || elem === "Repeat Password") && (
+                    {(elem === "Password" || elem === "RepeatPassword") && (
                       <button
                         type="button"
                         className={`${passwordEyeCSS}`}

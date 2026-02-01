@@ -19,6 +19,8 @@ const GlobalContextProvider = ({ children }) => {
 
   const [authHeadHeading, setAuthHeadHeading] = useState();
 
+  const [isButtonClick, setIsButtonClick] = useState(false);
+
   const [pageHeadingText, setPageHeadingText] = useState(null);
 
   const [toastMsg, setToastMsg] = useState("");
@@ -60,6 +62,7 @@ const GlobalContextProvider = ({ children }) => {
     { type: "ok", message: "OK" },
   ];
 
+  // eslint-disable-next-line no-useless-escape
   const regex = /[!#$%^&@*()_+\-=\[\]{};':"\\|,.<>\/?~`]/;
 
   const gmailRegex = /^[a-zA-Z0-9._]+@gmail\.com$/;
@@ -237,6 +240,8 @@ const GlobalContextProvider = ({ children }) => {
           heroIconCSS,
           toastMsgColor,
           pageHeadingText,
+          isButtonClick,
+          setIsButtonClick,
         }}
       >
         {children}

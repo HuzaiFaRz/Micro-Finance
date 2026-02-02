@@ -36,8 +36,10 @@ const GlobalContextProvider = ({ children }) => {
           return e.charAt(0).toUpperCase() + e.slice(1).toLowerCase();
         })
         .join(" ");
-      setPageHeadingText(currentPageURL);
-      document.title = `M - Finance - ${currentPageURL}`;
+      setPageHeadingText(
+        currentPageURL.includes("payment") ? "Loan Payment" : currentPageURL,
+      );
+      document.title = `M - Finance - ${currentPageURL.includes("payment") ? "Loan Payment" : currentPageURL}`;
       return;
     }
     document.title = `M - Finance - Home`;
@@ -72,13 +74,13 @@ const GlobalContextProvider = ({ children }) => {
   const mainColor =
     windowMode === "dark" ? "bg-black text-main" : "bg-main text-black";
 
-  const inputCSS = `w-full px-3 py-3 border-l-1 border-b-1 placeholder:opacity-70 mt-3 pointer-events-auto ${
+  const inputCSS = `px-3 py-3 border-l-1 border-b-1 placeholder:opacity-70 mt-[13px] pointer-events-auto ${
     windowMode === "dark"
       ? `placeholder:text-card text-main border-main`
       : `placeholder:text-black text-black border-black`
   } `;
 
-  const labelCSS = `w-full underline underline-offset-19 ${
+  const labelCSS = `underline underline-offset-20 ${
     windowMode === "dark"
       ? "text-main decoration-main"
       : "text-card font-elmssans-medium decoration-black"

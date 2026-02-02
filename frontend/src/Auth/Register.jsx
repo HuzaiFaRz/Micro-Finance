@@ -1,6 +1,7 @@
 import React, {
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useReducer,
   useRef,
@@ -23,7 +24,6 @@ import { auth, db } from "../Firebase/firebase";
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
-import { useEffect } from "react";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -64,7 +64,14 @@ const Register = () => {
   );
 
   const registerInputs = useMemo(
-    () => ["Name", "Email", "CNIC", "Password", "RepeatPassword"],
+    () => [
+      "Name",
+      "Email",
+      "CNIC",
+      "PhoneNumber",
+      "Password",
+      "RepeatPassword",
+    ],
     [],
   );
 
@@ -101,7 +108,6 @@ const Register = () => {
   useEffect(() => {
     const { Name, Email, CNIC, Password, RepeatPassword } = formValues;
     if (!Name || !Email || !CNIC || !Password || !RepeatPassword) {
-      errorToast("Kindly Complete Form", errorParaRef, lableRef, inputRef);
       return;
     }
     if (RepeatPassword !== password) {
@@ -164,6 +170,21 @@ const Register = () => {
       elem.target.value = format;
       if (digit.length !== 13) {
         inputsErrors("invalid_length", errorPara, lable, input);
+      }
+    }
+
+    if (id === "PhoneNumber") {
+      if (!value) {
+        elem.target.value = `+92 ` + value.slice(3);
+        return;
+      }
+      if (!value.includes("+92")) {
+        elem.target.value = `+92 ` + value.slice(3);
+        return;
+      }
+      if (value.length >= 15) {
+        inputsErrors("invalid_length", errorPara, lable, input);
+        return;
       }
     }
 
@@ -266,6 +287,10 @@ const Register = () => {
             {
               ...formValues,
               createdAt: userCredential?.user.metadata.creationTime,
+              accountDetails: {
+                accountTittle: formValues.Name,
+                accountNumber: `PK16${Math.random().toString(20).slice(5).toLocaleUpperCase()}${formValues.PhoneNumber.slice(4)}`,
+              },
             },
             { merge: true },
           );
@@ -290,34 +315,33 @@ const Register = () => {
   return (
     <>
       <div
-        className={`w-full h-svh flex flex-col tablet:flex-row justify-start items-start ${mainColor}`}
+        className={`w-full min-h-[105vh] flex flex-col tablet:flex-row ${mainColor}`}
       >
         <AuthImage />
+
         <div
-          className={`flex flex-col justify-evenly items-center tablet:w-[50%] w-full h-full px-4`}
+          className={`flex flex-col justify-between items-center w-full tablet:w-[60%] min-h-full`}
         >
           <AuthHead />
 
           <form
-            className={`flex flex-col justify-start items-start w-full x-10 py-5 gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider ${mainColor}`}
+            className={`flex flex-wrap justify-around items-center w-full h-full tablet:h-[600px] gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider px-3 ${mainColor}`}
           >
             {registerInputs.map((elem, index) => {
               return (
                 <React.Fragment key={index}>
-                  <div className="w-full flex flex-col justify-center items-start relative">
+                  <div className="flex flex-col justify-center items-start relative w-full desktop:w-[350px]">
                     <label
                       htmlFor={elem}
                       id={`Label-${elem}`}
-                      className={`${labelCSS}`}
+                      className={`${labelCSS} w-full`}
                       ref={(el) => (lableRef.current[index] = el)}
                     >
-                      {`Insert ${
-                        elem === "RepeatPassword" ? "Password" : elem
-                      }`}
+                      {`Insert ${elem.replace(/([A-Z])/g, " $1")}`}
                     </label>
 
                     <input
-                      className={`${inputCSS}`}
+                      className={`${inputCSS} w-full desktop:w-[350px]`}
                       ref={(el) => (inputRef.current[index] = el)}
                       autoComplete="off"
                       id={`${elem}`}
@@ -335,6 +359,7 @@ const Register = () => {
                       placeholder={`${elem}...`}
                       maxLength={elem === "CNIC" ? "15" : ""}
                       onChange={registerInputHandler}
+                      defaultValue={elem === "PhoneNumber" ? "+92 " : ""}
                     />
 
                     {(elem === "Password" || elem === "RepeatPassword") && (
@@ -359,7 +384,7 @@ const Register = () => {
             })}
           </form>
 
-          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-center items-center pb-5">
+          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-evenly items-center pb-4 mt-5">
             <button
               className="bg-card px-10 py-2 rounded-3xl disabled:opacity-50 flex items-center gap-4"
               type="submit"

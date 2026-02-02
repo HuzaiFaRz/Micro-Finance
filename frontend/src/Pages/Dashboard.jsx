@@ -9,7 +9,7 @@ const Dashboard = () => {
   return (
     <Fragment>
       <div className="w-full min-h-screen bg-black font-elmssans-medium relative">
-        <h1 className="text-4xl text-card font-elmssans-bold text-center pt-5 tracking-wider">
+        <h1 className="text-xl tablet:text-4xl text-card font-elmssans-bold text-center pt-5 tracking-wider">
           Hello {isUser?.Name} <br /> Your Loans Here
         </h1>
         <>
@@ -89,7 +89,7 @@ const Dashboard = () => {
                           {isInitialAmountPaid ? "Approved" : "Pending"}
                         </span>
 
-                        <h1 className="font-elmssans-bold text-2xl tablet:text-4xl px-3">
+                        <h1 className="font-elmssans-bold text-xl tablet:text-2xl desktop:text-4xl px-3">
                           Rs {formatingPKR(Loan_Amount)} PKR
                         </h1>
 
@@ -122,7 +122,7 @@ const Dashboard = () => {
                           </span>
                           {!isInitialAmountPaid && (
                             <NavLink
-                              to={`/dashboard/${loanID}`}
+                              to={`payment/${loanID}`}
                               className="px-3 py-2 text-xl bg-card text-main"
                             >
                               Pay Initial Amount

@@ -15,6 +15,7 @@ import LockRoute from "./Routes/LockRoute";
 import MassegeToast from "./Components/MassegeToast";
 import AuthRoute from "./Routes/AuthRoute";
 import ErrorRoute from "./Components/ErrorRoute";
+import Payment from "./Pages/Payment";
 
 const App = () => {
   return (
@@ -23,7 +24,7 @@ const App = () => {
         <MassegeToast />
         <AuthContextProvider>
           <Routes>
-            <Route path="*" element={<ErrorRoute />}  />
+            <Route path="*" element={<ErrorRoute />} />
             <Route element={<AuthRoute />}>
               <Route path="/register" element={<Register />} />
               <Route path="/sign-in" element={<SignIn />} />
@@ -34,6 +35,7 @@ const App = () => {
               <Route path="about-us" element={<About />} />
               <Route element={<LockRoute />}>
                 <Route path="dashboard" element={<Dashboard />} />
+                <Route path="dashboard/payment/:loanID" element={<Payment />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="loan-form" element={<LoanForm />} />
               </Route>

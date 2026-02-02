@@ -86,7 +86,8 @@ const Navbar = () => {
       setLoading(true);
       await signOut(auth);
       errorToast("Sign Out SuccessFully", 200, 200, 200);
-      navigate("/sign-in");
+      setWarn(false);
+      navigate("sign-in");
     } catch (error) {
       setLoading(false);
       console.error(error?.message);
@@ -111,7 +112,6 @@ const Navbar = () => {
       setNavbarButton(false);
       setWarn(false);
       errorToast("Account Deleted SuccessFully", 200, 200, 200);
-      navigate("/");
     } catch (error) {
       setLoading(false);
       console.error(error?.message);

@@ -62,7 +62,6 @@ const SignIn = () => {
   useEffect(() => {
     const { Email, Password } = formValues;
     if (!Email || !Password) {
-      errorToast("Kindly Complete Form", errorParaRef, lableRef, inputRef);
       return;
     }
   }, [isButtonClick]);
@@ -180,32 +179,31 @@ const SignIn = () => {
   return (
     <>
       <div
-        className={`w-full h-svh flex flex-col tablet:flex-row justify-between items-start ${mainColor}`}
+        className={`w-full min-h-[105vh] flex flex-col tablet:flex-row justify-between items-start ${mainColor}`}
       >
         <AuthImage />
         <div
-          className={`flex flex-col justify-between items-center tablet:w-[50%] w-full h-full px-4`}
+          className={`flex flex-col justify-between items-center w-full tablet:w-[60%] min-h-full`}
         >
           <AuthHead />
-
           <form
-            className={`flex flex-col justify-start items-start w-full x-10 py-5 gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider ${mainColor}`}
+            className={`flex flex-wrap justify-around items-center w-full h-full tablet:h-[500px] gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider px-3 ${mainColor}`}
           >
             {sigInInputs.map((elem, index) => {
               return (
                 <React.Fragment key={index}>
-                  <div className="w-full flex flex-col justify-center items-start relative">
+                  <div className="flex flex-col justify-center items-start relative w-full desktop:w-[350px]">
                     <label
                       htmlFor={elem}
                       id={`Label-${elem}`}
-                      className={`${labelCSS}`}
+                      className={`${labelCSS} w-full`}
                       ref={(el) => (lableRef.current[index] = el)}
                     >
                       {`Insert ${elem}`}
                     </label>
 
                     <input
-                      className={`${inputCSS}`}
+                      className={`${inputCSS} w-full desktop:w-[350px]`}
                       ref={(el) => (inputRef.current[index] = el)}
                       autoComplete="off"
                       id={`${elem}`}
@@ -244,7 +242,8 @@ const SignIn = () => {
             })}
           </form>
 
-          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-center items-center pb-5">
+          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-evenly items-center pb-4 mt-5">
+            {" "}
             <button
               className="bg-card px-10 py-2 rounded-3xl disabled:opacity-50 flex items-center gap-4"
               type="submit"

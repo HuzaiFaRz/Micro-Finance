@@ -155,13 +155,13 @@ const Register = () => {
     }
 
     if (id === "CNIC") {
-      let digit = value.replace(/[^0-9]/g, "");
-      let format = "";
-      if (digit.length <= 5) {
-        format = digit;
-      } else if (digit.length <= 12) {
+      let digit = value.replace(/\D/g, "");
+      let format = digit;
+
+      if (digit.length > 5 && digit.length <= 12) {
         format = `${digit.slice(0, 5)}-${digit.slice(5)}`;
-      } else {
+      }
+      if (digit.length > 12) {
         format = `${digit.slice(0, 5)}-${digit.slice(5, 12)}-${digit.slice(
           12,
           13,
@@ -175,16 +175,19 @@ const Register = () => {
 
     if (id === "PhoneNumber") {
       if (!value) {
-        elem.target.value = `+92 ` + value.slice(3);
-        return;
+        return inputsErrors("required", errorPara, lable, input);
       }
-      if (!value.includes("+92")) {
-        elem.target.value = `+92 ` + value.slice(3);
-        return;
+
+      if (value.startsWith(" ") || /\s{2,}/.test(value)) {
+        return inputsErrors("leading_space", errorPara, lable, input);
       }
-      if (value.length >= 15) {
-        inputsErrors("invalid_length", errorPara, lable, input);
-        return;
+
+      let val = value.replace(/[\s-]/g, "");
+
+      elem.target.value = `+92 ${val.slice(3)}`;
+
+      if (value.length > 14 || value.length < 14) {
+        return inputsErrors("invalid_length", errorPara, lable, input);
       }
     }
 
@@ -285,7 +288,12 @@ const Register = () => {
           await setDoc(
             doc(db, "Users", userCredential?.user?.uid),
             {
-              ...formValues,
+              CNIC: formValues.CNIC.replace(/\D/g, ""),
+              PhoneNumber: formValues.PhoneNumber.replace(`+92 `, "0"),
+              Email: formValues.Email,
+              Name: formValues.Name,
+              Password: formValues.Password,
+              RepeatPassword: formValues.RepeatPassword,
               createdAt: userCredential?.user.metadata.creationTime,
               accountDetails: {
                 accountTittle: formValues.Name,
@@ -325,23 +333,23 @@ const Register = () => {
           <AuthHead />
 
           <form
-            className={`flex flex-wrap justify-around items-center w-full h-full tablet:h-[600px] gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider px-3 ${mainColor}`}
+            className={`flex flex-wrap justify-around items-center h-full tablet:h-[600px] gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider px-3 w-full ${mainColor}`}
           >
             {registerInputs.map((elem, index) => {
               return (
                 <React.Fragment key={index}>
-                  <div className="flex flex-col justify-center items-start relative w-full desktop:w-[350px]">
+                  <div className="flex flex-col justify-center items-start relative w-full desktop:w-[450px] extra-large:w-[350px]">
                     <label
                       htmlFor={elem}
                       id={`Label-${elem}`}
                       className={`${labelCSS} w-full`}
                       ref={(el) => (lableRef.current[index] = el)}
                     >
-                      {`Insert ${elem.replace(/([A-Z])/g, " $1")}`}
+                      {`Insert ${elem.replace(/([a-z])([A-Z])/g, "$1 $2")}`}
                     </label>
 
                     <input
-                      className={`${inputCSS} w-full desktop:w-[350px]`}
+                      className={`${inputCSS} w-full`}
                       ref={(el) => (inputRef.current[index] = el)}
                       autoComplete="off"
                       id={`${elem}`}
@@ -352,14 +360,14 @@ const Register = () => {
                           ? passwordEye[elem]
                             ? "text"
                             : "password"
-                          : elem === "CNIC"
+                          : elem === "CNIC" || elem === "PhoneNumber"
                             ? "tel"
                             : "text"
                       }
-                      placeholder={`${elem}...`}
+                      placeholder={elem.replace(/([a-z])([A-Z])/g, "$1 $2")}
                       maxLength={elem === "CNIC" ? "15" : ""}
                       onChange={registerInputHandler}
-                      defaultValue={elem === "PhoneNumber" ? "+92 " : ""}
+                      defaultValue={elem === "PhoneNumber" ? `+92 ` : ""}
                     />
 
                     {(elem === "Password" || elem === "RepeatPassword") && (
@@ -374,7 +382,7 @@ const Register = () => {
                     )}
 
                     <p
-                      className={`absolute text-xs tablet:text-sm top-2 right-2 flex items-center gap-2 tracking-widest text-red-500`}
+                      className={`absolute text-xs tablet:text-sm top-[110%] right-2 flex items-center gap-2 tracking-widest text-red-500`}
                       id={`Error-Para-${elem}`}
                       ref={(el) => (errorParaRef.current[index] = el)}
                     ></p>
@@ -384,7 +392,7 @@ const Register = () => {
             })}
           </form>
 
-          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-evenly items-center pb-4 mt-5">
+          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-evenly items-center pb-4 mt-10">
             <button
               className="bg-card px-10 py-2 rounded-3xl disabled:opacity-50 flex items-center gap-4"
               type="submit"

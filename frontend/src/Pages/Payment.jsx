@@ -51,26 +51,27 @@ const Payment = () => {
     if (!value) {
       return errorToast("Fill Form");
     }
+
     if (id === "Initial_Amount") {
       if (
         value > targetLoan?.loanData.Initial_Amount ||
         value < targetLoan?.loanData.Initial_Amount
       ) {
-        return errorToast(
-          `Enter Correct Initial Amount ${targetLoan?.loanData.Initial_Amount}`,
-        );
+        return;
       }
       return;
     }
+
     if (id === "CNIC") {
       if (value !== isUser?.CNIC) {
-        return errorToast(`Enter Correct CNIC Number`);
+        return;
       }
       return;
     }
+
     if (id === "Password") {
       if (value !== isUser?.Password) {
-        return errorToast(`Enter Correct Password`);
+        return;
       }
       return;
     }
@@ -107,15 +108,33 @@ const Payment = () => {
     ) {
       return errorToast("Fill Form");
     }
-    if (!targetLoan.approved && !targetLoan.isInitialAmountPaid) {
-      if (SelectPurpose === "Monthly Payment") {
-        return errorToast("Kindly Select Initial Amount");
-      }
-    } else {
+
+    if (
+      Initial_Amount > targetLoan?.loanData.Initial_Amount ||
+      Initial_Amount < targetLoan?.loanData.Initial_Amount
+    ) {
+      return errorToast(
+        `Enter Correct Initial Amount ${targetLoan?.loanData.Initial_Amount}`,
+      );
+    }
+
+    if (CNIC !== isUser?.CNIC) {
+      return errorToast(`Enter Correct CNIC Number`);
+    }
+    if (Password !== isUser?.Password) {
+      return errorToast(`Enter Correct Password`);
+    }
+
+    if (targetLoan.approved && targetLoan.isInitialAmountPaid) {
       if (SelectPurpose === "Initial Amount") {
         return errorToast("Your Initial Amount is Paid");
       }
+    } else {
+      if (SelectPurpose === "Monthly Payment") {
+        return errorToast("Kindly Select Initial Amount");
+      }
     }
+    console.log("pass");
   };
 
   return (

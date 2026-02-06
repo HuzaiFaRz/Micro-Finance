@@ -37,6 +37,8 @@ const Dashboard = () => {
                     loanImageURL,
                   } = loanData;
 
+                  let initialAmountChecker = isInitialAmountPaid && approved;
+
                   const timestampInMilliseconds =
                     applyAt?.seconds * 1000 + applyAt?.nanoseconds / 1000000;
 
@@ -58,19 +60,18 @@ const Dashboard = () => {
                     "Monthly Installment": monthlyInstallment,
                     "Apply At": date,
                     "Profit Rate": profitRate,
-                    Approve:
-                      !approved && !isInitialAmountPaid
-                        ? "Your Initial Amount Is Unpaid"
-                        : "Approved",
+                    Approve: initialAmountChecker
+                      ? "Approved"
+                      : "Your Initial Amount Is Unpaid",
                   };
 
-                  if (!isInitialAmountPaid && !approved) {
+                  if (!initialAmountChecker) {
                     UI["Initial Amount"] = formatingPKR(Initial_Amount);
                   }
 
                   return (
                     <div
-                      className={`loanCard w-full h-full py-3 tablet:py-4 bg-gray-200 text-card relative flex flex-col justify-between items-start gap-3 rounded-2xl shadow-xl ${!isInitialAmountPaid && !approved ? "shadow-red-500" : "shadow-layout"}`}
+                      className={`loanCard w-full h-full py-3 tablet:py-4 bg-gray-200 text-card relative flex flex-col justify-between items-start gap-3 rounded-2xl shadow-xl ${initialAmountChecker ? "shadow-layout" : "shadow-red-500"}`}
                       id={loanID}
                       key={index}
                     >
@@ -83,9 +84,9 @@ const Dashboard = () => {
                       />
 
                       <span
-                        className={`status ${isInitialAmountPaid ? "text-green-500" : "text-red-500"} absolute right-2 top-2 font-elmssans-medium text-[15px] tablet:text-lg`}
+                        className={`status ${initialAmountChecker ? "text-green-500" : "text-red-500"} absolute right-2 top-2 font-elmssans-medium text-[15px] tablet:text-lg`}
                       >
-                        {isInitialAmountPaid ? "Approved" : "Pending"}
+                        {initialAmountChecker ? "Approved" : "Pending"}
                       </span>
 
                       <h1 className="font-elmssans-bold text-xl tablet:text-2xl desktop:text-4xl px-3">
@@ -100,7 +101,7 @@ const Dashboard = () => {
                                 {key}: {""}
                                 <strong
                                   key={i}
-                                  className={`tracking-wider leading-8 text-[17px] desktop:text-2xl tablet:text-xl ${key === "Approve" && !isInitialAmountPaid && !approved ? "text-red-500" : "text-layout"}`}
+                                  className={`tracking-wider leading-8 text-[17px] desktop:text-2xl tablet:text-xl ${key === "Approve" ? (initialAmountChecker ? "text-layout" : "text-red-500") : "text-layout"}`}
                                 >
                                   {value}
                                 </strong>{" "}
@@ -120,15 +121,15 @@ const Dashboard = () => {
                         <span className="text-xl tablet:text-2xl text-center">
                           Your dreams, funded responsibly.✨
                         </span>
-                        {!isInitialAmountPaid ||
-                          (!approved && (
-                            <NavLink
-                              to={`payment/${loanID}`}
-                              className="px-3 py-2 text-xl bg-card text-main"
-                            >
-                              Pay Initial Amount
-                            </NavLink>
-                          ))}
+
+                        <NavLink
+                          to={`payment/${loanID}`}
+                          className="px-3 py-2 text-xl bg-card text-main"
+                        >
+                          {initialAmountChecker
+                            ? "Pay Installment"
+                            : "Pay Initial Amount"}
+                        </NavLink>
                       </div>
                     </div>
                   );

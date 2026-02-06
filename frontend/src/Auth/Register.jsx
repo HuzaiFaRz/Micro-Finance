@@ -107,14 +107,31 @@ const Register = () => {
 
   useEffect(() => {
     const { Name, Email, CNIC, Password, RepeatPassword } = formValues;
-    if (!Name || !Email || !CNIC || !Password || !RepeatPassword) {
+    if (!Password || !RepeatPassword) {
       return;
     }
-    if (RepeatPassword !== password) {
+    if (RepeatPassword !== Password && password !== RepeatPassword) {
+      inputsErrors(
+        "required",
+        [errorParaRef.current[5]],
+        [lableRef.current[5]],
+        [inputRef.current[5]],
+      );
       errorToast("Password Don't Match", errorParaRef, lableRef, inputRef);
       return;
     }
-  }, [isButtonClick]);
+
+    inputsErrors(
+      "ok",
+      [errorParaRef.current[5]],
+      [lableRef.current[5]],
+      [inputRef.current[5]],
+    );
+
+    if (!Name || !Email || !CNIC) {
+      return;
+    }
+  }, [isButtonClick, formValues]);
 
   const registerInputHandler = (elem) => {
     let { value, id, name } = elem.target;
@@ -185,6 +202,10 @@ const Register = () => {
       let val = value.replace(/[\s-]/g, "");
 
       elem.target.value = `+92 ${val.slice(3)}`;
+
+      if (!value.startsWith(`+92 3`)) {
+        return inputsErrors("invalid_format", errorPara, lable, input);
+      }
 
       if (value.length > 14 || value.length < 14) {
         return inputsErrors("invalid_length", errorPara, lable, input);

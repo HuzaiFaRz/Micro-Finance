@@ -71,7 +71,7 @@ const Dashboard = () => {
 
                   return (
                     <div
-                      className={`loanCard w-full h-full py-3 tablet:py-4 bg-gray-200 text-card relative flex flex-col justify-between items-start gap-3 rounded-2xl shadow-xl ${initialAmountChecker ? "shadow-layout" : "shadow-red-500"}`}
+                      className={`loanCard w-full h-full py-3 tablet:py-4 bg-gray-200 text-card relative flex flex-col justify-between items-start gap-3 rounded-2xl shadow-xl ${initialAmountChecker ? "shadow-green-500" : "shadow-red-500"}`}
                       id={loanID}
                       key={index}
                     >
@@ -79,7 +79,7 @@ const Dashboard = () => {
                         id="my-tooltip"
                         variant="dark"
                         place="bottom-end"
-                        content="First Pay Initial Amount"
+                        content={`${isInitialAmountPaid ? "First Pay Initial Amount" : "Initial Amount Paid"}`}
                         anchorSelect=".status"
                       />
 
@@ -123,7 +123,7 @@ const Dashboard = () => {
                         </span>
 
                         <NavLink
-                          to={`payment/${loanID}`}
+                          to={`${initialAmountChecker ? "" : `payment/${loanID}`}`}
                           className="px-3 py-2 text-xl bg-card text-main"
                         >
                           {initialAmountChecker

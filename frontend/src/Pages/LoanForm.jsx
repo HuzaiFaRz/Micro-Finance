@@ -15,10 +15,14 @@ import {
 } from "@heroicons/react/16/solid";
 import { auth, db } from "../Firebase/firebase";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
+import { AuthUseContext } from "../Contexts/AuthContextProvider";
+import LoanDescriptionPDF from "../assets/Files/Loan_Categories_and_Rules.pdf";
 
 const LoanForm = () => {
   const navigate = useNavigate();
+
+  const { LOAN_CATEGORIES } = AuthUseContext();
 
   const labelCssL_form =
     "flex flex-wrap justify-start items-center gap-2 relative text-sm font-elmssans-light w-full desktop:w-[350px]";
@@ -103,51 +107,6 @@ const LoanForm = () => {
     LoanFormReducer,
     initialValue,
   );
-
-  const LOAN_CATEGORIES = {
-    Home: {
-      minLoan: 100000,
-      maxLoan: 5000000,
-      profitRate: 2,
-      duration: [1, 5],
-      initialPercent: 10,
-    },
-    Education: {
-      minLoan: 10000,
-      maxLoan: 500000,
-      profitRate: 0,
-      duration: [1, 2],
-      initialPercent: 5,
-    },
-    Business: {
-      minLoan: 100000,
-      maxLoan: 10000000,
-      profitRate: 5,
-      duration: [1, 2],
-      initialPercent: 10,
-    },
-    Personal: {
-      minLoan: 5000,
-      maxLoan: 300000,
-      profitRate: 2,
-      duration: [1, 2],
-      initialPercent: 2,
-    },
-    Vehicle: {
-      minLoan: 50000,
-      maxLoan: 2000000,
-      profitRate: 2,
-      duration: [1, 3],
-      initialPercent: 15,
-    },
-    Emergency: {
-      minLoan: 10000,
-      maxLoan: 100000,
-      profitRate: 0,
-      duration: [1, 5],
-      initialPercent: 2,
-    },
-  };
 
   const settingErrorMsg = (msg, id) => {
     setErrorMsg(msg);
@@ -433,9 +392,24 @@ const LoanForm = () => {
     <Fragment>
       <div className="w-full h-full bg-layout flex desktop:flex-row flex-col pb-10">
         <ol className="w-full desktop:w-[40%] h-full p-4 flex flex-col justify-start items-start font-elmssans-medium bg-black text-main">
-          <h3 className="text-2xl font-elmssans-bold flex items-center gap-4">
-            <InformationCircleIcon className="size-7" />
-            Before You Apply – Please Note
+          <h3 className="text-2xl font-elmssans-bold flex flex-wrap items-center gap-4">
+            <InformationCircleIcon className="h-7 w-7 text-card" />
+            Before You Apply – Kindly Review the Important Details on Our{" "}
+            <NavLink to="/loan-describtion" className="underline text-card">
+              Loan Description Page
+            </NavLink>
+            You can also download the comprehensive Loan Description PDF for
+            your reference.{" "}
+            <strong className="text-card underline text-xl">
+              <a
+                href={LoanDescriptionPDF}
+                target="_blank"
+                download
+                rel="noopener noreferrer"
+              >
+                PDF here
+              </a>{" "}
+            </strong>{" "}
           </h3>
 
           <ol className="list-disc list-outside text-xl p-6 space-y-5">

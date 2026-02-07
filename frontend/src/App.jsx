@@ -16,6 +16,7 @@ import MassegeToast from "./Components/MassegeToast";
 import AuthRoute from "./Routes/AuthRoute";
 import ErrorRoute from "./Components/ErrorRoute";
 import Payment from "./Pages/Payment";
+import LoanDescription from "./Pages/LoanDescription";
 
 const App = () => {
   return (
@@ -38,6 +39,7 @@ const App = () => {
                 <Route path="dashboard/payment/:loanID" element={<Payment />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="loan-form" element={<LoanForm />} />
+                <Route path="loan-describtion" element={<LoanDescription />} />
               </Route>
             </Route>
           </Routes>

@@ -14,6 +14,63 @@ import AuthLoadingPage from "../Components/AuthLoadingPage";
 export const AuthUseContext = () => useContext(AuthContextCreated);
 
 const AuthContextProvider = ({ children }) => {
+  const LOAN_CATEGORIES = {
+    Home: {
+      minLoan: 100000,
+      maxLoan: 5000000,
+      profitRate: 2,
+      duration: [1, 5],
+      initialPercent: 10,
+      description:
+        "Financial support to buy, construct, or renovate a residential property with flexible repayment options.",
+    },
+    Education: {
+      minLoan: 10000,
+      maxLoan: 500000,
+      profitRate: 0,
+      duration: [1, 2],
+      initialPercent: 5,
+      description:
+        "Covers tuition fees, books, and accommodation expenses to support your educational needs.",
+    },
+    Business: {
+      minLoan: 100000,
+      maxLoan: 10000000,
+      profitRate: 5,
+      duration: [1, 2],
+      initialPercent: 10,
+      description:
+        "Designed to help startups and SMEs expand operations, manage inventory, or cover operational costs.",
+    },
+    Personal: {
+      minLoan: 5000,
+      maxLoan: 300000,
+      profitRate: 2,
+      duration: [1, 2],
+      initialPercent: 2,
+      description:
+        "Short-term financial support for personal needs such as household expenses or emergency requirements.",
+    },
+    Vehicle: {
+      minLoan: 50000,
+      maxLoan: 2000000,
+      profitRate: 2,
+      duration: [1, 3],
+      initialPercent: 15,
+      description:
+        "Helps you purchase new or used vehicles including cars and motorcycles.",
+    },
+    Emergency: {
+      minLoan: 10000,
+      maxLoan: 100000,
+      profitRate: 0,
+      duration: [1, 5],
+      initialPercent: 2,
+      description:
+        "Quick financial assistance for medical emergencies or unexpected urgent expenses.",
+    },
+  };
+
   const [isRegistering, setIsRegistering] = useState(false);
   const [isUser, setIsuser] = useState(null);
   const [loan, setLoan] = useState(null);
@@ -75,6 +132,7 @@ const AuthContextProvider = ({ children }) => {
         setIsRegistering,
         loan,
         setLoan,
+        LOAN_CATEGORIES,
       }}
     >
       {authLoading ? <AuthLoadingPage /> : children}

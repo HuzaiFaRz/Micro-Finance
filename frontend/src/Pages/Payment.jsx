@@ -1,24 +1,29 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router";
-import { auth } from "../Firebase/firebase";
+import { auth, db } from "../Firebase/firebase";
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
 import {
+  ArrowPathRoundedSquareIcon,
   BanknotesIcon,
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/16/solid";
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
+import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { jsPDF } from "jspdf";
 
 const Payment = () => {
+  const docPDF = new jsPDF();
+
   const navigate = useNavigate();
-  const { loading, setLoading } = useState(false);
+  const [loading, setLoading] = useState(false);
   const [passwordEye, setPasswordEye] = useState(false);
   const { loanID } = useParams();
   const [targetLoan, setTargetLoan] = useState(null);
 
   const { errorToast, passwordEyeCSS } = useContext(GlobalContextCreated);
   const [payFormInputsValues, setPayFormInputsValues] = useState({
-    Initial_Amount: targetLoan?.loanData.Initial_Amount,
+    Initial_Amount: "",
     CNIC: "",
     Password: "",
     SelectPurpose: "",
@@ -40,19 +45,32 @@ const Payment = () => {
       console.error("Invalid Data Entered");
       return navigate("/dashboard");
     }
-  }, []);
+  }, [loan, loanID, navigate]);
+
+  useEffect(() => {
+    setPayFormInputsValues((prev) => ({
+      ...prev,
+      Initial_Amount: targetLoan?.loanData.Initial_Amount,
+    }));
+  }, [targetLoan]);
 
   const payFormInputHandler = (event) => {
     const { value, id } = event.target;
+
     setPayFormInputsValues((prev) => ({
       ...prev,
       [id]: value,
     }));
-    if (!value) {
-      return errorToast("Fill Form");
-    }
 
     if (id === "Initial_Amount") {
+      if (!value) {
+        console.log(payFormInputsValues);
+        setPayFormInputsValues((prev) => ({
+          ...prev,
+          Initial_Amount: "",
+        }));
+        return;
+      }
       if (
         value > targetLoan?.loanData.Initial_Amount ||
         value < targetLoan?.loanData.Initial_Amount
@@ -60,6 +78,10 @@ const Payment = () => {
         return;
       }
       return;
+    }
+
+    if (!value) {
+      return errorToast("Fill Form");
     }
 
     if (id === "CNIC") {
@@ -80,13 +102,16 @@ const Payment = () => {
       if (value === "Select Purpose") {
         return errorToast("Kindly Select Purpose");
       }
-      if (!targetLoan.approved && !targetLoan.isInitialAmountPaid) {
-        if (value === "Monthly Payment") {
-          return errorToast("Kindly Select Initial Amount");
+      if (
+        targetLoan.loanData.approved &&
+        targetLoan.loanData.isInitialAmountPaid
+      ) {
+        if (value === "Initial Payment") {
+          return errorToast("Your Initial Amount is Paid", 200, 200, 200);
         }
       } else {
-        if (value === "Initial Amount") {
-          return errorToast("Your Initial Amount is Paid");
+        if (value === "Monthly Payment") {
+          return errorToast("Kindly Select Initial Amount");
         }
       }
     }
@@ -96,14 +121,105 @@ const Payment = () => {
     setPasswordEye(!passwordEye);
   };
 
-  const paymentHandler = (event) => {
+  const paymentReciptGenerator = (Initial_Amount, SelectPurpose) => {
+    const date = new Date().toLocaleDateString("PKT", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    // Create new PDF
+    const docPDF = new jsPDF();
+    const txid =
+      `MF- ${loanID}` +
+      Math.random().toString(36).substring(2, 10).toUpperCase();
+
+    // Header
+    docPDF.setFont("helvetica", "bold");
+    docPDF.setFontSize(22);
+    docPDF.text("MicroFinance", 105, 20, { align: "center" });
+
+    docPDF.setFontSize(16);
+    docPDF.text("Payment Receipt", 105, 30, { align: "center" });
+
+    // Transaction info
+    docPDF.setFontSize(12);
+    docPDF.setFont("helvetica", "normal");
+
+    const startY = 45;
+    let y = startY;
+
+    docPDF.text(`Transaction ID: ${txid}`, 15, y);
+    y += 7;
+    docPDF.text(`Transaction Date: ${date}`, 15, y);
+    y += 7;
+    docPDF.text(`Payment Status: PAID`, 15, y);
+    y += 10;
+
+    // From
+    docPDF.setFont("helvetica", "bold");
+    docPDF.text("Paid By:", 15, y);
+    docPDF.setFont("helvetica", "normal");
+    y += 7;
+    docPDF.text(
+      `Account Tittle: ${isUser?.accountDetails.accountTittle}`,
+      15,
+      y,
+    );
+    y += 7;
+    docPDF.text(`Account no: ${isUser?.accountDetails.accountNumber}`, 15, y);
+    y += 7;
+    docPDF.text(`CNIC: ${isUser?.CNIC}`, 15, y);
+    y += 10;
+
+    // To
+    docPDF.setFont("helvetica", "bold");
+    docPDF.text("Paid To:", 15, y);
+    docPDF.setFont("helvetica", "normal");
+    y += 7;
+    docPDF.text(`Organization: M_Finance`, 15, y);
+    y += 7;
+    docPDF.text(`Account Number: M_F-XXX-XXXXX`, 15, y);
+    y += 10;
+
+    // Payment info
+    docPDF.setFont("helvetica", "bold");
+    docPDF.text("Payment Details:", 15, y);
+    docPDF.setFont("helvetica", "normal");
+    y += 7;
+    docPDF.text(`Amount Paid: PKR ${Initial_Amount}`, 15, y);
+    y += 7;
+    docPDF.text(`Payment Method: M_Finance`, 15, y);
+    y += 7;
+    docPDF.text(`Purpose: ${SelectPurpose}`, 15, y);
+    y += 15;
+
+    // Footer
+    docPDF.setFont("helvetica", "italic");
+    docPDF.setFontSize(10);
+    docPDF.text(
+      "This is a system-generated receipt. No signature required.",
+      15,
+      y,
+    );
+
+    docPDF.save(`Receipt_${txid}${loanID}.pdf`);
+  };
+
+  const paymentHandler = async (event) => {
     event.preventDefault();
+
     const { Initial_Amount, CNIC, Password, SelectPurpose } =
       payFormInputsValues;
+
     if (
       !Initial_Amount ||
       !CNIC ||
       !Password ||
+      !SelectPurpose ||
       SelectPurpose === "Select Purpose"
     ) {
       return errorToast("Fill Form");
@@ -121,20 +237,44 @@ const Payment = () => {
     if (CNIC !== isUser?.CNIC) {
       return errorToast(`Enter Correct CNIC Number`);
     }
+
     if (Password !== isUser?.Password) {
       return errorToast(`Enter Correct Password`);
     }
 
-    if (targetLoan.approved && targetLoan.isInitialAmountPaid) {
-      if (SelectPurpose === "Initial Amount") {
-        return errorToast("Your Initial Amount is Paid");
+    if (
+      targetLoan.loanData.approved &&
+      targetLoan.loanData.isInitialAmountPaid
+    ) {
+      if (SelectPurpose === "Initial Payment") {
+        return errorToast("Your Initial Amount is Paid", 200, 200, 200);
       }
     } else {
       if (SelectPurpose === "Monthly Payment") {
         return errorToast("Kindly Select Initial Amount");
       }
     }
-    console.log("pass");
+
+    try {
+      setLoading(true);
+      await updateDoc(
+        doc(db, "Users", auth.currentUser.uid, "Loans", targetLoan.loanID),
+        {
+          isInitialAmountPaid: true,
+          approved: true,
+          isInitialAmountPaidTime: serverTimestamp(),
+        },
+      );
+      errorToast("Your Initial Amount Is Paid Save PDF", 200, 200, 200);
+      paymentReciptGenerator(Initial_Amount, SelectPurpose);
+      navigate("/dashboard");
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -144,7 +284,7 @@ const Payment = () => {
           {["Initial_Amount", "CNIC", "Password"].map((e, i) => {
             return (
               <label
-                className={`flex flex-wrap justify-start items-center gap-2 relative text-sm font-elmssans-light w-full`}
+                className={`flex flex-wrap justify-start items-center gap-2 relative text-sm font-elmssans-medium w-full`}
                 key={i}
               >
                 <span className="text-main text-xl">

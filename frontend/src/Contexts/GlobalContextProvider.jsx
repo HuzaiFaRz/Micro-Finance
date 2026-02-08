@@ -4,10 +4,15 @@ import { GlobalContextCreated } from "./GlobalContext";
 import Lenis from "lenis";
 
 const GlobalContextProvider = ({ children }) => {
+  const pageLocation = useLocation();
   const lenis = new Lenis({
     autoRaf: true,
   });
   lenis.on("scroll");
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pageLocation]);
 
   const matchMedia = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -25,8 +30,6 @@ const GlobalContextProvider = ({ children }) => {
 
   const [toastMsg, setToastMsg] = useState("");
 
-  const pageLocation = useLocation();
-
   useEffect(() => {
     if (pageLocation.pathname !== "/") {
       const currentPageURL = pageLocation.pathname
@@ -36,10 +39,14 @@ const GlobalContextProvider = ({ children }) => {
           return e.charAt(0).toUpperCase() + e.slice(1).toLowerCase();
         })
         .join(" ");
-      setPageHeadingText(
-        currentPageURL.includes("payment") ? "Loan Payment" : currentPageURL,
-      );
-      document.title = `M - Finance - ${currentPageURL.includes("payment") ? "Loan Payment" : currentPageURL}`;
+
+      const formatingCurrentPageURL = currentPageURL.includes("Shedule")
+        ? "Loan Payment Shedule"
+        : currentPageURL.includes("Payment")
+          ? "Loan Payment"
+          : currentPageURL;
+      setPageHeadingText(formatingCurrentPageURL);
+      document.title = `M - Finance - ${formatingCurrentPageURL}`;
       return;
     }
     document.title = `M - Finance - Home`;

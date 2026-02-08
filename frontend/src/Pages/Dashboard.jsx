@@ -122,14 +122,27 @@ const Dashboard = () => {
                           Your dreams, funded responsibly.✨
                         </span>
 
-                        <NavLink
-                          to={`${initialAmountChecker ? "" : `payment/${loanID}`}`}
-                          className="px-3 py-2 text-xl bg-card text-main"
-                        >
-                          {initialAmountChecker
-                            ? "Pay Installment"
-                            : "Pay Initial Amount"}
-                        </NavLink>
+                        <div>
+                          {/* <button disabled={initialAmountChecker}> */}
+                          <NavLink
+                            to={`${initialAmountChecker ? "" : `loan-payment/${loanID}`}`}
+                            className="px-2 py-2 text-lg bg-card text-main mr-4"
+                          >
+                            {initialAmountChecker
+                              ? "Pay Installment"
+                              : "Pay Initial Amount"}
+                          </NavLink>
+                          {/* </button> */}
+
+                          {initialAmountChecker && (
+                            <NavLink
+                              to={`${`payment-shedule/${loanID}`}`}
+                              className="px-2 py-2 text-lg bg-card text-main"
+                            >
+                              View Payment Shedule
+                            </NavLink>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );

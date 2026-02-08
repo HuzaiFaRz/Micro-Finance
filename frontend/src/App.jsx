@@ -7,7 +7,7 @@ import Dashboard from "./Pages/Dashboard";
 import Profile from "./Pages/Profile";
 import LoanForm from "./Pages/LoanForm";
 import Contact from "./Pages/Contact";
-import { About } from "./Pages/About";
+import About from "./Pages/About";
 import Layout from "./Layout/Layout";
 import GlobalContextProvider from "./Contexts/GlobalContextProvider";
 import AuthContextProvider from "./Contexts/AuthContextProvider";
@@ -17,6 +17,7 @@ import AuthRoute from "./Routes/AuthRoute";
 import ErrorRoute from "./Components/ErrorRoute";
 import Payment from "./Pages/Payment";
 import LoanDescription from "./Pages/LoanDescription";
+import PaymentShedule from "./Pages/PaymentShedule";
 
 const App = () => {
   return (
@@ -36,7 +37,14 @@ const App = () => {
               <Route path="about-us" element={<About />} />
               <Route element={<LockRoute />}>
                 <Route path="dashboard" element={<Dashboard />} />
-                <Route path="dashboard/payment/:loanID" element={<Payment />} />
+                <Route
+                  path="dashboard/loan-payment/:loanID"
+                  element={<Payment />}
+                />
+                <Route
+                  path="dashboard/payment-shedule/:loanID"
+                  element={<PaymentShedule />}
+                />
                 <Route path="profile" element={<Profile />} />
                 <Route path="loan-form" element={<LoanForm />} />
                 <Route path="loan-describtion" element={<LoanDescription />} />

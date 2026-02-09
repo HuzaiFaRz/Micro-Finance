@@ -4,7 +4,7 @@ import { AuthUseContext } from "../Contexts/AuthContextProvider";
 const Info = ({ label, value }) => (
   <div>
     <p className="text-main text-sm">{label}</p>
-    <p className="font-medium text-card">{value}</p>
+    <p className="font-medium text-main">{value}</p>
   </div>
 );
 
@@ -16,7 +16,7 @@ const Input = ({ label, type, value }) => {
       {type === "textarea" ? (
         <textarea
           rows="4"
-          className="w-full mt-1 bg-main px-3 py-2 focus:border-0 focus:outline-0 text-black"
+          className="w-full mt-1 bg-main px-3 py-2 focus:border-0 focus:outline-0 text-black resize-none"
         />
       ) : (
         <input
@@ -46,10 +46,10 @@ const Contact = () => {
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Contact Info */}
-            <div className="bg-black flex flex-col justify-evenly items-start px-4">
+            <div className="bg-layout flex flex-col justify-evenly items-start px-4">
               <Info label="Organization" value="M_Finance" />
               <Info label="Email" value="support@mfinance.pk" />
-              <Info label="Phone" value="+92 3XX XXXXXXX" />
+              <Info label="Phone" value="+92 3708915862" />
               <Info label="Working Hours" value="Mon – Sat (9AM – 6PM)" />
             </div>
 
@@ -59,7 +59,10 @@ const Contact = () => {
               <Input label="Email Address" type="email" value={isUser?.Email} />
               <Input label="Message" type="textarea" />
 
-              <button className="w-full bg-green-600 hover:bg-green-700 transition rounded-lg py-2 font-medium">
+              <button
+                className="w-full bg-green-600 hover:bg-green-700 transition rounded-lg py-2 font-medium"
+                type="button"
+              >
                 Send Message
               </button>
             </form>

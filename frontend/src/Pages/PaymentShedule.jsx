@@ -1,30 +1,26 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { NavLink, useNavigate, useParams } from "react-router";
 import { auth } from "../Firebase/firebase";
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
-import {
-  ArrowPathRoundedSquareIcon,
-  BanknotesIcon,
-  EyeIcon,
-  EyeSlashIcon,
-} from "@heroicons/react/16/solid";
+
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import jsPDF from "jspdf";
 
 const Detail = ({ label, value }) => (
   <div className="flex justify-between items-center gap-5">
-    <span className="text-gray-400">{label}</span>
-    <span className="text-right break-all">{value}</span>
+    <span className="text-gray-400 text-xs tablet:text-sm tracking-wider">
+      {label}
+    </span>
+    <span className="text-right break-all text-xs tablet:text-sm tracking-wide">
+      {value}
+    </span>
   </div>
 );
 
 const PaymentShedule = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const { loanID } = useParams();
   const [targetLoan, setTargetLoan] = useState(null);
-
-  const { errorToast } = useContext(GlobalContextCreated);
 
   const { loan, isUser } = AuthUseContext();
 
@@ -117,104 +113,189 @@ const PaymentShedule = () => {
     docPDF.save(`Receipt_${transaction_ID}${loanID}.pdf`);
   };
 
+  let calculatedDuration = parseInt(targetLoan?.loanData?.Loan_Duration) * 12;
+
+  const calculatedLoanApplyTime = new Date(
+    targetLoan?.loanData.applyAt?.seconds * 1000 +
+      targetLoan?.loanData.applyAt?.nanoseconds / 1000000,
+  );
+
+  let paymentDate = [];
+  let balance = [];
+
+  for (let index = 1; index <= calculatedDuration; index++) {
+    let futureDate = new Date(calculatedLoanApplyTime);
+    futureDate.setMonth(calculatedLoanApplyTime.getMonth() + index);
+
+    paymentDate.push(futureDate);
+  }
+
+  for (let index = calculatedDuration; index >= 1; index--) {
+    balance.push(
+      parseInt(targetLoan?.loanData?.monthlyInstallment.replaceAll(/,/g, "")) *
+        index,
+    );
+  }
+
+  const formatingPKR = (amount) =>
+    new Intl.NumberFormat("en-PK", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+
   return (
-    <div className="w-full min-h-dvh flex justify-center items-center bg-black px-3 font-elmssans-light">
-      <div className="w-full max-w-lg border text-main shadow-lg p-6 space-y-4">
+    <div className="w-full min-h-screen flex flex-col justify-evenly items-center gap-10 bg-black px-3 font-elmssans-light p-3">
+      {targetLoan?.loanData?.isInitialAmountPaid &&
+      targetLoan?.loanData?.approved ? (
         <>
-          <div className="text-center border-b border-gray-700 pb-3">
-            <h1 className="text-xl font-semibold">Initial Payment Details</h1>
-            <span className="text-green-500 text-sm font-medium">
-              {
-                targetLoan?.loanData?.initialAmountPaidDetails
-                  .transaction_STATUS
-              }
-            </span>
-          </div>
-
-          {/* Amount */}
-          <div className="text-center">
-            <p className="text-gray-400 text-sm">Amount Paid</p>
-            <h2 className="text-3xl font-bold">
-              PKR{" "}
-              {Number(
-                targetLoan?.loanData?.initialAmountPaidDetails
-                  .transaction_AMOUNT,
-              ).toLocaleString()}
-            </h2>
-          </div>
-
-          {/* Details */}
-          <div className="space-y-2 text-sm">
-            <Detail
-              label="Purpose"
-              value={
-                targetLoan?.loanData?.initialAmountPaidDetails
-                  .transaction_PURPOSE
-              }
-            />
-            <Detail
-              label="Payment Method"
-              value={
-                targetLoan?.loanData?.initialAmountPaidDetails
-                  .transaction_PAYMENT_METHOD
-              }
-            />
-            <Detail
-              label="Transaction ID"
-              value={
-                targetLoan?.loanData?.initialAmountPaidDetails.transaction_ID
-              }
-            />
-            <Detail
-              label="Date & Time"
-              value={
-                targetLoan?.loanData?.initialAmountPaidDetails.transaction_TIME
-              }
-            />
-          </div>
-
-          <div className="flex flex-wrap justify-between items-center gap-5">
-            <div className="bg-blue-800 p-3 w-full tablet:w-auto">
-              <p className="text-gray-400">Paid From</p>
-              <p className="font-medium">
+          <div className="w-full max-w-lg border border-gray-400 text-main shadow-lg p-6 space-y-4">
+            <div className="text-center border-b border-gray-700 pb-3">
+              <h1 className="text-xl font-semibold">Initial Payment Details</h1>
+              <span className="text-green-500 text-sm font-medium">
                 {
                   targetLoan?.loanData?.initialAmountPaidDetails
-                    ?.transaction_PAID_FROM[0]
+                    .transaction_STATUS
                 }
-              </p>
-              <p className="text-xs break-all">
-                {
-                  targetLoan?.loanData?.initialAmountPaidDetails
-                    ?.transaction_PAID_FROM[1]
-                }
-              </p>
+              </span>
             </div>
-
-            <div className="bg-blue-800 p-3 w-full tablet:w-auto">
-              <p className="text-gray-400">Paid To</p>
-              <p className="font-medium">
-                {
+            <div className="text-center">
+              <p className="text-gray-400 text-sm">Amount Paid</p>
+              <h2 className="text-xl tablet:text-3xl font-bold">
+                PKR{" "}
+                {Number(
                   targetLoan?.loanData?.initialAmountPaidDetails
-                    .transaction_PAID_TO[0]
-                }
-              </p>
-              <p className="text-xs break-all">
-                {
-                  targetLoan?.loanData?.initialAmountPaidDetails
-                    .transaction_PAID_TO[1]
-                }
-              </p>
+                    .transaction_AMOUNT,
+                ).toLocaleString()}
+              </h2>
             </div>
-          </div>
+            <div className="space-y-2 text-sm">
+              <Detail
+                label="Purpose"
+                value={
+                  targetLoan?.loanData?.initialAmountPaidDetails
+                    .transaction_PURPOSE
+                }
+              />
+              <Detail
+                label="Payment Method"
+                value={
+                  targetLoan?.loanData?.initialAmountPaidDetails
+                    .transaction_PAYMENT_METHOD
+                }
+              />
+              <Detail
+                label="Transaction ID"
+                value={
+                  targetLoan?.loanData?.initialAmountPaidDetails.transaction_ID
+                }
+              />
+              <Detail
+                label="Date & Time"
+                value={
+                  targetLoan?.loanData?.initialAmountPaidDetails
+                    .transaction_TIME
+                }
+              />
+            </div>
+            <div className="flex flex-wrap justify-between items-center gap-5">
+              <div className="bg-blue-800 p-3 w-full tablet:w-auto">
+                <p className="text-gray-400">Paid From</p>
+                <p className="font-medium">
+                  {
+                    targetLoan?.loanData?.initialAmountPaidDetails
+                      ?.transaction_PAID_FROM[0]
+                  }
+                </p>
+                <p className="text-xs break-all">
+                  {
+                    targetLoan?.loanData?.initialAmountPaidDetails
+                      ?.transaction_PAID_FROM[1]
+                  }
+                </p>
+              </div>
 
-          <h1
-            className="text-blue-300 underline w-full text-center text-lg cursor-pointer"
-            onClick={paymentReciptGenerator}
-          >
-            Download Recipt
+              <div className="bg-blue-800 p-3 w-full tablet:w-auto">
+                <p className="text-gray-400">Paid To</p>
+                <p className="font-medium">
+                  {
+                    targetLoan?.loanData?.initialAmountPaidDetails
+                      .transaction_PAID_TO[0]
+                  }
+                </p>
+                <p className="text-xs break-all">
+                  {
+                    targetLoan?.loanData?.initialAmountPaidDetails
+                      .transaction_PAID_TO[1]
+                  }
+                </p>
+              </div>
+            </div>
+            <h1
+              className="text-blue-300 underline w-full text-center text-lg cursor-pointer"
+              onClick={paymentReciptGenerator}
+            >
+              Download Recipt
+            </h1>
+          </div>
+          <h1 className="text-layout font-elmssans-bold text-xl tablet:text-4xl w-full text-center">
+            See Your Next Installment Shedule are As Follow
           </h1>
+          <div className="w-full h-full flex flex-wrap justify-evenly items-center gap-4 p-3">
+            {paymentDate.map((elem, index) => {
+              let date = elem.toLocaleString("en-US", {
+                month: "short",
+                year: "numeric",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              });
+              console.log();
+              return (
+                <div
+                  className="w-[500px] h-[250px] border border-gray-400 text-main flex flex-col justify-evenly items-start p-5 relative"
+                  key={index}
+                >
+                  <span
+                    className={`absolute right-2 top-2 ${elem > calculatedLoanApplyTime ? "text-[#FBED00]" : "text-red-500"}`}
+                  >
+                    {elem > calculatedLoanApplyTime ? "Upcoming" : "Overdue"}
+                  </span>
+                  <span className={`absolute right-2 bottom-2 text-gray-400`}>
+                    Instalment #{index + 1} of {calculatedDuration}
+                  </span>
+                  <span className="flex flex-row justify-center items-start gap-2 tablet:gap-3 text-lg tablet:text-2xl tracking-wider text-gray-400">
+                    <span>Time</span>{" "}
+                    <strong className="text-card">{date}</strong>
+                  </span>
+                  <span className="flex gap-2 tablet:gap-3 text-lg tablet:text-2xl tracking-wider text-gray-400">
+                    <span>Amount</span>
+                    <strong className="text-card">
+                      {targetLoan?.loanData?.monthlyInstallment}
+                    </strong>
+                  </span>
+                  <span className="flex flex-row justify-center items-start gap-2 tablet:gap-3 text-lg tablet:text-2xl tracking-wider text-gray-400">
+                    <span>Remaining Amount</span>
+                    <strong className="text-card">
+                      {formatingPKR(balance[index])}
+                    </strong>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </>
-      </div>
+      ) : (
+        <h1 className="text-3xl text-card flex flex-col justify-center items-center gap-3">
+          Kindly First Pay Initial Ammount to see Next Shedule{" "}
+          <NavLink
+            className={"underline"}
+            to={`/dashboard/loan-payment/${targetLoan?.loanID}`}
+          >
+            Pay Now
+          </NavLink>{" "}
+        </h1>
+      )}
     </div>
   );
 };

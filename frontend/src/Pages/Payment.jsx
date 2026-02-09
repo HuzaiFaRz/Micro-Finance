@@ -26,7 +26,7 @@ const Payment = () => {
   const { errorToast, passwordEyeCSS } = useContext(GlobalContextCreated);
 
   const [payFormInputsValues, setPayFormInputsValues] = useState({
-    Initial_Amount: "",
+    Amount: "",
     CNIC: "",
     Password: "",
     SelectPurpose: "",
@@ -50,12 +50,21 @@ const Payment = () => {
     }
   }, [loan, loanID, navigate]);
 
+  let amountPurposeChecking =
+    targetLoan?.loanData?.approved && targetLoan?.loanData?.isInitialAmountPaid;
+
+  let monthlyInstallMent =
+    amountPurposeChecking &&
+    parseInt(targetLoan?.loanData?.monthlyInstallment.replaceAll(/,/g, ""));
+
   useEffect(() => {
     setPayFormInputsValues((prev) => ({
       ...prev,
-      Initial_Amount: targetLoan?.loanData.Initial_Amount,
+      Amount: amountPurposeChecking
+        ? monthlyInstallMent
+        : targetLoan?.loanData.Initial_Amount,
     }));
-  }, [targetLoan]);
+  }, [amountPurposeChecking, monthlyInstallMent, targetLoan]);
 
   const payFormInputHandler = (event) => {
     const { value, id } = event.target;
@@ -65,20 +74,26 @@ const Payment = () => {
       [id]: value,
     }));
 
-    if (id === "Initial_Amount") {
+    if (id === "Amount") {
       if (!value) {
-        console.log(payFormInputsValues);
         setPayFormInputsValues((prev) => ({
           ...prev,
-          Initial_Amount: "",
+          Amount: "",
         }));
         return;
       }
-      if (
-        value > targetLoan?.loanData.Initial_Amount ||
-        value < targetLoan?.loanData.Initial_Amount
-      ) {
-        return;
+      if (amountPurposeChecking) {
+        if (value > monthlyInstallMent || value < monthlyInstallMent) {
+          console.log(this);
+          return;
+        }
+      } else {
+        if (
+          value > targetLoan?.loanData.Initial_Amount ||
+          value < targetLoan?.loanData.Initial_Amount
+        ) {
+          return;
+        }
       }
       return;
     }
@@ -246,26 +261,33 @@ const Payment = () => {
   const paymentHandler = (event) => {
     event.preventDefault();
 
-    const { Initial_Amount, CNIC, Password, SelectPurpose } =
-      payFormInputsValues;
+    const { Amount, CNIC, Password, SelectPurpose } = payFormInputsValues;
 
     if (
-      !Initial_Amount ||
+      !Amount ||
       !CNIC ||
       !Password ||
       !SelectPurpose ||
       SelectPurpose === "Select Purpose"
     ) {
-      return errorToast("Fill Form");
+      return errorToast("Kindly Complete Form");
     }
 
-    if (
-      Initial_Amount > targetLoan?.loanData.Initial_Amount ||
-      Initial_Amount < targetLoan?.loanData.Initial_Amount
-    ) {
-      return errorToast(
-        `Enter Correct Initial Amount ${targetLoan?.loanData.Initial_Amount}`,
-      );
+    if (amountPurposeChecking) {
+      if (Amount > monthlyInstallMent || Amount < monthlyInstallMent) {
+        return errorToast(
+          `Enter Correct Installment Amount ${monthlyInstallMent}`,
+        );
+      }
+    } else {
+      if (
+        Amount > targetLoan?.loanData.Initial_Amount ||
+        Amount < targetLoan?.loanData.Initial_Amount
+      ) {
+        return errorToast(
+          `Enter Correct Initial Amount ${targetLoan?.loanData.Initial_Amount}`,
+        );
+      }
     }
 
     if (CNIC !== isUser?.CNIC) {
@@ -289,14 +311,17 @@ const Payment = () => {
       }
     }
 
-    paymenting(Initial_Amount, SelectPurpose);
+    if (!amountPurposeChecking) {
+      paymenting(Amount, SelectPurpose);
+      return;
+    }
   };
 
   return (
     <>
       <div className="w-full h-dvh flex justify-center items-center bg-black px-2">
         <form className="paymentCard w-full tablet:w-[400px] h-[600px] bg-card p-3 flex flex-col justify-evenly items-center">
-          {["Initial_Amount", "CNIC", "Password"].map((e, i) => {
+          {["Amount", "CNIC", "Password"].map((e, i) => {
             return (
               <label
                 className={`flex flex-wrap justify-start items-center gap-2 relative text-sm font-elmssans-medium w-full`}
@@ -321,18 +346,24 @@ const Payment = () => {
                   className="bg-main text-layout w-full full p-3 text-xl font-elmssans-medium"
                   placeholder={e.replace(/([a-z])([A-Z])/g, "$1 $2")}
                   max={
-                    e === "Initial_Amount"
-                      ? targetLoan?.loanData.Initial_Amount
+                    e === "Amount"
+                      ? amountPurposeChecking
+                        ? monthlyInstallMent
+                        : targetLoan?.loanData.Initial_Amount
                       : ""
                   }
                   min={
-                    e === "Initial_Amount"
-                      ? targetLoan?.loanData.Initial_Amount
+                    e === "Amount"
+                      ? amountPurposeChecking
+                        ? monthlyInstallMent
+                        : targetLoan?.loanData.Initial_Amount
                       : ""
                   }
                   defaultValue={
-                    e === "Initial_Amount"
-                      ? targetLoan?.loanData.Initial_Amount
+                    e === "Amount"
+                      ? amountPurposeChecking
+                        ? monthlyInstallMent
+                        : targetLoan?.loanData.Initial_Amount
                       : ""
                   }
                 />

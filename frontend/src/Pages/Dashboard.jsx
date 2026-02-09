@@ -62,10 +62,16 @@ const Dashboard = () => {
                     "Profit Rate": profitRate,
                     Approve: initialAmountChecker
                       ? "Approved"
-                      : "Your Initial Amount Is Unpaid",
+                      : "Initial Payment Pending",
                   };
 
-                  if (!initialAmountChecker) {
+                  if (initialAmountChecker) {
+                    UI["Remaining Amount"] = formatingPKR(
+                      monthlyInstallment.replaceAll(/,/g, "") *
+                        parseInt(Loan_Duration) *
+                        12,
+                    );
+                  } else {
                     UI["Initial Amount"] = formatingPKR(Initial_Amount);
                   }
 
@@ -75,18 +81,20 @@ const Dashboard = () => {
                       id={loanID}
                       key={index}
                     >
-                      <Tooltip
-                        id="my-tooltip"
-                        variant="dark"
-                        place="bottom-end"
-                        content={`${isInitialAmountPaid ? "First Pay Initial Amount" : "Initial Amount Paid"}`}
-                        anchorSelect=".status"
-                      />
+                      {!initialAmountChecker && (
+                        <Tooltip
+                          id="my-tooltip"
+                          variant="dark"
+                          place="bottom-end"
+                          content={`First Pay Initial Amount`}
+                          anchorSelect=".status"
+                        />
+                      )}
 
                       <span
                         className={`status ${initialAmountChecker ? "text-green-500" : "text-red-500"} absolute right-2 top-2 font-elmssans-medium text-[15px] tablet:text-lg`}
                       >
-                        {initialAmountChecker ? "Approved" : "Pending"}
+                        {initialAmountChecker ? "Active" : "Pending"}
                       </span>
 
                       <h1 className="font-elmssans-bold text-xl tablet:text-2xl desktop:text-4xl px-3">
@@ -122,10 +130,10 @@ const Dashboard = () => {
                           Your dreams, funded responsibly.✨
                         </span>
 
-                        <div>
+                        <div className="flex flex-wrap justify-evenly items-center gap-4">
                           {/* <button disabled={initialAmountChecker}> */}
                           <NavLink
-                            to={`${initialAmountChecker ? "" : `loan-payment/${loanID}`}`}
+                            to={`${`loan-payment/${loanID}`}`}
                             className="px-2 py-2 text-lg bg-card text-main mr-4"
                           >
                             {initialAmountChecker

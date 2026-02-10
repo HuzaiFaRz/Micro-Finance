@@ -58,7 +58,7 @@ const GlobalContextProvider = ({ children }) => {
     { type: "required", message: "Required" },
     { type: "firebase", message: "Error" },
     { type: "no_space", message: "No spaces" },
-    { type: "leading_space", message: "No leading space" },
+    { type: "leading_space", message: "No Extra space" },
     { type: "invalid_chars", message: "Invalid characters" },
     { type: "invalid_format", message: "Invalid format" },
     { type: "too_short", message: "Too short" },

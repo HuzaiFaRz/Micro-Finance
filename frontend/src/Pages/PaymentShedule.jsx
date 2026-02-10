@@ -253,7 +253,7 @@ const PaymentShedule = () => {
               console.log();
               return (
                 <div
-                  className="w-[500px] h-[250px] border border-gray-400 text-main flex flex-col justify-evenly items-start p-5 relative"
+                  className="w-full h-[200px] border border-gray-400 text-main flex flex-col justify-between items-start p-5 relative "
                   key={index}
                 >
                   <span
@@ -261,7 +261,9 @@ const PaymentShedule = () => {
                   >
                     {elem > calculatedLoanApplyTime ? "Upcoming" : "Overdue"}
                   </span>
-                  <span className={`absolute right-2 bottom-2 text-gray-400`}>
+                  <span
+                    className={`absolute right-2 bottom-2 text-gray-400 text-lg`}
+                  >
                     Instalment #{index + 1} of {calculatedDuration}
                   </span>
                   <span className="flex flex-row justify-center items-start gap-2 tablet:gap-3 text-lg tablet:text-2xl tracking-wider text-gray-400">

@@ -125,7 +125,7 @@ const Payment = () => {
         targetLoan.loanData.isInitialAmountPaid
       ) {
         if (value === "Initial Payment") {
-          return errorToast("Your Initial Amount is Paid", 200, 200, 200);
+          return errorToast("Your Initial Amount is Paid Select Installment");
         }
       } else {
         if (value === "Monthly Payment") {
@@ -303,7 +303,7 @@ const Payment = () => {
       targetLoan.loanData.isInitialAmountPaid
     ) {
       if (SelectPurpose === "Initial Payment") {
-        return errorToast("Your Initial Amount is Paid", 200, 200, 200);
+        return errorToast("Your Initial Amount is Paid Select Installment");
       }
     } else {
       if (SelectPurpose === "Monthly Payment") {

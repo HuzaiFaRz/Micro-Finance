@@ -22,7 +22,7 @@ const Footer = () => {
       <>
         <footer className="w-full flex flex-col justify-center items-center bg-layout text-main border-main font-elmssans-medium">
           <div className="flex flex-col tablet:flex-row w-full h-40 tablet:h-24 text-[15px] tracking-wide tablet:text-sm desktop:text-[16px] text-sm">
-            <div className="w-full tablet:w-[50%] desktop:w-[40%] h-full flex flex-row justify-evenly tablet:justify-evenly px-10 py-3 tablet:py-0 tablet:px-0 gap-10 items-center marker:text-3xl tablet:border-r border-b">
+            <div className="w-full tablet:w-[50%] desktop:w-[40%] h-full flex flex-row justify-evenly tablet:justify-evenly px-10 py-3 tablet:py-0 tablet:px-0 gap-10 items-center marker:text-3xl tablet:border-r border-b text-xs tablet:text-sm">
               <li>
                 Plot # 999 <br /> UnDefined PK
               </li>
@@ -37,7 +37,7 @@ const Footer = () => {
                   <React.Fragment key={index}>
                     <NavLink
                       to={linkURL}
-                      className={`px-2 py-2`}
+                      className={`px-2 py-2 text-xs tablet:text-sm`}
                       target={index === 3 ? "_blank" : undefined}
                     >
                       {linkName}
@@ -50,7 +50,7 @@ const Footer = () => {
 
           <div className="w-full tablet:h-72 h-48 flex flex-wrap">
             <div className="w-full tablet:w-[50%] desktop:w-[60%] flex flex-row tablet:flex-col justify-center tablet:justify-end tablet:items-center items-end gap-6 order-2 tablet:order-1 pb-4 tablet:pb-0">
-              <div className="text-xl tablet:text-3xl flex flex-col items-center text-center">
+              <div className="text-lg tablet:text-3xl flex flex-col items-center text-center">
                 <span>Making Money</span>
                 <span>Accessible & Durable.</span>
               </div>

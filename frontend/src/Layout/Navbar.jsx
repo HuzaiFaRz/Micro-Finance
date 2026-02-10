@@ -13,14 +13,8 @@ import {
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import { Tooltip } from "react-tooltip";
-import {
-  deleteUser,
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-  signOut,
-} from "firebase/auth";
-import { auth, db } from "../Firebase/firebase";
-import { deleteDoc, doc } from "firebase/firestore";
+import { signOut } from "firebase/auth";
+import { auth } from "../Firebase/firebase";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -32,8 +26,6 @@ const Navbar = () => {
   const { errorToast } = useContext(GlobalContextCreated);
 
   let [navbarButton, setNavbarButton] = useState(false);
-
-  const [whoButton, setWhoButton] = useState(null);
 
   const authButton = [
     { linkName: "Register", linkURL: "register" },
@@ -56,9 +48,7 @@ const Navbar = () => {
     setNavbarButton(!navbarButton);
   };
 
-  const warnEvent = (e) => {
-    setWhoButton(e);
-    setNavbarButton(false);
+  const warnEvent = () => {
     setWarn(!warn);
   };
 
@@ -87,31 +77,6 @@ const Navbar = () => {
       await signOut(auth);
       errorToast("Sign Out SuccessFully", 200, 200, 200);
       setWarn(false);
-      navigate("sign-in");
-    } catch (error) {
-      setLoading(false);
-      console.error(error?.message);
-      errorToast(error?.code, null, null, null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteAccountHandler = async () => {
-    event.preventDefault();
-    try {
-      setLoading(true);
-      const user = auth.currentUser;
-      const credential = EmailAuthProvider.credential(
-        isUser.Email,
-        isUser.Password,
-      );
-      await reauthenticateWithCredential(user, credential);
-      await deleteDoc(doc(db, "Users", user?.uid));
-      await deleteUser(user);
-      setNavbarButton(false);
-      setWarn(false);
-      errorToast("Account Deleted SuccessFully", 200, 200, 200);
       navigate("sign-in");
     } catch (error) {
       setLoading(false);
@@ -180,53 +145,41 @@ const Navbar = () => {
           </div>
 
           <div className="flex justify-evenly w-full tablet:w-auto items-center tablet:gap-3 desktop:gap-5 font-elmssans-medium mt-12 tablet:mt-0 absolute bottom-5 tablet:static">
-            {isUser === null
-              ? authButton.map((elem, index) => {
-                  const { linkName, linkURL } = elem;
-                  return (
-                    <React.Fragment key={index}>
-                      <NavLink
-                        className={
-                          "px-3 desktop:px-4 py-2 tablet:text-xs desktop:text-sm text-xl flex gap-1 items-center bg-green-600 rounded-lg hover:bg-hover"
-                        }
-                        to={linkURL}
-                      >
-                        {linkName}
-                        {index === 0 ? (
-                          <UserPlusIcon className={`tablet:size-4 size-5`} />
-                        ) : (
-                          <UserIcon className={`tablet:size-4 size-5`} />
-                        )}
-                      </NavLink>
-                    </React.Fragment>
-                  );
-                })
-              : ["Log Out", "Delete Account"].map((e, i) => {
-                  return (
-                    <React.Fragment key={i}>
-                      <button
-                        className={
-                          "px-3 desktop:px-4 py-2 tablet:text-xs desktop:text-sm text-[17px] flex gap-3 items-center bg-red-600 rounded-lg hover:bg-hover"
-                        }
-                        onClick={() => {
-                          warnEvent(e);
-                        }}
-                        disabled={loading}
-                        key={`${i} Log Out`}
-                      >
-                        {e}
-
-                        {i === 1 ? (
-                          <TrashIcon className={`tablet:size-4 size-5`} />
-                        ) : (
-                          <ArrowLeftEndOnRectangleIcon
-                            className={`tablet:size-4 size-5`}
-                          />
-                        )}
-                      </button>
-                    </React.Fragment>
-                  );
-                })}
+            {isUser === null ? (
+              authButton.map((elem, index) => {
+                const { linkName, linkURL } = elem;
+                return (
+                  <React.Fragment key={index}>
+                    <NavLink
+                      className={
+                        "px-3 desktop:px-4 py-2 tablet:text-xs desktop:text-sm text-xl flex gap-1 items-center bg-green-600 rounded-lg hover:bg-hover"
+                      }
+                      to={linkURL}
+                    >
+                      {linkName}
+                      {index === 0 ? (
+                        <UserPlusIcon className={`tablet:size-4 size-5`} />
+                      ) : (
+                        <UserIcon className={`tablet:size-4 size-5`} />
+                      )}
+                    </NavLink>
+                  </React.Fragment>
+                );
+              })
+            ) : (
+              <button
+                className={
+                  "px-3 desktop:px-4 py-2 tablet:text-xs desktop:text-sm text-[17px] flex gap-3 items-center bg-red-600 rounded-lg hover:bg-hover"
+                }
+                onClick={() => {
+                  warnEvent(!warn);
+                }}
+                disabled={loading}
+              >
+                Log Out
+                <TrashIcon className={`tablet:size-4 size-5`} />
+              </button>
+            )}
 
             <Tooltip
               id="my-tooltip"
@@ -270,20 +223,16 @@ const Navbar = () => {
                 className={
                   "px-4 py-2 text-lg flex gap-3 items-center bg-red-600"
                 }
-                onClick={
-                  whoButton === "Log Out" ? logoutHandler : deleteAccountHandler
-                }
+                onClick={logoutHandler}
                 disabled={loading}
               >
-                {whoButton}
+                Log Out
                 {loading ? (
                   <ArrowPathRoundedSquareIcon
                     className={`tablet:size-4 size-5 animate-spin`}
                   />
-                ) : whoButton === "Log Out" ? (
-                  <ArrowLeftEndOnRectangleIcon className={`size-5`} />
                 ) : (
-                  <TrashIcon className={`size-5`} />
+                  <ArrowLeftEndOnRectangleIcon className={`size-5`} />
                 )}
               </button>
             </div>

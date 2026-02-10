@@ -141,19 +141,22 @@ const Home = () => {
                     {heading}
                   </h1>
                   <p className="text-2xl">{paragraph}</p>
-                  <NavLink
-                    to={"/loan-form"}
-                    className="bg-card rounded-tl-2xl rounded-br-2xl px-5 py-2 tracking-wider mt-5"
-                  >
-                    Apply Now
-                  </NavLink>
                 </div>
               </div>
             );
           })}
         </Slider>
 
-        <h1 className="text-5xl tablet:text-7xl text-card font-elmssans-bold p-10 w-full text-center">
+        <div className="w-full flex justify-center items-center p-5">
+          <NavLink
+            to={"/loan-form"}
+            className="bg-card rounded-tl-2xl rounded-br-2xl px-5 py-2 tracking-wider"
+          >
+            Apply Now
+          </NavLink>
+        </div>
+
+        <h1 className="text-5xl tablet:text-7xl text-card font-elmssans-bold p-5 w-full text-center">
           Loan Categories
         </h1>
 
@@ -174,17 +177,20 @@ const Home = () => {
                     {heading}
                   </h1>
                   <p className="text-sm tablet:text-xl">{paragraph}</p>
-                  <NavLink
-                    to={"/loan-form"}
-                    className="bg-card rounded-tl-2xl rounded-br-2xl px-5 py-2 tracking-wider mt-5"
-                  >
-                    Apply Now
-                  </NavLink>
                 </div>
               </div>
             );
           })}
         </Slider>
+
+        <div className="w-full flex justify-center items-center p-5">
+          <NavLink
+            to={"/loan-form"}
+            className="bg-card rounded-tl-2xl rounded-br-2xl px-5 py-2 tracking-wider"
+          >
+            Apply Now
+          </NavLink>
+        </div>
       </div>
     </Fragment>
   );

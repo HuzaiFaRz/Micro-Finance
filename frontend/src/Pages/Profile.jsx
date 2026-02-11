@@ -118,7 +118,6 @@ const Profile = () => {
 
   let [userNewName, setUserNewName] = useState("");
   let [isUserNameEdit, setIsUserNameEdit] = useState(false);
-
   const editNameHandler = async () => {
     if (
       regex.test(userNewName) ||

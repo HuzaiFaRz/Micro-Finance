@@ -18,7 +18,7 @@ const About = () => {
         </div>
 
         {/* Mission */}
-        <div className="bg-card rounded-xl p-6 shadow">
+        <div className="bg-layout rounded-xl p-6 shadow">
           <h2 className="text-xl font-semibold mb-2">Our Mission</h2>
           <p className="text-gray-300 leading-relaxed">
             M_Finance is a digital micro-finance platform designed to provide
@@ -49,7 +49,7 @@ const About = () => {
         </div>
 
         {/* Vision */}
-        <div className="bg-card rounded-xl p-6">
+        <div className="bg-layout rounded-xl p-6">
           <h2 className="text-xl font-semibold mb-2">Our Vision</h2>
           <p className="text-gray-300">
             To become a trusted micro-finance solution that bridges the gap

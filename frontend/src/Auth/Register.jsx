@@ -131,7 +131,7 @@ const Register = () => {
     if (!Name || !Email || !CNIC) {
       return;
     }
-  }, [isButtonClick, formValues]);
+  }, [isButtonClick, formValues, password, inputsErrors, errorToast]);
 
   const registerInputHandler = (elem) => {
     let { value, id, name } = elem.target;

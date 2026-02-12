@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router";
 import { auth } from "../Firebase/firebase";
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
-
-import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import jsPDF from "jspdf";
 
 const Detail = ({ label, value }) => (
@@ -148,7 +146,7 @@ const PaymentShedule = () => {
       {targetLoan?.loanData?.isInitialAmountPaid &&
       targetLoan?.loanData?.approved ? (
         <>
-          <div className="w-full max-w-lg border border-gray-400 text-main shadow-lg p-6 space-y-4">
+          <div className="w-full max-w-lg border border-gray-400 text-main shadow-lg p-6 space-y-6">
             <div className="text-center border-b border-gray-700 pb-3">
               <h1 className="text-xl font-semibold">Initial Payment Details</h1>
               <span className="text-green-500 text-sm font-medium">
@@ -250,33 +248,31 @@ const PaymentShedule = () => {
                 minute: "2-digit",
                 second: "2-digit",
               });
-              console.log();
               return (
                 <div
-                  className="w-full h-[200px] border border-gray-400 text-main flex flex-col justify-between items-start p-5 relative "
+                  className="w-[600px] h-[250px] border border-gray-400 flex flex-col justify-center gap-4 items-start p-5 relative text-[16px] tablet:text-2xl tracking-wider text-gray-400"
                   key={index}
                 >
                   <span
-                    className={`absolute right-2 top-2 ${elem > calculatedLoanApplyTime ? "text-[#FBED00]" : "text-red-500"}`}
+                    className={`absolute right-4 top-2 ${elem > calculatedLoanApplyTime ? "text-[#FBED00]" : "text-red-500"}`}
                   >
                     {elem > calculatedLoanApplyTime ? "Upcoming" : "Overdue"}
                   </span>
-                  <span
-                    className={`absolute right-2 bottom-2 text-gray-400 text-lg`}
-                  >
+                  <span className={`absolute right-4 bottom-2`}>
                     Instalment #{index + 1} of {calculatedDuration}
                   </span>
-                  <span className="flex flex-row justify-center items-start gap-2 tablet:gap-3 text-lg tablet:text-2xl tracking-wider text-gray-400">
+
+                  <span className="flex gap-2 tablet:gap-3">
                     <span>Time</span>{" "}
                     <strong className="text-card">{date}</strong>
                   </span>
-                  <span className="flex gap-2 tablet:gap-3 text-lg tablet:text-2xl tracking-wider text-gray-400">
+                  <span className="flex gap-2 tablet:gap-3">
                     <span>Amount</span>
                     <strong className="text-card">
                       {targetLoan?.loanData?.monthlyInstallment}
                     </strong>
                   </span>
-                  <span className="flex flex-row justify-center items-start gap-2 tablet:gap-3 text-lg tablet:text-2xl tracking-wider text-gray-400">
+                  <span className="flex gap-2 tablet:gap-3">
                     <span>Remaining Amount</span>
                     <strong className="text-card">
                       {formatingPKR(balance[index])}

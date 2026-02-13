@@ -131,7 +131,6 @@ const Dashboard = () => {
                         </span>
 
                         <div className="flex flex-wrap justify-evenly items-center gap-4">
-                          {/* <button disabled={initialAmountChecker}> */}
                           <NavLink
                             to={`${`loan-payment/${loanID}`}`}
                             className="px-2 py-2 text-lg bg-card text-main mr-4"
@@ -140,7 +139,6 @@ const Dashboard = () => {
                               ? "Pay Installment"
                               : "Pay Initial Amount"}
                           </NavLink>
-                          {/* </button> */}
 
                           {initialAmountChecker && (
                             <NavLink

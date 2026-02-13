@@ -158,6 +158,15 @@ const GlobalContextProvider = ({ children }) => {
     "account-exists-with-different-credential":
       "An account already exists with a different credential.",
     "app-not-authorized": "App is not authorized. Please contact support.",
+    "permission-denied": "You don't have permission.",
+    "not-found": "User not found.",
+    unavailable: "Service temporarily unavailable.",
+    "invalid-argument": "Invalid data provided.",
+    "auth/requires-recent-login": "Please login again to change your password.",
+    "auth/network-request-failed":
+      "Network error. Check your internet connection.",
+    "auth/internal-error": "Something went wrong. Try again.",
+    "auth/too-many-requests": "Too many attempts. Try again later.",
   };
 
   const errorToast = (code, errorParaRef, lableRef, inputRef) => {

@@ -3,7 +3,7 @@ import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import { AuthUseContext } from "../Contexts/AuthContextProvider";
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../Firebase/firebase";
-import { PencilSquareIcon } from "@heroicons/react/16/solid";
+import { PencilSquareIcon, XCircleIcon } from "@heroicons/react/16/solid";
 
 const ProfileGenerelInfo = () => {
   const { isUser } = AuthUseContext();
@@ -68,10 +68,10 @@ const ProfileGenerelInfo = () => {
         Name: Name,
         CNIC: CNIC,
       });
-      setLoading(false);
       setIsUserInfoEdit(false);
-      errorToast("Info Updated", 200, 200, 200);
+      setLoading(false);
       location.reload();
+      errorToast("Info Updated", 200, 200, 200);
     } catch (error) {
       setLoading(false);
       console.error(error);
@@ -84,7 +84,7 @@ const ProfileGenerelInfo = () => {
         Your Amazing Info
       </h1>
       <div
-        className={`w-full h-[400px] flex flex-col justify-evenly items-start gap-8 text-lg tablet:text-xl font-elmssans-medium tracking-wider relative`}
+        className={`w-full ${isUserInfoEdit ? "h-full" : "h-[485px]"} h-full flex flex-col justify-evenly items-start gap-8 text-lg tablet:text-xl font-elmssans-medium tracking-wider relative`}
       >
         {[
           { id: "Name", value: isUser?.Name },
@@ -118,14 +118,22 @@ const ProfileGenerelInfo = () => {
           );
         })}
 
-        <div className="absolute -top-10 right-0 w-full cursor-pointer flex flex-col justify-end items-end gap-4">
-          <PencilSquareIcon
-            onClick={() => {
-              setIsUserInfoEdit(!isUserInfoEdit);
-            }}
-            className={`size-6`}
-          />
-
+        <div className="absolute -top-10 right-0 cursor-pointer flex flex-col items-end gap-4">
+          {isUserInfoEdit ? (
+            <XCircleIcon
+              onClick={() => {
+                setIsUserInfoEdit(!isUserInfoEdit);
+              }}
+              className={`size-6`}
+            />
+          ) : (
+            <PencilSquareIcon
+              onClick={() => {
+                setIsUserInfoEdit(!isUserInfoEdit);
+              }}
+              className={`size-6`}
+            />
+          )}
           {isUserInfoEdit && (
             <button
               className="px-4 bg-black py-1"

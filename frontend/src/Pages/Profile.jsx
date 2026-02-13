@@ -100,7 +100,7 @@ const Profile = () => {
           <div className="flex flex-row w-full p-4 justify-center items-center gap-5 relative">
             {aside && (
               <div
-                className="w-full h-full absolute bg-black/50 backdrop-blur-md"
+                className="w-full h-full absolute bg-black/50 backdrop-blur-md z-10"
                 onClick={() => {
                   setAside(false);
                 }}
@@ -108,7 +108,7 @@ const Profile = () => {
             )}
 
             <aside
-              className={`h-[300px] w-full tablet:w-[30%] absolute tablet:sticky ${aside ? "left-0" : "-left-full"} bg-card flex flex-col justify-evenly items-start px-3 tablet:text-2xl text-lg text-main cursor-pointer transition-all z-100`}
+              className={`h-[300px] w-full tablet:w-[30%] absolute tablet:sticky ${aside ? "left-0" : "-left-full"} bg-card flex flex-col justify-evenly items-start px-3 tablet:text-2xl text-lg text-main cursor-pointer transition-all z-10`}
             >
               {asideButtons.map((elem, index) => {
                 return (
@@ -134,7 +134,7 @@ const Profile = () => {
               if (whatAsideContentOpen[index]) {
                 return (
                   <div
-                    className={`h-full p-5 w-full tablet:w-[70%] bg-card flex flex-col justify-evenly items-start text-2xl text-main `}
+                    className={`h-full p-5 w-full tablet:w-[70%] bg-zinc-900 flex flex-col justify-evenly items-start text-2xl text-main `}
                     key={index}
                     id={elem.content_ID}
                   >

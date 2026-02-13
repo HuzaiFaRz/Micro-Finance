@@ -28,8 +28,6 @@ This project focuses on **financial logic implementation**, **clean UX**, and **
 ### 👤 User Profile
 - Update Full Name & CNIC
 - View Phone Number & Account Number
-- Profile Image Upload
-- Organized UI with tab layout (General / Security / Danger Zone)
 
 ### 🔐 Security
 - Change Password functionality
@@ -66,7 +64,6 @@ This project focuses on **financial logic implementation**, **clean UX**, and **
 ### Backend / Database
 - **Firebase Authentication**
 - **Firebase Firestore**
-- **Firebase Hosting (optional)**
 
 ### UI + Utilities
 - **PrimeReact**
@@ -107,20 +104,7 @@ cd Micro-Finance
 npm install
 ```
 
-### 3️⃣ Add Firebase Configuration
-
-Create a `.env` file:
-
-```
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_bucket
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
-```
-
-### 4️⃣ Run Locally
+### 3️⃣ Run Locally
 
 ```bash
 npm run dev
@@ -133,7 +117,6 @@ npm run dev
 - Email/password sign-in
 - Protected routes
 - Password change
-- Account deletion via Firebase Auth
 
 ---
 
@@ -156,11 +139,8 @@ Live demo 👉 https://huzaifamicrofinance.netlify.app/
 
 ## 🎯 Future Enhancements
 
-- **Admin Panel**
+
 - **Loan Approval Workflow**
-- **Payment Gateway Integration**
-- **Email + SMS Notifications**
-- **Two-Factor Authentication**
 - **Dashboard Analytics**
 
 ---
@@ -176,9 +156,3 @@ Building real-world financial systems with modern UI & secure logic.
 ## ⭐ Support & Stars
 
 If you find this project useful or cool, don’t forget to ⭐ the repo!
-
----
-
-## 📜 License
-
-This project is open-source and available under the MIT License.

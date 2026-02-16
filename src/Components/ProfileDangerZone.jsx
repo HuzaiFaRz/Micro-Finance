@@ -46,45 +46,40 @@ const ProfileDangerZone = () => {
       errorToast("Your Loans Are Pending");
       return;
     }
-
-    console.log("this is delte acc");
-
-    // try {
-    //   setLoading(true);
-    //   const user = auth.currentUser;
-    //   const credential = EmailAuthProvider.credential(
-    //     isUser.Email,
-    //     isUser.Password,
-    //   );
-    //   await reauthenticateWithCredential(user, credential);
-    //   await deleteDoc(doc(db, "Users", user?.uid));
-    //   await deleteUser(user);
-    //   errorToast("Account Deleted SuccessFully", 200, 200, 200);
-    // } catch (error) {
-    //   setLoading(false);
-    //   console.error(error?.message);
-    //   errorToast(error?.code, null, null, null);
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      setLoading(true);
+      const user = auth.currentUser;
+      const credential = EmailAuthProvider.credential(
+        isUser.Email,
+        isUser.Password,
+      );
+      await reauthenticateWithCredential(user, credential);
+      await deleteDoc(doc(db, "Users", user?.uid));
+      await deleteUser(user);
+      errorToast("Account Deleted SuccessFully", 200, 200, 200);
+    } catch (error) {
+      setLoading(false);
+      console.error(error?.message);
+      errorToast(error?.code, null, null, null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logoutHandler = async () => {
     event.preventDefault();
-    console.log("this is logout acc");
-
-    // try {
-    //   setLoading(true);
-    //   await signOut(auth);
-    //   errorToast("Sign Out SuccessFully", 200, 200, 200);
-    //   navigate("/sign-in");
-    // } catch (error) {
-    //   setLoading(false);
-    //   console.error(error?.message);
-    //   errorToast(error?.code, null, null, null);
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      setLoading(true);
+      await signOut(auth);
+      errorToast("Sign Out SuccessFully", 200, 200, 200);
+      navigate("/sign-in");
+    } catch (error) {
+      setLoading(false);
+      console.error(error?.message);
+      errorToast(error?.code, null, null, null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const whoWarnClickHandler = (event) => {
@@ -121,7 +116,7 @@ const ProfileDangerZone = () => {
               </form>
             )}
 
-            <h1 className="text-lg">
+            <h1 className="text-sm tablet:text-lg">
               Are You Sure? This Action Cannot be UnDone{" "}
             </h1>
 

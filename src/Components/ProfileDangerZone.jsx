@@ -90,7 +90,7 @@ const ProfileDangerZone = () => {
   return (
     <div className="w-full h-full font-elmssans-light flex flex-col justify-start gap-10">
       {whoWarnClick && (
-        <div className="fixed inset-0 w-full h-svh bg-black/85 backdrop-blur-lg z-100 flex justify-center items-center p-4">
+        <div className="fixed inset-0 w-full min-h-screen bg-black/85 backdrop-blur-lg z-100 flex justify-center items-center p-4">
           <div className="w-full tablet:w-[500px] h-[300px] bg-black flex flex-col justify-evenly items-center">
             {whoWarnClick === "DeleteAccount" && (
               <form className="flex relative flex-wrap justify-between items-center gap-1 text-[16px] tablet:text-lg p-1">

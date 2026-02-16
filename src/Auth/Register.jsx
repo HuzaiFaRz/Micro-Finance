@@ -413,7 +413,7 @@ const Register = () => {
             );
           })}
 
-          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-evenly items-center pb-1 mt-1">
+          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-evenly items-center m-10">
             <button
               className="bg-card px-10 py-2 rounded-3xl disabled:opacity-50 flex items-center gap-4"
               type="submit"

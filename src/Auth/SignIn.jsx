@@ -189,7 +189,7 @@ const SignIn = () => {
       >
         <AuthHead />
         <form
-          className={`flex flex-wrap absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 justify-around items-center h-[500px] gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider w-full z-10 p-2 ${mainColor}`}
+          className={`flex flex-wrap absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 justify-around items-center h-[500px] gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider w-full z-10 p-5 ${mainColor}`}
         >
           {sigInInputs.map((elem, index) => {
             return (

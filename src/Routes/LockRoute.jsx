@@ -4,6 +4,7 @@ import { AuthUseContext } from "../Contexts/AuthContextProvider";
 import AuthLoadingPage from "../Components/AuthLoadingPage";
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
 import PagesHeading from "../Components/PagesHeading";
+import { auth } from "../Firebase/firebase";
 
 const LockRoute = () => {
   const { isUser, authLoading } = AuthUseContext();

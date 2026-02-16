@@ -10,6 +10,7 @@ import {
   query,
 } from "firebase/firestore";
 import AuthLoadingPage from "../Components/AuthLoadingPage";
+import { Navigate, useNavigate } from "react-router";
 
 export const AuthUseContext = () => useContext(AuthContextCreated);
 
@@ -70,7 +71,7 @@ const AuthContextProvider = ({ children }) => {
         "Quick financial assistance for medical emergencies or unexpected urgent expenses.",
     },
   };
-
+  const navigate = useNavigate();
   const [isRegistering, setIsRegistering] = useState(false);
   const [isUser, setIsuser] = useState(null);
   const [loan, setLoan] = useState(null);
@@ -95,7 +96,7 @@ const AuthContextProvider = ({ children }) => {
           onSnapshot(
             query(
               collection(db, "Users", auth.currentUser.uid, "Loans"),
-              orderBy("applyAt", "desc"),
+              orderBy("applyAt", "asc"),
             ),
             (realTimeLoan) => {
               if (!realTimeLoan.empty) {

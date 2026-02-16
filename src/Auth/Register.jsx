@@ -344,74 +344,70 @@ const Register = () => {
   return (
     <>
       <div
-        className={`w-full min-h-[105vh] flex flex-col tablet:flex-row ${mainColor}`}
+        className={`w-full h-full min-h-screen flex flex-col justify-center items-center ${mainColor} relative`}
       >
         <AuthImage />
 
-        <div
-          className={`flex flex-col justify-between items-center w-full tablet:w-[60%] min-h-full`}
+        <AuthHead />
+
+        <form
+          className={`flex flex-wrap justify-around items-center h-full self-center justify-self-center tablet:h-[600px] gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider px-3 w-full z-10 p-2 ${mainColor} mt-20`}
         >
-          <AuthHead />
+          {registerInputs.map((elem, index) => {
+            return (
+              <React.Fragment key={index}>
+                <div className="flex flex-col justify-center items-start relative w-[300px]">
+                  <label
+                    htmlFor={elem}
+                    id={`Label-${elem}`}
+                    className={`${labelCSS} w-full`}
+                    ref={(el) => (lableRef.current[index] = el)}
+                  >
+                    {`Insert ${elem.replace(/([a-z])([A-Z])/g, "$1 $2")}`}
+                  </label>
 
-          <form
-            className={`flex flex-wrap justify-around items-center h-full tablet:h-[600px] gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider px-3 w-full ${mainColor}`}
-          >
-            {registerInputs.map((elem, index) => {
-              return (
-                <React.Fragment key={index}>
-                  <div className="flex flex-col justify-center items-start relative w-full desktop:w-[450px] extra-large:w-[350px]">
-                    <label
-                      htmlFor={elem}
-                      id={`Label-${elem}`}
-                      className={`${labelCSS} w-full`}
-                      ref={(el) => (lableRef.current[index] = el)}
-                    >
-                      {`Insert ${elem.replace(/([a-z])([A-Z])/g, "$1 $2")}`}
-                    </label>
+                  <input
+                    className={`${inputCSS} w-full`}
+                    ref={(el) => (inputRef.current[index] = el)}
+                    autoComplete="off"
+                    id={`${elem}`}
+                    name={elem}
+                    disabled={loading}
+                    type={
+                      elem === "Password" || elem === "RepeatPassword"
+                        ? passwordEye[elem]
+                          ? "text"
+                          : "password"
+                        : elem === "CNIC" || elem === "PhoneNumber"
+                          ? "tel"
+                          : "text"
+                    }
+                    placeholder={elem.replace(/([a-z])([A-Z])/g, "$1 $2")}
+                    maxLength={elem === "CNIC" ? "15" : ""}
+                    onChange={registerInputHandler}
+                    defaultValue={elem === "PhoneNumber" ? `+92 ` : ""}
+                  />
 
-                    <input
-                      className={`${inputCSS} w-full`}
-                      ref={(el) => (inputRef.current[index] = el)}
-                      autoComplete="off"
-                      id={`${elem}`}
-                      name={elem}
+                  {(elem === "Password" || elem === "RepeatPassword") && (
+                    <button
+                      type="button"
+                      className={`${passwordEyeCSS}`}
+                      onClick={() => passwordEyeHandler(elem)}
                       disabled={loading}
-                      type={
-                        elem === "Password" || elem === "RepeatPassword"
-                          ? passwordEye[elem]
-                            ? "text"
-                            : "password"
-                          : elem === "CNIC" || elem === "PhoneNumber"
-                            ? "tel"
-                            : "text"
-                      }
-                      placeholder={elem.replace(/([a-z])([A-Z])/g, "$1 $2")}
-                      maxLength={elem === "CNIC" ? "15" : ""}
-                      onChange={registerInputHandler}
-                      defaultValue={elem === "PhoneNumber" ? `+92 ` : ""}
-                    />
+                    >
+                      {passwordEye[elem] ? <EyeIcon /> : <EyeSlashIcon />}
+                    </button>
+                  )}
 
-                    {(elem === "Password" || elem === "RepeatPassword") && (
-                      <button
-                        type="button"
-                        className={`${passwordEyeCSS}`}
-                        onClick={() => passwordEyeHandler(elem)}
-                        disabled={loading}
-                      >
-                        {passwordEye[elem] ? <EyeIcon /> : <EyeSlashIcon />}
-                      </button>
-                    )}
-
-                    <p
-                      className={`absolute text-xs tablet:text-sm top-[110%] right-2 flex items-center gap-2 tracking-widest text-red-500`}
-                      id={`Error-Para-${elem}`}
-                      ref={(el) => (errorParaRef.current[index] = el)}
-                    ></p>
-                  </div>
-                </React.Fragment>
-              );
-            })}
-          </form>
+                  <p
+                    className={`absolute text-xs tablet:text-sm top-[110%] right-2 flex items-center gap-2 tracking-widest text-red-500`}
+                    id={`Error-Para-${elem}`}
+                    ref={(el) => (errorParaRef.current[index] = el)}
+                  ></p>
+                </div>
+              </React.Fragment>
+            );
+          })}
 
           <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-evenly items-center pb-4 mt-10">
             <button
@@ -446,7 +442,7 @@ const Register = () => {
               )}
             </NavLink>
           </div>
-        </div>
+        </form>
       </div>
     </>
   );

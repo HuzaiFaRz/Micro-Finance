@@ -47,40 +47,44 @@ const ProfileDangerZone = () => {
       return;
     }
 
-    try {
-      setLoading(true);
-      const user = auth.currentUser;
-      const credential = EmailAuthProvider.credential(
-        isUser.Email,
-        isUser.Password,
-      );
-      await reauthenticateWithCredential(user, credential);
-      await deleteDoc(doc(db, "Users", user?.uid));
-      await deleteUser(user);
-      errorToast("Account Deleted SuccessFully", 200, 200, 200);
-    } catch (error) {
-      setLoading(false);
-      console.error(error?.message);
-      errorToast(error?.code, null, null, null);
-    } finally {
-      setLoading(false);
-    }
+    console.log("this is delte acc");
+
+    // try {
+    //   setLoading(true);
+    //   const user = auth.currentUser;
+    //   const credential = EmailAuthProvider.credential(
+    //     isUser.Email,
+    //     isUser.Password,
+    //   );
+    //   await reauthenticateWithCredential(user, credential);
+    //   await deleteDoc(doc(db, "Users", user?.uid));
+    //   await deleteUser(user);
+    //   errorToast("Account Deleted SuccessFully", 200, 200, 200);
+    // } catch (error) {
+    //   setLoading(false);
+    //   console.error(error?.message);
+    //   errorToast(error?.code, null, null, null);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const logoutHandler = async () => {
     event.preventDefault();
-    try {
-      setLoading(true);
-      await signOut(auth);
-      errorToast("Sign Out SuccessFully", 200, 200, 200);
-      navigate("/sign-in");
-    } catch (error) {
-      setLoading(false);
-      console.error(error?.message);
-      errorToast(error?.code, null, null, null);
-    } finally {
-      setLoading(false);
-    }
+    console.log("this is logout acc");
+
+    // try {
+    //   setLoading(true);
+    //   await signOut(auth);
+    //   errorToast("Sign Out SuccessFully", 200, 200, 200);
+    //   navigate("/sign-in");
+    // } catch (error) {
+    //   setLoading(false);
+    //   console.error(error?.message);
+    //   errorToast(error?.code, null, null, null);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const whoWarnClickHandler = (event) => {
@@ -90,34 +94,38 @@ const ProfileDangerZone = () => {
 
   return (
     <div className="w-full h-full font-elmssans-light flex flex-col justify-start gap-10">
-      {/* Header */}
-
-      {whoWarnClick === "DeleteAccount" && (
+      {whoWarnClick && (
         <div className="fixed inset-0 w-full h-svh bg-black/85 backdrop-blur-lg z-100 flex justify-center items-center p-4">
           <div className="w-full tablet:w-[500px] h-[300px] bg-black flex flex-col justify-evenly items-center">
-            <form className="flex relative flex-wrap justify-between items-center gap-1 text-[16px] tablet:text-lg p-1">
-              <label htmlFor={"Password"}>Enter Your Password</label>
-              <input
-                placeholder={"Password"}
-                type={passwordEye ? "text" : "password"}
-                id={"Password"}
-                disabled={loading}
-                className="p-3 bg-layout w-full tracking-wider"
-                onChange={(e) => {
-                  setPasswordValue(e.target.value);
-                }}
-              />
-              <button
-                type="button"
-                className={`absolute top-[55%] right-4 size-5`}
-                onClick={() => setPasswordEye(!passwordEye)}
-                disabled={loading}
-              >
-                {passwordEye ? <EyeIcon /> : <EyeSlashIcon />}
-              </button>
-            </form>
+            {whoWarnClick === "DeleteAccount" && (
+              <form className="flex relative flex-wrap justify-between items-center gap-1 text-[16px] tablet:text-lg p-1">
+                <label htmlFor={"Password"}>Enter Your Password</label>
+                <input
+                  placeholder={"Password"}
+                  type={passwordEye ? "text" : "password"}
+                  id={"Password"}
+                  disabled={loading}
+                  className="p-3 bg-layout w-full tracking-wider"
+                  onChange={(e) => {
+                    setPasswordValue(e.target.value);
+                  }}
+                />
+                <button
+                  type="button"
+                  className={`absolute top-[55%] right-4 size-5`}
+                  onClick={() => setPasswordEye(!passwordEye)}
+                  disabled={loading}
+                >
+                  {passwordEye ? <EyeIcon /> : <EyeSlashIcon />}
+                </button>
+              </form>
+            )}
 
-            <div className="text-white flex flex-wrap justify-center items-center gap-5">
+            <h1 className="text-lg">
+              Are You Sure? This Action Cannot be UnDone{" "}
+            </h1>
+
+            <div className="text-white flex flex-wrap justify-evenly items-center gap-2 p-3 w-full">
               <button
                 className={"px-4 py-2 text-lg bg-green-600"}
                 onClick={() => {
@@ -131,16 +139,24 @@ const ProfileDangerZone = () => {
                 className={
                   "px-4 py-2 text-lg flex gap-3 items-center bg-red-600"
                 }
-                onClick={deleteAccountHandler}
+                onClick={
+                  whoWarnClick === "DeleteAccount"
+                    ? deleteAccountHandler
+                    : logoutHandler
+                }
                 disabled={loading}
               >
-                Delete Account
+                {whoWarnClick === "DeleteAccount"
+                  ? "Delete Account"
+                  : "LogOut All"}
                 {loading ? (
                   <ArrowPathRoundedSquareIcon
                     className={`tablet:size-4 size-5 animate-spin`}
                   />
-                ) : (
+                ) : whoWarnClick === "DeleteAccount" ? (
                   <TrashIcon className="size-5" />
+                ) : (
+                  <ArrowLeftEndOnRectangleIcon className="size-5" />
                 )}
               </button>
             </div>
@@ -188,8 +204,8 @@ const ProfileDangerZone = () => {
 
         <button
           className="bg-red-600 hover:bg-red-700 text-white text-lg px-5 py-2 rounded-xl transition duration-200 flex items-center gap-2"
-          onClick={logoutHandler}
           name="LogoutAll"
+          onClick={whoWarnClickHandler}
           disabled={loading}
         >
           Logout All{" "}

@@ -79,7 +79,7 @@ const GlobalContextProvider = ({ children }) => {
   const passwordEyeCSS = `size-5 absolute right-2 top-[60%] cursor-pointer`;
 
   const mainColor =
-    windowMode === "dark" ? "bg-black text-main" : "bg-main text-black";
+    windowMode === "dark" ? "bg-black/70 text-main" : "bg-white/80 text-black";
 
   const inputCSS = `px-3 py-3 border-l-1 border-b-1 placeholder:opacity-70 mt-[13px] pointer-events-auto ${
     windowMode === "dark"
@@ -87,7 +87,7 @@ const GlobalContextProvider = ({ children }) => {
       : `placeholder:text-black text-black border-black`
   } `;
 
-  const labelCSS = `underline underline-offset-20 ${
+  const labelCSS = `underline underline-offset-19 ml-[0.5px] ${
     windowMode === "dark"
       ? "text-main decoration-main"
       : "text-card font-elmssans-medium decoration-black"

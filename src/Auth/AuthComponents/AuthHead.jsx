@@ -3,8 +3,9 @@ import { MoonIcon, SunIcon } from "@heroicons/react/16/solid";
 import { GlobalContextCreated } from "../../Contexts/GlobalContext";
 
 const AuthHead = () => {
-  const { windowMode, setWindowMode, authHeadHeading } =
+  const { windowMode, setWindowMode, authHeadHeading, mainColor } =
     useContext(GlobalContextCreated);
+
   const [, setUserMode] = useState(localStorage.getItem("theme") || windowMode);
   const modeButtonHandler = () => {
     setUserMode((prev) => {
@@ -25,11 +26,11 @@ const AuthHead = () => {
   return (
     <Fragment>
       <div
-        className={`w-full flex justify-between items-center font-elmssans-bold text-3xl tablet:text-4xl tracking-tighter py-5 px-5 ${
+        className={`w-full flex justify-between items-center font-elmssans-bold text-3xl tablet:text-4xl tracking-tighter px-5 z-10 fixed top-0 h-[60px] ${mainColor} ${
           windowMode === "dark" ? "text-main" : "text-black"
         }`}
       >
-        <span className="tablet:py-0 italic">{authHeadHeading}</span>
+        <h1 className="italic text-4xl tablet:text-6xl">{authHeadHeading}</h1>
         <button
           className="modeButton cursor-pointer"
           type="button"

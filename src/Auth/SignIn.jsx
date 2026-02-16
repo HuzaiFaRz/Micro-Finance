@@ -179,69 +179,65 @@ const SignIn = () => {
   return (
     <>
       <div
-        className={`w-full min-h-[105vh] flex flex-col tablet:flex-row justify-between items-start ${mainColor}`}
+        className={`w-full h-full min-h-screen flex flex-col justify-center items-center ${mainColor} relative`}
       >
         <AuthImage />
-        <div
-          className={`flex flex-col justify-between items-center w-full tablet:w-[60%] min-h-full`}
+
+        <AuthHead />
+        <form
+          className={`flex flex-wrap justify-around items-center h-full self-center justify-self-center tablet:h-[600px] gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider px-3 w-full z-10 p-2 ${mainColor} mt-20`}
         >
-          <AuthHead />
-          <form
-            className={`flex flex-wrap justify-around items-center w-full h-full tablet:h-[500px] gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider px-3 ${mainColor}`}
-          >
-            {sigInInputs.map((elem, index) => {
-              return (
-                <React.Fragment key={index}>
-                  <div className="flex flex-col justify-center items-start relative w-full desktop:w-[350px]">
-                    <label
-                      htmlFor={elem}
-                      id={`Label-${elem}`}
-                      className={`${labelCSS} w-full`}
-                      ref={(el) => (lableRef.current[index] = el)}
-                    >
-                      {`Insert ${elem}`}
-                    </label>
+          {sigInInputs.map((elem, index) => {
+            return (
+              <React.Fragment key={index}>
+                <div className="flex flex-col justify-center items-start relative w-full desktop:w-[350px]">
+                  <label
+                    htmlFor={elem}
+                    id={`Label-${elem}`}
+                    className={`${labelCSS} w-full`}
+                    ref={(el) => (lableRef.current[index] = el)}
+                  >
+                    {`Insert ${elem}`}
+                  </label>
 
-                    <input
-                      className={`${inputCSS} w-full desktop:w-[350px]`}
-                      ref={(el) => (inputRef.current[index] = el)}
-                      autoComplete="off"
-                      id={`${elem}`}
-                      name={elem}
+                  <input
+                    className={`${inputCSS} w-full desktop:w-[350px]`}
+                    ref={(el) => (inputRef.current[index] = el)}
+                    autoComplete="off"
+                    id={`${elem}`}
+                    name={elem}
+                    disabled={loading}
+                    type={
+                      elem === "Password"
+                        ? passwordEye
+                          ? "text"
+                          : "password"
+                        : "text"
+                    }
+                    placeholder={`${elem}...`}
+                    onChange={signInInputHandler}
+                  />
+
+                  {elem === "Password" && (
+                    <button
+                      type="button"
+                      className={`${passwordEyeCSS}`}
+                      onClick={() => passwordEyeHandler()}
                       disabled={loading}
-                      type={
-                        elem === "Password"
-                          ? passwordEye
-                            ? "text"
-                            : "password"
-                          : "text"
-                      }
-                      placeholder={`${elem}...`}
-                      onChange={signInInputHandler}
-                    />
+                    >
+                      {passwordEye ? <EyeIcon /> : <EyeSlashIcon />}
+                    </button>
+                  )}
 
-                    {elem === "Password" && (
-                      <button
-                        type="button"
-                        className={`${passwordEyeCSS}`}
-                        onClick={() => passwordEyeHandler()}
-                        disabled={loading}
-                      >
-                        {passwordEye ? <EyeIcon /> : <EyeSlashIcon />}
-                      </button>
-                    )}
-
-                    <p
-                      className={`absolute text-xs tablet:text-sm top-2 right-2 flex items-center gap-2 tracking-widest text-red-500`}
-                      id={`Error-Para-${elem}`}
-                      ref={(el) => (errorParaRef.current[index] = el)}
-                    ></p>
-                  </div>
-                </React.Fragment>
-              );
-            })}
-          </form>
-
+                  <p
+                    className={`absolute text-xs tablet:text-sm top-2 right-2 flex items-center gap-2 tracking-widest text-red-500`}
+                    id={`Error-Para-${elem}`}
+                    ref={(el) => (errorParaRef.current[index] = el)}
+                  ></p>
+                </div>
+              </React.Fragment>
+            );
+          })}
           <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-evenly items-center pb-4 mt-5">
             {" "}
             <button
@@ -276,7 +272,7 @@ const SignIn = () => {
               )}
             </NavLink>
           </div>
-        </div>
+        </form>
       </div>
     </>
   );

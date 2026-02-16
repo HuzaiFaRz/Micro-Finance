@@ -17,7 +17,6 @@ import {
 } from "@heroicons/react/16/solid";
 
 import { GlobalContextCreated } from "../Contexts/GlobalContext";
-import AuthImage from "./AuthComponents/AuthImage";
 import AuthHead from "./AuthComponents/AuthHead";
 import AuthFormReducer from "../Reducers/AuthFormReducer";
 import { auth, db } from "../Firebase/firebase";
@@ -344,14 +343,19 @@ const Register = () => {
   return (
     <>
       <div
-        className={`w-full h-full min-h-screen flex flex-col justify-center items-center ${mainColor} relative`}
+        className={`w-full min-h-screen flex flex-col items-center relative`}
+        style={{
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),  url(
+            "https://images.unsplash.com/photo-1640197618317-dc379a226fbe?q=80&w=437&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
-        <AuthImage />
-
         <AuthHead />
 
         <form
-          className={`flex flex-wrap justify-around items-center h-full self-center justify-self-center tablet:h-[600px] gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider px-3 w-full z-10 p-2 ${mainColor} mt-20`}
+          className={`flex flex-wrap justify-around items-center h-full tablet:h-[700px] gap-5 text-sm tablet:text-[16px] font-elmssans-light tracking-wider w-full z-10 p-2 ${mainColor}`}
         >
           {registerInputs.map((elem, index) => {
             return (
@@ -409,7 +413,7 @@ const Register = () => {
             );
           })}
 
-          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-evenly items-center pb-4 mt-10">
+          <div className="font-elmssans-medium tablet:text-lg text-sm text-main w-full flex flex-wrap gap-5 justify-evenly items-center pb-1 mt-1">
             <button
               className="bg-card px-10 py-2 rounded-3xl disabled:opacity-50 flex items-center gap-4"
               type="submit"

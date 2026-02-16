@@ -172,6 +172,3 @@ option:hover {
 input:invalid {
   box-shadow: 0px 0px 5px 2px red;
 }
-/* input:valid {
-  box-shadow: 0px 0px 0px 0px red;
-} */

@@ -181,7 +181,7 @@ const LoanForm = () => {
 
     if (Initial_Amount > gettingInitialAmount) {
       return settingErrorMsg(
-        `Initial amount cannot be equal to or greater than the loan amount`,
+        `Initial amount cannot be equal or greater or less than the loan amount`,
         "Initial_Amount",
       );
     }
@@ -321,7 +321,7 @@ const LoanForm = () => {
         }
         if (value > initialAmount) {
           return settingErrorMsg(
-            `Initial amount cannot be equal or greater or less than the loan amount`,
+            `Initial amount cannot be equal or222 greater or less than the loan amount`,
             id,
           );
         }

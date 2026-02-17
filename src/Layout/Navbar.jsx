@@ -4,7 +4,7 @@ import {
   ArrowLeftEndOnRectangleIcon,
   ArrowPathRoundedSquareIcon,
   Bars3BottomRightIcon,
-  CurrencyDollarIcon,
+  CurrencyRupeeIcon,
   TrashIcon,
   UserIcon,
   UserPlusIcon,
@@ -119,7 +119,7 @@ const Navbar = () => {
           }`}
         >
           <div className="nav-start absolute top-20 tablet:static">
-            <CurrencyDollarIcon className="size-12 tablet:size-10" />
+            <CurrencyRupeeIcon className="size-12 tablet:size-10" />
           </div>
 
           <div className="nav-center flex flex-col tablet:flex-row justify-center items-start tablet:items-center w-full tablet:w-auto px-0 desktop:px-5 gap-8 tablet:gap-3 desktop:gap-6 font-elmssans-medium">

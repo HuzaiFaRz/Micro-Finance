@@ -20,6 +20,7 @@ import { useNavigate } from "react-router";
 
 const ProfileDangerZone = () => {
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const { errorToast } = useContext(GlobalContextCreated);
@@ -29,6 +30,7 @@ const ProfileDangerZone = () => {
   const [whoWarnClick, setWhoWarnClick] = useState();
 
   const [passwordValue, setPasswordValue] = useState();
+
   const [passwordEye, setPasswordEye] = useState();
 
   const deleteAccountHandler = async () => {

@@ -130,7 +130,7 @@ const Register = () => {
     if (!Name || !Email || !CNIC) {
       return;
     }
-  }, [isButtonClick, formValues, password, inputsErrors, errorToast]);
+  }, [isButtonClick]);
 
   const registerInputHandler = (elem) => {
     let { value, id, name } = elem.target;
@@ -292,6 +292,7 @@ const Register = () => {
           isValid = false;
           return;
         }
+        return;
       }
     });
 

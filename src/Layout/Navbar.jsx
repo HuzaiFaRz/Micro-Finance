@@ -37,6 +37,7 @@ const Navbar = () => {
     { linkName: "Contact Us", linkURL: "contact-us" },
     { linkName: "About Us", linkURL: "about-us" },
     { linkName: "Dashboard", linkURL: "dashboard" },
+    { linkName: "Profile", linkURL: "profile" },
     { linkName: "Apply Now", linkURL: "loan-form" },
   ];
 

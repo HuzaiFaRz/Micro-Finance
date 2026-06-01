@@ -110,19 +110,23 @@ const PaymentShedule = () => {
     );
     docPDF.save(`Receipt_${transaction_ID}${loanID}.pdf`);
   };
+  let paymentDate = [];
+  let balance = [];
 
-  let calculatedDuration = parseInt(targetLoan?.loanData?.Loan_Duration) * 12;
+  let calculatedDuration =
+    parseInt(targetLoan?.loanData.Loan_Duration || 0) * 12;
 
   const calculatedLoanApplyTime = new Date(
     targetLoan?.loanData.applyAt?.seconds * 1000 +
       targetLoan?.loanData.applyAt?.nanoseconds / 1000000,
   );
 
-  let paymentDate = [];
-  let balance = [];
-
   for (let index = 1; index <= calculatedDuration; index++) {
-    let futureDate = new Date(calculatedLoanApplyTime);
+    let futureDate = new Date(
+      calculatedLoanApplyTime.getFullYear(),
+      calculatedLoanApplyTime.getMonth() + index,
+      calculatedLoanApplyTime.getDate(),
+    );
     futureDate.setMonth(calculatedLoanApplyTime.getMonth() + index);
 
     paymentDate.push(futureDate);
@@ -240,6 +244,8 @@ const PaymentShedule = () => {
           </h1>
           <div className="w-full h-full flex flex-wrap justify-evenly items-center gap-4 p-3">
             {paymentDate.map((elem, index) => {
+              const today = new Date();
+              const isUpcoming = elem > today;
               let date = elem.toLocaleString("en-US", {
                 month: "short",
                 year: "numeric",
@@ -254,9 +260,9 @@ const PaymentShedule = () => {
                   key={index}
                 >
                   <span
-                    className={`absolute right-4 top-2 ${elem > calculatedLoanApplyTime ? "text-[#FBED00]" : "text-red-500"}`}
+                    className={`absolute right-4 top-2 ${isUpcoming ? "text-[#FBED00]" : "text-red-500"}`}
                   >
-                    {elem > calculatedLoanApplyTime ? "Upcoming" : "Overdue"}
+                    {isUpcoming ? "Upcoming" : "Expired"}
                   </span>
                   <span className={`absolute right-4 bottom-2`}>
                     Instalment #{index + 1} of {calculatedDuration}

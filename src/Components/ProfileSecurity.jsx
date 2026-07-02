@@ -11,9 +11,11 @@ import { auth, db } from "../Firebase/firebase";
 import {
   EmailAuthProvider,
   reauthenticateWithCredential,
+  signOut,
   updatePassword,
 } from "firebase/auth";
 import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { useNavigate } from "react-router";
 
 const ProfileSecurity = () => {
   const { isUser } = AuthUseContext();
@@ -52,6 +54,7 @@ const ProfileSecurity = () => {
   }, [isUser?.LastPasswordChangeTime]);
 
   const [passwordValues, setPasswordValues] = useState({});
+  const navigate = useNavigate();
 
   const changePasswordHandler = async (event) => {
     event.preventDefault();
@@ -102,6 +105,8 @@ const ProfileSecurity = () => {
         RepeatPassword: RepeatPassword,
         LastPasswordChangeTime: serverTimestamp(),
       });
+      signOut(auth);
+      navigate("/sign-in");
       errorToast("Password Updated", 200, 200, 200);
       location.reload();
       setLoading(false);
@@ -134,7 +139,7 @@ const ProfileSecurity = () => {
               </label>
               <input
                 placeholder={elem.replace(/([a-z])([A-Z])/g, "$1 $2")}
-                type={!passwordEye[elem] ? "text" : "password"}
+                type={passwordEye[elem] ? "text" : "password"}
                 id={elem}
                 disabled={loading}
                 className="p-3 bg-layout w-full tracking-wider"

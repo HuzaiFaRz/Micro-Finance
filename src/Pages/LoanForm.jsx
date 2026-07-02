@@ -64,7 +64,7 @@ const LoanForm = () => {
       "https://images.unsplash.com/photo-1758404958502-44f156617bae?q=80&w=436&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   };
 
-  const errorParaRef = useRef({});
+  const errorParaRef = useRef([]);
 
   const { errorToast } = useContext(GlobalContextCreated);
 
@@ -110,21 +110,21 @@ const LoanForm = () => {
 
   const settingErrorMsg = (msg, id) => {
     setErrorMsg(msg);
-    // const errorP = errorParaRef.current.find((e) => e.id === id);
-    // if (errorP) {
-    //   errorP.innerHTML = msg;
-    // } else {
-    //   errorParaRef.current.forEach((e) => {
-    //     e.innerHTML = msg;
-    //   });
-    // }
-    const targets = Array.isArray(id) ? id : [id];
-    Object.keys(errorParaRef.current).forEach((key) => {
-      if (!id || targets.includes(key)) {
-        if (errorParaRef.current[key])
-          errorParaRef.current[key].innerHTML = msg;
-      }
-    });
+    const errorP = errorParaRef.current.find((e) => e.id === id);
+    if (errorP) {
+      errorP.innerHTML = msg;
+    } else {
+      errorParaRef.current.forEach((e) => {
+        e.innerHTML = msg;
+      });
+    }
+    // const targets = Array.isArray(id) ? id : [id];
+    // Object.keys(errorParaRef.current).forEach((key) => {
+    //   if (!id || targets.includes(key)) {
+    //     if (errorParaRef.current[key])
+    //       errorParaRef.current[key].innerHTML = msg;
+    //   }
+    // });
   };
 
   const formatingPKR = (amount) =>
@@ -222,7 +222,6 @@ const LoanForm = () => {
     );
 
     if (id === "Loan_Duration" && value === "Loan_Duration") {
-      console.log("dfds");
       settingErrorMsg("Select Duration", id);
       setM_Install(null);
       setValid(false);
@@ -486,7 +485,7 @@ const LoanForm = () => {
                 <p
                   id={e}
                   className="text-sm tablet:text-lg tracking-wider text-red-500 w-full h-max"
-                  ref={(el) => (errorParaRef.current[e] = el)}
+                  ref={(el) => (errorParaRef.current[i] = el)}
                 ></p>
               </label>
             );

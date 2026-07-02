@@ -64,7 +64,7 @@ const LoanForm = () => {
       "https://images.unsplash.com/photo-1758404958502-44f156617bae?q=80&w=436&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   };
 
-  const errorParaRef = useRef([]);
+  const errorParaRef = useRef({});
 
   const { errorToast } = useContext(GlobalContextCreated);
 
@@ -110,14 +110,21 @@ const LoanForm = () => {
 
   const settingErrorMsg = (msg, id) => {
     setErrorMsg(msg);
-    const errorP = errorParaRef.current.find((e) => e.id === id);
-    if (errorP) {
-      errorP.innerHTML = msg;
-    } else {
-      errorParaRef.current.forEach((e) => {
-        e.innerHTML = msg;
-      });
-    }
+    // const errorP = errorParaRef.current.find((e) => e.id === id);
+    // if (errorP) {
+    //   errorP.innerHTML = msg;
+    // } else {
+    //   errorParaRef.current.forEach((e) => {
+    //     e.innerHTML = msg;
+    //   });
+    // }
+    const targets = Array.isArray(id) ? id : [id];
+    Object.keys(errorParaRef.current).forEach((key) => {
+      if (!id || targets.includes(key)) {
+        if (errorParaRef.current[key])
+          errorParaRef.current[key].innerHTML = msg;
+      }
+    });
   };
 
   const formatingPKR = (amount) =>
@@ -215,6 +222,7 @@ const LoanForm = () => {
     );
 
     if (id === "Loan_Duration" && value === "Loan_Duration") {
+      console.log("dfds");
       settingErrorMsg("Select Duration", id);
       setM_Install(null);
       setValid(false);
@@ -343,7 +351,7 @@ const LoanForm = () => {
     return setValid(true);
   };
 
-  const applyLoanFormHandler = async () => {
+  const applyLoanFormHandler = async (event) => {
     event.preventDefault();
     if (
       !valid ||
@@ -394,12 +402,12 @@ const LoanForm = () => {
         <ol className="w-full desktop:w-[40%] h-full p-4 flex flex-col justify-start items-start font-elmssans-medium bg-black text-main">
           <h3 className="text-2xl font-elmssans-bold flex flex-wrap items-center gap-4">
             <InformationCircleIcon className="h-7 w-7 text-card" />
-            Before You Apply – Kindly Review the Important Details on Our{" "}
+            Before You Apply – Kindly Review the Important Details on Our
             <NavLink to="/loan-describtion" className="underline text-card">
               Loan Description Page
             </NavLink>
             You can also download the comprehensive Loan Description PDF for
-            your reference.{" "}
+            your reference.
             <strong className="text-card underline text-xl">
               <a
                 href={LoanDescriptionPDF}
@@ -408,8 +416,8 @@ const LoanForm = () => {
                 rel="noopener noreferrer"
               >
                 PDF here
-              </a>{" "}
-            </strong>{" "}
+              </a>
+            </strong>
           </h3>
 
           <ol className="list-disc list-outside text-xl p-6 space-y-5">
@@ -420,7 +428,7 @@ const LoanForm = () => {
         </ol>
 
         <form
-          className="w-full desktop:w-[60%] flex flex-wrap justify-evenly items-center gap-5 p-3 bg-layout"
+          className="w-full desktop:w-[60%] flex flex-wrap justify-evenly items-center p-3 bg-layout"
           onSubmit={applyLoanFormHandler}
         >
           {loanFormSelect.map((mainElem, MainIndex) => {
@@ -478,13 +486,13 @@ const LoanForm = () => {
                 <p
                   id={e}
                   className="text-sm tablet:text-lg tracking-wider text-red-500 w-full h-max"
-                  ref={(el) => (errorParaRef.current[i] = el)}
+                  ref={(el) => (errorParaRef.current[e] = el)}
                 ></p>
               </label>
             );
           })}
 
-          <div className="w-full flex flex-col items-center gap-6 font-elmssans-medium">
+          <div className="w-full flex flex-wrap items-center justify-center gap-6 font-elmssans-medium self-start">
             {/* Apply Button */}
             <button
               type="submit"
@@ -502,13 +510,13 @@ const LoanForm = () => {
             {/* Loan Info */}
             <div className="w-[300px] flex flex-col gap-1 bg-gray-50 rounded-lg p-3 shadow-sm border border-gray-200">
               <span className="text-gray-700 text-base tracking-wide">
-                Profit Rate:{" "}
+                Profit Rate:
                 <span className="font-semibold text-gray-900">
                   {profitRate}
                 </span>
               </span>
               <span className="text-gray-700 text-base tracking-wide">
-                Monthly Installment:{" "}
+                Monthly Installment:
                 <span className="font-semibold text-gray-900">{m_Install}</span>
               </span>
             </div>

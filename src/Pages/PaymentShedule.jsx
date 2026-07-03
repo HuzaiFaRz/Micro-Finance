@@ -94,7 +94,12 @@ const PaymentShedule = () => {
     docPDF.text("Payment Details:", 15, y);
     docPDF.setFont("helvetica", "normal");
     y += 7;
-    docPDF.text(`Amount Paid: PKR ${transaction_AMOUNT}`, 15, y);
+    let amount = new Intl.NumberFormat("en-PK", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(transaction_AMOUNT);
+
+    docPDF.text(`Amount Paid: PKR ${amount}`, 15, y);
     y += 7;
     docPDF.text(`Payment Method: ${transaction_PAYMENT_METHOD}`, 15, y);
     y += 7;
@@ -110,6 +115,7 @@ const PaymentShedule = () => {
     );
     docPDF.save(`Receipt_${transaction_ID}${loanID}.pdf`);
   };
+
   let paymentDate = [];
   let balance = [];
 

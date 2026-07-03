@@ -45,6 +45,8 @@ const LoanForm = () => {
 
   const [m_Install, setM_Install] = useState(null);
 
+  const [initital_Amount, setInitital_Amount] = useState(null);
+
   const loanCategoryImgURL = {
     "Home Loan":
       "https://images.unsplash.com/photo-1691941209466-e981f3a192a7?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -174,6 +176,7 @@ const LoanForm = () => {
         "Loan_Amount",
       );
     }
+    setInitital_Amount(formatingPKR(gettingInitialAmount));
 
     if (!Initial_Amount) {
       return;
@@ -193,7 +196,17 @@ const LoanForm = () => {
       );
     }
 
+    if (
+      +loanFormValues.Loan_Duration.split(" ")[0] >
+      whatCategorySelected[0][1].duration[1]
+    ) {
+      errorToast("Kindly Select Correct Duration");
+      settingErrorMsg("Select Duration", "Loan_Duration");
+      return;
+    }
+
     settingErrorMsg("", null);
+
     setM_Install(
       formatingPKR(
         (Loan_Amount -
@@ -205,7 +218,7 @@ const LoanForm = () => {
           (parseInt(Loan_Duration) * 12),
       ),
     );
-  }, [loanFormValues, whatCategorySelected]);
+  }, [errorToast, initital_Amount, loanFormValues, whatCategorySelected]);
 
   const loanFormInputHandler = (event) => {
     let id = event.target.id;
@@ -224,6 +237,7 @@ const LoanForm = () => {
     if (id === "Loan_Duration" && value === "Loan_Duration") {
       settingErrorMsg("Select Duration", id);
       setM_Install(null);
+      setInitital_Amount(null);
       setValid(false);
       errorToast("Please Select Duration");
       return;
@@ -237,6 +251,7 @@ const LoanForm = () => {
         settingErrorMsg("Select Category", id);
         setM_Install(null);
         setProfitRate(null);
+        setInitital_Amount(null);
         errorToast("Please Select Category");
         setLoanDurationRange([1, 5]);
         setWhatCategorySelected(null);
@@ -283,6 +298,7 @@ const LoanForm = () => {
       settingErrorMsg(``, id);
 
       if (id === "Loan_Amount") {
+        setInitital_Amount(null);
         if (!value) {
           return settingErrorMsg(`Enter ${id}`, id);
         }
@@ -352,6 +368,16 @@ const LoanForm = () => {
 
   const applyLoanFormHandler = async (event) => {
     event.preventDefault();
+
+    if (
+      +loanFormValues.Loan_Duration.split(" ")[0] >
+      whatCategorySelected[0][1].duration[1]
+    ) {
+      errorToast("Kindly Select Correct Duration");
+      settingErrorMsg("Select Duration", "Loan_Duration");
+      return;
+    }
+
     if (
       !valid ||
       loanFormValues.Loan_Category === "Loan_Category" ||
@@ -427,7 +453,7 @@ const LoanForm = () => {
         </ol>
 
         <form
-          className="w-full desktop:w-[60%] flex flex-wrap justify-evenly items-center p-3 bg-layout"
+          className="w-full desktop:w-[60%] flex flex-wrap justify-evenly items-center gap-6 p-3 bg-layout"
           onSubmit={applyLoanFormHandler}
         >
           {loanFormSelect.map((mainElem, MainIndex) => {
@@ -507,16 +533,24 @@ const LoanForm = () => {
             </button>
 
             {/* Loan Info */}
-            <div className="w-[300px] flex flex-col gap-1 bg-gray-50 rounded-lg p-3 shadow-sm border border-gray-200">
+            <div className="flex flex-col gap-1 bg-gray-50 rounded-lg p-3 shadow-sm border border-gray-200">
               <span className="text-gray-700 text-base tracking-wide">
                 Profit Rate:
-                <span className="font-semibold text-gray-900">
+                <span className="font-semibold text-gray-900 pl-2">
                   {profitRate}
                 </span>
               </span>
               <span className="text-gray-700 text-base tracking-wide">
                 Monthly Installment:
-                <span className="font-semibold text-gray-900">{m_Install}</span>
+                <span className="font-semibold text-gray-900 pl-2">
+                  {m_Install}
+                </span>
+              </span>
+              <span className="text-gray-700 text-base tracking-wide">
+                Initial Amount:
+                <span className="font-semibold text-gray-900 pl-2">
+                  {initital_Amount}
+                </span>
               </span>
             </div>
           </div>

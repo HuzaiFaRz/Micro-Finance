@@ -203,7 +203,13 @@ const Payment = () => {
     docPDF.text("Payment Details:", 15, y);
     docPDF.setFont("helvetica", "normal");
     y += 7;
-    docPDF.text(`Amount Paid: PKR ${amount}`, 15, y);
+
+    let amountA = new Intl.NumberFormat("en-PK", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+
+    docPDF.text(`Amount Paid: PKR ${amountA}`, 15, y);
     y += 7;
     docPDF.text(`Payment Method: M_Finance`, 15, y);
     y += 7;
